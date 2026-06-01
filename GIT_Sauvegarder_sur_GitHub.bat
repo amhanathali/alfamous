@@ -34,7 +34,7 @@ git add -A
 echo [2/3] Enregistrement local (commit)...
 git commit -m "%MSG%"
 if errorlevel 1 (
-  echo [INFO] Rien a enregistrer (aucune modification) — on tente quand meme l'envoi.
+  echo [INFO] Rien a enregistrer ou commit refuse. On tente quand meme l'envoi.
 ) else (
   echo [OK] Modifications enregistrees en local.
 )

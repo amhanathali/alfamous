@@ -23,7 +23,7 @@ git pull
 if errorlevel 1 (
   echo.
   echo [ERREUR] La recuperation a echoue. Voir les messages ci-dessus.
-  echo          (En cas de conflit, demandez de l'aide avant de continuer.)
+  echo          En cas de conflit, demandez de l'aide avant de continuer.
 ) else (
   echo.
   echo [OK] Projet a jour avec GitHub.
