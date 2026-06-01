@@ -18,21 +18,28 @@
 
 ## ✨ Présentation
 
-**Alfamous** (interface « Zoom-Coran ») est une application web open source dédiée à la **recherche sémantique et lexicale du Coran**. Elle permet d'explorer le texte par **racines arabes**, par **mots**, par **synonymes** et de croiser ces données avec un lexique de référence (*Maqāyīs al-Lugha* d'Ibn Fāris) ainsi que des traductions multilingues.
+**Alfamous** (interface « Zoom-Coran ») est une plateforme open source de **recherche sémantique et lexicale du Coran**. Elle permet d'explorer le texte par **racines arabes**, par **mots** et par **synonymes**, et de croiser ces données avec un lexique de référence (*Maqāyīs al-Lugha* d'Ibn Fāris) et des traductions multilingues.
 
-Le projet est publié sous licence **GPL v3** afin qu'il puisse être **étudié, amélioré, vérifié et préservé sur le long terme par la communauté**.
+Mais Alfamous est bien plus qu'un moteur de recherche : c'est un **atelier collectif** pour *travailler* le Livre — pas seulement le consulter.
 
-> 🌐 Démo en ligne : `https://alfamous-amha.web.app`
+> 🌐 Démo en ligne : `https://alfamous-amha.web.app` · 📖 [Manifeste complet (page « À propos »)](https://alfamous-amha.web.app/APropos.html)
 
 ![Aperçu de l'interface Alfamous](public/img/Alfamous-UI.jpg)
+
+## 🧭 Notre approche
+
+- **Ouvert à tous.** Le Coran n'est pas réservé à des élites religieuses : aucun diplôme n'est requis pour lire, chercher, commenter, proposer un sens, ouvrir un fil ou publier une note. Ce qui compte, c'est **le texte** — pas le titre, ni l'autorité, ni l'appartenance.
+- **Le texte d'abord.** Par choix méthodologique, la lecture part **exclusivement du texte coranique**. Les hadiths n'entrent pas dans le dispositif d'analyse (ni comme preuve, ni comme autorité, ni comme grille imposée) : une frontière nette est maintenue entre *ce que dit le texte*, *ce que l'on mesure* et *ce que l'on propose*.
+- **Une base vivante.** Ce n'est pas une encyclopédie figée : chacun peut enrichir le corpus (commentaires sur les versets, thèmes du lexique). « Pas une chapelle. Un chantier. »
+- **Une recherche qui relie.** Un seul mot traverse d'un mouvement le Coran, le lexique, le forum, les témoignages, les articles et les médias.
 
 ## 🌟 Ce qui rend Alfamous unique
 
 À notre connaissance, Alfamous est **la seule application** qui réunit, dans un même espace de recherche coranique :
 
-- 💬 **L'annotation collaborative** : la possibilité d'**ajouter des commentaires** directement **aux versets** et à des **expressions multilingues** — une fonctionnalité inédite dans le domaine de la recherche coranique.
-- 🔗 **Le croisement racine ↔ mot ↔ sens** : navigation fluide entre les racines arabes, leurs occurrences dans le texte, et le lexique étymologique d'Ibn Fāris.
-- 🌍 **Une approche réellement multilingue** (arabe, français, anglais, et traductions kabyles), pensée pour l'étude comparée.
+- 💬 **L'annotation collaborative** : ajouter des **commentaires** directement **aux versets** et à des **expressions**, dans la **langue de son choix** — une fonctionnalité inédite dans la recherche coranique.
+- 🔗 **Le croisement racine ↔ mot ↔ sens**, appuyé sur le lexique étymologique d'Ibn Fāris et des statistiques de racines.
+- 🌍 **Une approche réellement multilingue** (arabe, français, anglais, espagnol, kabyle), pensée pour l'étude comparée — avec écoute audio des versets et sourates.
 
 ## 🎯 Notre vision
 
@@ -43,7 +50,7 @@ Alfamous a été conçu comme un **bien commun** au service de l'étude du texte
 - **vérifier** la rigueur des données et des traitements ;
 - **le préserver et le diffuser largement**, au-delà de son auteur initial.
 
-> Toute contribution allant dans ce sens est chaleureusement bienvenue (voir [CONTRIBUTING.md](./CONTRIBUTING.md)).
+> Toute contribution — technique, rédactionnelle ou spirituelle — est chaleureusement bienvenue (voir [CONTRIBUTING.md](./CONTRIBUTING.md)).
 
 ## 🔑 Fonctionnalités principales
 
@@ -56,6 +63,23 @@ Alfamous a été conçu comme un **bien commun** au service de l'étude du texte
 - 📨 **Newsletter** avec désabonnement
 - 📎 **Partage de médias** et favoris
 - ❤️ Compteurs « J'aime » et statistiques de présence en temps réel
+
+## 🧩 Les modules
+
+- **SAWM — recherche libre** : dans le Coran ou un livre de *tafsir*, plus le lexique et le recueil de commentaires liés aux versets.
+- **SALAT — recherche par racines** : statistiques de racines, analyse d'expressions, mots co-occurrents (« amis de la racine ») et formes dérivées — inspiré des travaux du Dr Sameer Islambulli.
+- **CHOKR — partage des connaissances** : messagerie, partage de médias, accès aux articles du blog, forum d'idées, et contribution de commentaires sur un verset ou une expression.
+
+## 🌐 Écosystème
+
+Le projet s'appuie sur **deux piliers complémentaires** :
+
+- **[Alfamous.ca](https://www.alfamous.ca)** — l'outil d'analyse dans le texte (cette application).
+- **[blog.alfamous.ca](https://lexique-coran.blogspot.com)** — l'espace de publication et de mise en perspective (articles, analyses, études de cas).
+
+## 👥 Pour qui ?
+
+Pour **toute personne** qui veut lire le Coran et contribuer — curieux·ses, étudiant·e·s, chercheur·e·s — **sans prérequis d'expertise institutionnelle**. Les mêmes outils servent la même exigence de méthode : texte, données, analyses.
 
 ## 🧱 Pile technique
 
@@ -173,6 +197,8 @@ Voir [CHANGELOG.md](./CHANGELOG.md).
 ## 👤 Auteur
 
 **Amha NathAli** — gmpcdz@gmail.com
+
+Ingénieur civil et titulaire d'un Master en gestion de projet, programmeur autodidacte depuis 1993. Sa recherche outillée du texte coranique, initiée en 2009, a donné naissance à **Alfamous** (l'application) et à **blog.alfamous.ca** (le blog).
 
 ---
 

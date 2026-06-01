@@ -18,21 +18,28 @@
 
 ## ✨ Overview
 
-**Alfamous** (interface "Zoom-Coran") is an open-source web application dedicated to the **semantic and lexical search of the Quran**. It lets you explore the text by **Arabic roots**, by **words**, by **synonyms**, and cross-reference this data with a reference lexicon (*Maqāyīs al-Lugha* by Ibn Fāris) as well as multilingual translations.
+**Alfamous** (interface "Zoom-Coran") is an open-source platform for the **semantic and lexical search of the Quran**. It lets you explore the text by **Arabic roots**, by **words** and by **synonyms**, and cross-reference this data with a reference lexicon (*Maqāyīs al-Lugha* by Ibn Fāris) and multilingual translations.
 
-The project is released under the **GPL v3** license so that it can be **studied, improved, verified and preserved over the long term by the community**.
+But Alfamous is much more than a search engine: it is a **collective workshop** to *work* the Book — not merely to consult it.
 
-> 🌐 Live demo: `https://alfamous-amha.web.app`
+> 🌐 Live demo: `https://alfamous-amha.web.app` · 📖 [Full manifesto ("About" page)](https://alfamous-amha.web.app/APropos.html)
 
 ![Preview of the Alfamous interface](public/img/Alfamous-UI.jpg)
+
+## 🧭 Our approach
+
+- **Open to everyone.** The Quran is not reserved for religious elites: no degree is required to read, search, comment, propose a meaning, open a thread or publish a note. What counts is **the text** — not the title, the authority, or any affiliation.
+- **The text first.** As a methodological choice, the reading starts **exclusively from the Quranic text**. Hadiths are not part of the analytical apparatus (neither as evidence, nor authority, nor an imposed grid): a clear line is kept between *what the text says*, *what we measure*, and *what we propose*.
+- **A living knowledge base.** This is not a frozen encyclopedia: anyone can enrich the corpus (comments on verses, themes in the lexicon). "Not a chapel. A worksite."
+- **Search that connects.** A single word runs, in one pass, through the Quran, the lexicon, the forum, testimonials, articles and media.
 
 ## 🌟 What makes Alfamous unique
 
 To our knowledge, Alfamous is **the only application** that brings together, within a single Quranic research space:
 
-- 💬 **Collaborative annotation**: the ability to **add comments** directly **to verses** and to **multilingual expressions** — a feature unprecedented in the field of Quranic research.
-- 🔗 **Root ↔ word ↔ meaning cross-referencing**: smooth navigation between Arabic roots, their occurrences in the text, and Ibn Fāris's etymological lexicon.
-- 🌍 **A genuinely multilingual approach** (Arabic, French, English, and Kabyle translations), designed for comparative study.
+- 💬 **Collaborative annotation**: add **comments** directly **to verses** and to **expressions**, in the **language of your choice** — a feature unprecedented in Quranic research.
+- 🔗 **Root ↔ word ↔ meaning cross-referencing**, backed by Ibn Fāris's etymological lexicon and root statistics.
+- 🌍 **A genuinely multilingual approach** (Arabic, French, English, Spanish, Kabyle), designed for comparative study — with audio listening of verses and surahs.
 
 ## 🎯 Our vision
 
@@ -43,7 +50,7 @@ Alfamous was conceived as a **common good** serving the study of the Quranic tex
 - **verify** the rigor of the data and processing;
 - **preserve and widely share** it, beyond its original author.
 
-> Any contribution in this spirit is warmly welcome (see [CONTRIBUTING.md](./CONTRIBUTING.md)).
+> Any contribution — technical, editorial, or spiritual — is warmly welcome (see [CONTRIBUTING.md](./CONTRIBUTING.md)).
 
 ## 🔑 Key features
 
@@ -56,6 +63,23 @@ Alfamous was conceived as a **common good** serving the study of the Quranic tex
 - 📨 **Newsletter** with unsubscribe
 - 📎 **Media sharing** and favorites
 - ❤️ "Like" counters and real-time presence statistics
+
+## 🧩 The modules
+
+- **SAWM — free search**: across the Quran or a *tafsir* (commentary) book, plus the lexicon and the collection of comments tied to verses.
+- **SALAT — search by roots**: root statistics, expression analysis, co-occurring words ("root friends") and inflected forms — inspired by the work of Dr. Sameer Islambulli.
+- **CHOKR — share knowledge**: messaging, media sharing, access to blog articles, an ideas forum, and contributing comments on a verse or expression.
+
+## 🌐 Ecosystem
+
+The project rests on **two complementary pillars**:
+
+- **[Alfamous.ca](https://www.alfamous.ca)** — the in-text analysis tool (this application).
+- **[blog.alfamous.ca](https://lexique-coran.blogspot.com)** — the space for publishing and contextualization (articles, analyses, case studies).
+
+## 👥 Who is it for?
+
+For **anyone** who wants to read the Quran and contribute — curious readers, students, researchers — **with no institutional expertise required**. The same tools uphold the same methodological rigor: text, data, analyses.
 
 ## 🧱 Tech stack
 
@@ -173,6 +197,8 @@ See [CHANGELOG.md](./CHANGELOG.md).
 ## 👤 Author
 
 **Amha NathAli** — gmpcdz@gmail.com
+
+A civil engineer holding a Master's in project management, and a self-taught programmer since 1993. His tool-assisted research on the Quranic text, started in 2009, gave rise to **Alfamous** (the application) and **blog.alfamous.ca** (the blog).
 
 ---
 

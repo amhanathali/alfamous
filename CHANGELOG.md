@@ -17,6 +17,10 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Dossier `docs/` : `ARCHITECTURE.md`, `DATA-MODEL.md`, `DEPLOYMENT.md`, `CONFIGURATION.md`, `ROADMAP.md`.
 - `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1).
 - Modèles GitHub : rapports de bug, propositions de fonctionnalité, gabarit de Pull Request.
+- Version anglaise du README (`README.en.md`) avec sélecteur de langue FR/EN.
+- Présentation enrichie des README (approche, modules SAWM/SALAT/CHOKR, écosystème, public visé), inspirée de la page « À propos ».
+- Guide `docs/MIGRATION.md` pour réinstaller le projet sur un nouvel ordinateur.
+- Scripts `.bat` d'aide Git (sauvegarde, récupération, état) ; `DEPLOYER` sauvegarde désormais sur GitHub ; `SAUVEGARDER` inclut tous les secrets.
 
 ### Sécurité
 - Exclusion du suivi Git de tous les secrets (clés de service Firebase Admin,
