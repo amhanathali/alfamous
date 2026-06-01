@@ -115,48 +115,28 @@ if /I "!DEPLOY_TARGET!"=="all" (
   call firebase deploy --only hosting
 )
 if errorlevel 1 (
-  echo [ERROR] Echec du deploiement Firebase. Sauvegarde RAR non lancee.
+  echo [ERROR] Echec du deploiement Firebase. Sauvegarde GitHub non lancee.
   goto :END
 )
 echo [INFO] Deploiement Firebase termine.
 echo.
 
-REM === Sauvegarde WinRAR (meme logique que SAUVEGARDER____.BAT : pas de *.rar dans l'archive, sans node_modules) ===
-for /f %%A in ('powershell -NoProfile -Command "(Get-Date).ToString(\"yyyy-MM-dd_HHmm\")"') do set "TS=%%A"
-set "ARCHIVE=Sauvegarde_Alfamous_%TS%.rar"
-set "DEST=%CD%\%ARCHIVE%"
-
-set "LST=%TEMP%\alfamous_deploy_rar_%RANDOM%.lst"
-> "%LST%" echo public
-if exist "functions\" (
-  >>"%LST%" echo functions
+REM === Sauvegarde automatique sur GitHub (remplace l'ancienne archive .rar) ===
+echo.
+echo [GIT] Sauvegarde du projet sur GitHub...
+git rev-parse --is-inside-work-tree >nul 2>&1
+if errorlevel 1 (
+  echo [WARN] Pas de depot Git ici : sauvegarde GitHub ignoree.
 ) else (
-  echo [WARN] Dossier "functions\" absent - archive sans Cloud Functions.
-)
-if exist "Gscript\" >>"%LST%" echo Gscript
-for %%F in (firebase.json .firebaserc firestore.rules firestore.indexes.json storage.rules package.json package-lock.json firebase-storage-cors.json cors.json .gitignore) do (
-  if exist "%%~F" >>"%LST%" echo %%~F
-)
-for %%F in (DEPLOYER____.BAT SAUVEGARDER____.BAT lancer-alfamous.bat) do (
-  if exist "%%~F" >>"%LST%" echo %%~F
-)
-
-set "WINRAR=%ProgramFiles%\WinRAR\WinRAR.exe"
-if not exist "%WINRAR%" set "WINRAR=%ProgramFiles(x86)%\WinRAR\WinRAR.exe"
-
-if exist "%WINRAR%" (
-  echo [INFO] Creation archive post-deploy ^(exclut *.rar et node_modules^) :
-  echo       %DEST%
-  call :RUN_RAR_ARCHIVE "%DEST%" "%LST%"
-  set "WRERR=!ERRORLEVEL!"
-  if exist "%DEST%" (
-    echo [OK] Archive creee : %DEST%
+  for /f %%A in ('powershell -NoProfile -Command "(Get-Date).ToString(\"yyyy-MM-dd HH:mm\")"') do set "GITTS=%%A"
+  git add -A
+  git commit -m "deploy: mise en ligne du !GITTS!"
+  git push -u origin HEAD
+  if errorlevel 1 (
+    echo [WARN] Envoi GitHub echoue. Pensez a sauvegarder manuellement plus tard.
   ) else (
-    echo [ERROR] Echec creation archive. Code RAR: !WRERR!
+    echo [OK] Projet sauvegarde sur GitHub.
   )
-) else (
-  echo [WARN] WinRAR introuvable. Etape archive ignoree.
-  if exist "%LST%" del /q "%LST%" >nul 2>&1
 )
 
 :END
@@ -167,27 +147,6 @@ pause >nul
 if "%TM_PUSHED%"=="1" popd
 endlocal
 exit /b
-
-REM Rar.exe + DisableDelayedExpansion : -xr! reste intact
-:RUN_RAR_ARCHIVE
-setlocal DisableDelayedExpansion
-set "ARCH=%~1"
-set "LSTF=%~2"
-set "RAREXE=%ProgramFiles%\WinRAR\Rar.exe"
-if not exist "%RAREXE%" set "RAREXE=%ProgramFiles(x86)%\WinRAR\Rar.exe"
-if not exist "%RAREXE%" set "RAREXE=%ProgramFiles%\WinRAR\WinRAR.exe"
-if not exist "%RAREXE%" set "RAREXE=%ProgramFiles(x86)%\WinRAR\WinRAR.exe"
-if not exist "%RAREXE%" (
-  echo [ERROR] Rar.exe / WinRAR.exe introuvable.
-  if exist "%LSTF%" del /q "%LSTF%" >nul 2>&1
-  endlocal
-  exit /b 1
-)
-REM -idq : sortie reduite pendant l'archivage
-"%RAREXE%" a -idq -r -xr!node_modules -xr!*.rar "%ARCH%" @"%LSTF%"
-set ER=%ERRORLEVEL%
-if exist "%LSTF%" del /q "%LSTF%" >nul 2>&1
-endlocal & exit /b %ER%
 
 :SYNC_ONE
 set "SYNC_SRC=%~1"
