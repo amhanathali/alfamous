@@ -1,0 +1,1283 @@
+/* styles.css — fichier principal.
+ *
+ * Phase C de l'audit : les design tokens sont maintenant dans styles/01-tokens.css.
+ * À terme, les autres chapitres seront aussi extraits (02-reset, 03-layout, 04-popup-shell, etc.).
+ */
+
+@import url("styles/01-tokens.css");
+@import url("styles/02-reset-base.css");
+@import url("styles/03-comment-popup.css");
+@import url("styles/04-popup-shell.css");
+@import url("styles/05-bandeau.css");
+@import url("styles/06-cards.css");
+@import url("styles/07-ctx-tab.css");
+@import url("styles/08-record-languette.css");
+@import url("styles/09-forum.css");
+@import url("styles/10-forum-popups.css");
+@import url("styles/11-medias.css");
+@import url("styles/12-login.css");
+@import url("styles/13-selection-ctx-menu.css");
+@import url("styles/14-modules-toolbar.css");
+@import url("styles/15-bloc2-actions.css");
+@import url("styles/16-newsletter.css");
+@import url("styles/17-topline-stickyhead.css");
+@import url("styles/18-popup-context-menu.css");
+@import url("styles/19-popups-utils.css");
+@import url("styles/20-search-field.css");
+
+/* html, body, .light-background : désormais dans styles/02-reset-base.css (Phase C). */
+
+/* Style pour iPhone - Champ de saisie personnalisé */
+/* Style pour iPhone - Bouton */
+.bouton-loupe-croix {
+  /* background-color: #f5f5f5; */
+  background: none;
+  color: var(--zc-link-strong);
+  border: none;
+  padding: 10px;
+  border-radius: 0px;
+  cursor: pointer;
+  margin-left: 0px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  /* Taille de la police */
+}
+
+/* Style du textarea (hors champs recherche unifiés .zc-ui-search-field) */
+.textArea:not(.zc-ui-search-field) {
+  width: 100%;
+  /* min-height: 100px; */
+  max-height: 100px;
+  /* Supprime la restriction de hauteur maximale pour permettre l'ajustement dynamique */
+  resize: none;
+  /* Désactive le redimensionnement manuel */
+  font-size: 16px;
+  margin: 10px auto;
+  display: block;
+  border-radius: var(--zc-radius-sm, 8px);
+  border: 1px solid var(--zc-border, #e2e8f0);
+  background: var(--zc-surface, #fff);
+  overflow-y: auto;
+  /* Permet le défilement vertical */
+  padding: 10px 12px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.textArea:not(.zc-ui-search-field):focus {
+  outline: none;
+  border-color: var(--zc-accent, #0d9488);
+  box-shadow: 0 0 0 3px var(--zc-focus-ring);
+}
+
+/* ——— Recherche / parcours listes : jumeaux du champ principal #mot (une même hauteur = une ligne) ——— */
+textarea.zc-ui-search-field,
+input.zc-ui-search-field {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--zc-font);
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+  padding: 10px var(--zc-ui-search-pad-x-icon);
+  min-height: var(--zc-ui-search-min-h);
+  max-height: var(--zc-ui-search-min-h);
+  height: var(--zc-ui-search-min-h);
+  border-radius: var(--zc-radius-sm, 8px);
+  border: 1px solid var(--zc-border, #e2e8f0);
+  background: var(--zc-surface, #fff);
+  color: var(--zc-text);
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input.zc-ui-search-field {
+  line-height: 1.35;
+}
+
+textarea.zc-ui-search-field:focus,
+input.zc-ui-search-field:focus {
+  outline: none;
+  border-color: var(--zc-accent, #0d9488);
+  box-shadow: 0 0 0 3px var(--zc-focus-ring);
+}
+
+textarea.zc-ui-search-field.zc-ui-search-field--multiline {
+  /* Même gabarit que les autres jumeaux : une ligne de hauteur (le texte défile dans la boîte). */
+  min-height: var(--zc-ui-search-min-h);
+  max-height: var(--zc-ui-search-min-h);
+  height: var(--zc-ui-search-min-h);
+  resize: none;
+}
+
+#mot.textArea.zc-ui-search-field {
+  margin: 10px auto;
+}
+
+.zc-forum-reader-panel .zc-forum-reader-search-row .zc-ui-search-field,
+.articles-module-root .search-input-wrap .zc-ui-search-field,
+.app-recherche .search-input-wrap .zc-ui-search-field,
+.zc-temoignages-module .tm-search-wrap .zc-ui-search-field,
+#SelecteurMedias .zc-ui-search-field {
+  margin: 0;
+}
+
+/* Champ personnalisé (fusion : conserve les valeurs les plus récentes) */
+.custom-input {
+  background-color: var(--zc-ui-soft-bg);
+  border: 2px solid var(--zc-ui-soft-border);
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--zc-link-strong);
+  font-size: 16px;
+  margin: 10px auto;
+  width: 80%;
+  padding: 8px;
+}
+
+.custom-input:focus {
+  font-size: 16px;
+  /* Taille de la police */
+  outline: none;
+  border-color: var(--zc-link-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zc-link-strong) 30%, transparent);
+  /* color: blue; */
+}
+
+.bouton {
+  margin: 1px 3px;
+  /* Marge entre les boutons verticale 1px, horizontale 2px */
+  padding: 4px 8px;
+  /* Légère respiration intérieure */
+  font-size: 16px;
+  /* Taille du texte */
+  cursor: pointer;
+  color: var(--zc-link);
+  border-radius: var(--zc-radius-sm);
+  background: var(--zc-surface);
+  border: none;
+  box-shadow: none;
+}
+
+/* Style pour le bouton activé */
+.bouton.enabled {
+  background-color: var(--zc-accent);
+  color: #fff;
+}
+
+/* Style pour le bouton désactivé */
+.bouton.disabled {
+  background-color: var(--zc-text-muted);
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* Style simple pour un bouton avec logo ou icône */
+.bouton-logo {
+  background-color: transparent;
+  /* Fond transparent pour ne montrer que l'icône */
+  border: none;
+  /* Pas de bordure */
+  cursor: pointer;
+  /* Curseur pour indiquer qu'il est cliquable */
+  padding: 0;
+  /* Pas de padding pour que l'image/icone occupe tout l'espace */
+  margin-left: 5px;
+  /* Un léger espacement à gauche si nécessaire */
+}
+
+.bouton-logo img,
+.bouton-logo i {
+  width: 24px;
+  /* Ajustez la taille de l'icône ou du logo */
+  height: 24px;
+  /* Assurez-vous que c'est carré si nécessaire */
+  display: inline-block;
+  /* Pour que l'icône ne déborde pas */
+}
+
+/* Barre d'annonce (fusion : conserve overflow + style plus récent) */
+/* Viewport d'annonce : masque le débordement et garde l'arrondi+fond */
+.annonce-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--zc-radius-sm);
+  background-color: var(--zc-surface-muted);
+  border: none;
+}
+
+/* Vitesse du défilement de la bande annonce, en pixels par seconde */
+/* Ruban de texte : pas d'animation CSS (géré en JS pour séquentiel) */
+.annonce-bar {
+  display: inline-block;
+  white-space: nowrap;
+  color: var(--zc-text-muted);
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  will-change: transform;
+  animation: none !important;
+  /* neutralise d’anciens keyframes */
+}
+
+/* (optionnel) curseur / état pause au survol */
+.annonce-container:hover {
+  cursor: pointer;
+}
+
+/* Accessibilité : si l’utilisateur préfère moins d’animations */
+@media (prefers-reduced-motion: reduce) {
+  .annonce-bar {
+    transition: none !important;
+  }
+}
+
+#IframePDF {
+  display: none;
+  width: 90%;
+  height: 500px;
+  border: none;
+  border-radius: 0px;
+  background-color: var(--zc-ui-soft-bg);
+  margin: 0;
+}
+
+
+/* Style pour les boutons radio décochés */
+input[type="radio"]:not(:checked)+label {
+  color: var(--grey-color);
+  pointer-events: none;
+}
+
+/* Style pour aligner les boutons radio et les labels sur une seule ligne */
+input[type="radio"],
+label {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+
+  /*50% { transform: rotate(-180deg); }*/
+}
+
+.progress-bar-swing {
+  animation: swing 2s infinite;
+}
+
+
+/* Trad.X */
+
+
+.content {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.invisible {
+  display: none;
+}
+
+.icone-grande {
+  font-size: 18px;
+  /* Remplacez cette valeur par la taille souhaitée */
+}
+.icone-petite {
+  font-size: 12px;
+  /* Remplacez cette valeur par la taille souhaitée */
+}
+
+/* Aimer */
+
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+.like {
+  background-color: var(--zc-popup-link);
+  color: #fff;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  /* Centrer horizontalement les éléments */
+  margin-bottom: 20px;
+}
+
+.menu button {
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 0px;
+  margin-left: 0px;
+  background-color: var(--zc-ui-soft-bg);
+}
+
+.menu button:last-child {
+  margin-right: 0;
+}
+
+#zoomCoranBtn {
+  background-color: var(--zc-bg);
+}
+
+#lexiqueBtn {
+  background-color: var(--zc-bg);
+}
+
+.menu button.active {
+  background-color: var(--zc-popup-link);
+  color: #fff;
+}
+
+.menu button:not(.active) {
+  filter: grayscale(100%);
+  /* Griser les boutons non sélectionnés */
+  cursor: default;
+  /* Désactiver le curseur pour les boutons non sélectionnés */
+}
+
+.suggestions-container-mot {
+  position: absolute;
+  width: 100%;
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: var(--zc-surface);
+  border: none;
+  box-shadow: var(--zc-shadow-md);
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.suggestion-item:hover {
+  background-color: var(--zc-hover-bg);
+}
+
+/* #container { //connexion  ... }  -> commentaire corrigé */
+#container {
+  /* connexion */
+  width: 100%;
+  background: var(--zc-surface);
+  padding: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+#msgDivCommentaire {
+  margin-bottom: 20px;
+  color: var(--zc-text);
+  width: 98%;
+}
+
+.hidden {
+  display: none;
+}
+
+.icon {
+  margin-right: 8px;
+}
+
+/* Style pour le bouton ouvrir forum pas utilisé*/
+
+.titre-forum {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--zc-text);
+}
+
+/* Forum (shell + welcome + notify + posts + replies éditeur inline) : désormais dans styles/09-forum.css (Phase C). */
+/* Formulaire connexion */
+.styled-button {
+  background-color: var(--zc-bg);
+  color: var(--zc-popup-link);
+  border: none;
+  border-radius: 8px;
+  padding: 1px 2px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  margin: 1px;
+  justify-content: center;
+}
+
+.styled-button:hover {
+  background-color: var(--zc-popup-link);
+  color: #fff;
+}
+
+.styled-button:active {
+  background-color: var(--zc-popup-link-hover);
+}
+
+.helpPopup {
+  display: none;
+  width: 100%;
+  padding: 5px;
+  border: none;
+  background-color: var(--zc-surface);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Styles pour la modale */
+.modal {
+  display: none;
+  /* Masqué par défaut */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Fond semi-transparent */
+  justify-content: center;
+  align-items: center;
+  /* z-index: 100; */
+}
+
+.modal-content {
+  background-color: var(--zc-surface);
+  padding: 20px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+#confirmBtn {
+  background-color: var(--zc-accent);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+#cancelBtn {
+  background-color: var(--zc-danger);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.styled-button.cancel {
+  background-color: var(--zc-danger);
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  /* Alignement vertical */
+  justify-content: center;
+  /* Centrer verticalement */
+  align-items: center;
+  /* Centrer horizontalement */
+  text-align: center;
+  /* Centrer le texte */
+  margin-top: 5px;
+}
+
+/* Warsh (#options2) masqué : pas de réserve flex / marge (évite trou au-dessus du ☰ du bas). */
+.center-container:has(#options2[style*="display: none"]) {
+  display: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.session-count {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--zc-text);
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: var(--zc-danger);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Message générique (classe générique, plus récente) */
+.message-box {
+  font-size: 16px;
+  margin: 10px auto;
+  width: 80%;
+  color: var(--zc-success-text);
+}
+
+
+/* MENU */
+.menu {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.menu-button {
+  /* style="height: 25px; padding: 0; margin: 5px;" */
+  background-color: var(--zc-surface);
+  border: none;
+  border-radius: var(--zc-radius-sm);
+  padding: 6px 10px;
+  min-height: 36px;
+  margin: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--zc-text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  box-shadow: none;
+}
+
+/* Styles du bouton actif */
+.menu-button.active {
+  background: var(--zc-surface-muted);
+  color: var(--zc-accent-hover);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.menu-button:hover {
+  background: var(--zc-ui-soft-bg);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.menu-button.active:hover {
+  background: color-mix(in srgb, var(--zc-accent) 18%, var(--zc-surface-muted));
+}
+
+/* FIN MENU */
+
+/* NOUVEAU STYLE */
+.container-center {
+  text-align: center;
+  border-radius: var(--zc-radius);
+  background-color: var(--zc-surface);
+  padding: 12px 10px 20px;
+  max-width: min(720px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--zc-shadow-md);
+  border: none;
+  box-sizing: border-box;
+}
+
+/* (annonce-container déjà fusionné plus haut) */
+
+.social-buttons,
+.boutons-container,
+.center-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.icon-small {
+  width: 12px;
+  height: 12px;
+}
+
+.icon-medium {
+  max-width: 14px;
+}
+
+.icon-white {
+  color: #fff;
+}
+
+.form-box {
+  position: relative;
+  padding: 20px;
+  border: none;
+  background-color: var(--zc-surface);
+  width: 300px;
+  margin: 20px auto;
+  text-align: center;
+  /* Centrer tout le contenu à l'intérieur, y compris le bouton */
+}
+
+#okBtn {
+  display: block;
+  /* Le bouton occupe une ligne complète */
+  margin: 0 auto;
+  /* Centrer le bouton horizontalement */
+  padding: 10px 20px;
+  /* Optionnel : Ajouter du padding pour plus de confort */
+  font-size: 16px;
+  /* Optionnel : Ajuster la taille de la police */
+  background-color: var(--zc-link-strong);
+  /* Optionnel : Couleur de fond */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  /* Optionnel : Bordures arrondies */
+  cursor: pointer;
+  /* Changer le curseur en "pointeur" */
+}
+
+/* (custom-input fusionné plus haut) */
+
+.message-boxVersets {
+  display: none;
+  background-color: var(--zc-success-bg);
+  color: var(--zc-success-text);
+  padding: 8px 12px;
+  border: 1px solid var(--zc-success-border);
+  border-radius: 6px;
+  margin: 8px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  /* z-index: 99; */
+}
+
+.collaborate-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* .menu-container : règle finale (display:block + width:100%) dans styles/14-modules-toolbar.css.
+ * L'ancienne règle display:flex ici a été supprimée car elle écrasait la règle voulue après extraction. */
+
+/* Popups utilitaires (.messagePopup, .popupOverlay), suggestions, #inputSoura, #audioContainer : désormais dans styles/19-popups-utils.css (Phase C). */
+/* mots-coran.js : nouvelles fonctions de recherche: R1 R2 */
+/* verset/rouge : conserver la version la plus récente */
+.verset {
+  margin-bottom: 20px;
+  border-bottom: none;
+  padding-bottom: 10px;
+}
+
+.rouge {
+  color: var(--zc-danger);
+  font-weight: bold;
+}
+
+.ref {
+  font-size: 16px;
+  color: var(--zc-text-muted);
+  text-align: left;
+  direction: ltr;
+}
+
+
+.cache {
+  display: none;
+}
+
+
+/* .popup-container, .popup-content, .popup-header, .popup-body, .popup-overlay,
+ * .popup-box, .popup-close : désormais dans styles/04-popup-shell.css (Phase C). */
+
+.verset:last-child {
+  margin-bottom: 1em;
+}
+
+.texte-arabe {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-top: 2px;
+}
+
+.popup-mode-btn {
+  margin: 0 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--zc-surface);
+  cursor: pointer;
+}
+
+.popup-mode-btn.active {
+  background-color: var(--zc-link-strong);
+  color: var(--zc-danger-text);
+  font-weight: bold;
+}
+
+.popup-enregistrer-btn {
+  padding: 8px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: var(--zc-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.popup-enregistrer-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: var(--zc-text-muted);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* Popup commentaire / notes / forum reply : désormais dans styles/03-comment-popup.css (Phase C). */
+
+
+/* Newsletter popup : désormais dans styles/16-newsletter.css (Phase C). */
+/* Popups forum (reply, reader, edit, read) : désormais dans styles/10-forum-popups.css (Phase C). */
+@keyframes balanceDouce {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.balancement {
+  animation: balanceDouce 1.2s ease-in-out infinite;
+}
+
+.social-buttons .bouton {
+  width: 20px;
+  height: 20px;
+  padding: 2;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: var(--zc-surface);
+  border-radius: 4px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.social-buttons .bouton img,
+.social-buttons .bouton i {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  font-size: 16px;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 95%;
+  height: 95%;
+  background: var(--zc-overlay-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* z-index: 99; */
+}
+
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 1px;
+  background: var(--zc-accent);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.close-btnStatRacines {
+  background: transparent;
+  color: var(--zc-text);
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.close-btnStatRacines:hover {
+  background: var(--zc-hover-bg);
+}
+
+/* Panneaux modules + toolbars (toolbar1, zc-module-panel, zc-versets-panel, zc-footer-bar, zc-top-action*) : désormais dans styles/14-modules-toolbar.css (Phase C). */
+/* Bloc 2 (Recherche versets) + media query mobile modules : désormais dans styles/15-bloc2-actions.css (Phase C). */
+/* CSS : largeur pour 4 chiffres, recentré, sans largeur minimale imposée */
+#indexInputVisible,
+.bouton.index-4ch {
+  width: 5.8ch;
+  /* assez pour “9999” */
+  min-width: 0;
+  /* écrase un éventuel min-width de .bouton */
+  text-align: center;
+  padding-inline: .4rem;
+}
+
+/* Optionnel tableau translitération */
+.label-actif {
+  font-weight: 600;
+}
+
+.label-cache {
+  opacity: 0;
+}
+
+/* ou rien si le display:none suffit via JS */
+/* Optionnel, pour le style du bouton */
+.toggle-btn {
+  padding: .35rem .6rem;
+  border: none;
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+/* conteneur intérieur de la popup */
+.translit-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--zc-surface);
+}
+
+.translit-table th,
+.translit-table td {
+  border: none;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+
+.translit-table tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--zc-ui-soft-bg) 55%, transparent);
+}
+
+.translit-table thead th {
+  background: var(--zc-ui-soft-bg);
+  font-weight: 600;
+}
+
+.translit-table td.ar {
+  font-size: 16px;
+  text-align: center;
+  white-space: nowrap;
+  font-family: "Noto Naskh Arabic", "Scheherazade", serif;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px 4px 2px 0;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  background: var(--zc-ui-soft-bg);
+}
+
+[dir="rtl"] .translit-table td.ar {
+  text-align: center;
+}
+
+.is-selected {
+  color: var(--zc-success-text);
+  font-weight: 600;
+}
+
+/* aligner proprement le petit champ langue */
+#uiLangInput {
+  font-size: 14px;
+  padding: 4px 6px;
+}
+
+
+
+
+
+/* ☰ menu contextuel mot : au-dessus du panel Outils (pas dans la rangée pastillée) */
+.zc-versets-tools-ctx-above {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 4px;
+  padding: 0 2px;
+}
+
+.zc-versets-tools-ctx-above #mainCtxMenuBtn.menu-button,
+.zc-versets-tools-ctx-above #mainCtxMenuBtnFooter.menu-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  min-height: auto;
+  padding: 2px 6px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Bandeau ☰ du bas : sans marge verticale (conteneur verset est injecté au besoin par Ghamidi.js). */
+.zc-versets-tools-ctx-above.zc-versets-tools-ctx-above--after-verset {
+  margin: 0;
+  padding: 0;
+}
+
+/* œil résultats masqué : tout le slot disparaît. */
+.zc-aux-below-results {
+  text-align: center;
+}
+
+.zc-aux-below-results:has(#btnAfficherPopup[style*="none"]) {
+  display: none;
+}
+
+/* Coller un peu le pied au bandeau ☰ du bas */
+.zc-versets-tools-ctx-above.zc-versets-tools-ctx-above--after-verset + .zc-footer-panel-stack {
+  margin-top: 0;
+}
+
+/* Affichage versets flux (créé par ensureZoneAffichageVerset dans Ghamidi.js). */
+#zoneAffichageVerset.zc-zone-affichage-verset,
+.zc-zone-affichage-verset {
+  font-size: 1.8rem;
+  line-height: 2.4rem;
+}
+
+/* Barre supérieure figée + lang-picker : désormais dans styles/17-topline-stickyhead.css (Phase C). */
+/* Menu hamburger #popupContextMenu : désormais dans styles/18-popup-context-menu.css (Phase C). */
+/* Bouton menu : rend le tap iOS infaillible */
+#btnContextMenu {
+  position: relative;
+  display: inline-flex;
+  /* vraie zone cliquable */
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  /* hit-area confortable */
+  min-height: 36px;
+  padding: 4px;
+  /* garde un peu de marge */
+  /* z-index: 2147483647;             tout en haut */
+  pointer-events: auto !important;
+  /* ne jamais hériter d'un none */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+#btnContextMenu i {
+  pointer-events: none;
+}
+
+/* l'icône ne capte pas l'événement */
+
+
+
+/*bouton qui ferme pas sur iphone*/
+/* garantit que le bouton est toujours au-dessus et cliquable */
+#popupHtml .popup-content {
+  position: relative;
+}
+
+#popupHtml #iframeHtml {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto !important;
+}
+
+/* Fermeture popup polyvalente : croix × (hérite de .zc-forum-head-close, sans pastille verte) */
+#popupHtml #btnClosePopupHtml.zc-popup-html-close {
+  align-self: flex-end;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: 0.35rem 0.35rem 0.25rem auto;
+  pointer-events: auto;
+}
+
+/* #popupHtml: Fermer hébergé dans la barre titre d'un module (Articles/Témoignages) */
+#popupHtml #contenuLocal .zc-forum-head-bar #btnClosePopupHtml.zc-popup-html-close,
+#popupHtml #temoignagesApp .tm-list-title-bar #btnClosePopupHtml.zc-popup-html-close {
+  position: relative;
+  top: auto;
+  align-self: center;
+  margin: 0;
+  z-index: 3;
+}
+
+/* Forum ouvert dans #popupHtml : plein écran utile, liste scrollable */
+#popupHtml.zc-popup-html--forum-fullbleed {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  box-sizing: border-box;
+  transform: none;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed .popup-content {
+  max-height: none;
+  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Module Médias (+ articles/témoignages fullbleed) : désormais dans styles/11-medias.css (Phase C). */
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-root {
+  max-width: 100%;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-reader-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Ne pas laisser la liste « voler » toute la hauteur : garder la languette Bienvenue exploitable */
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-reader-panel .zc-forum-welcome-panel {
+  flex-shrink: 0;
+  min-height: min-content;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-reader-panel .zc-forum-welcome-head.Modules {
+  min-height: 36px;
+}
+
+#popupHtml.zc-popup-html--forum-fullbleed #contenuLocal .zc-forum-reader-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+}
+
+/* Iframe module fullbleed (pages HTML externes) */
+#popupHtml.zc-popup-html--iframe-fullbleed {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  box-sizing: border-box;
+  transform: none;
+}
+
+#popupHtml.zc-popup-html--iframe-fullbleed .popup-content {
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+#popupHtml.zc-popup-html--iframe-fullbleed #iframeHtml {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+
+/* Signe + / − à côté de l’icône des paramètres */
+.toggle-sign {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 999px;
+  background: var(--zc-surface);
+  color: var(--zc-text);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.zc-top-action-btn:hover .toggle-sign {
+  background: var(--zc-bg);
+  border-color: transparent;
+}
+
+
+
+.like-btn{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.15rem .2rem; border:none; border-radius:.6rem;
+  font-size:1rem; line-height:1; cursor:pointer;
+  background:transparent;
+  color:var(--zc-text);
+  border-color:transparent;
+  transition:transform .12s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+.like-btn:active{ transform:scale(.98); }
+
+/* Cœur: taille x2, contour sur fond gris (neutre), plein sur fond rouge (aimé) */
+.like-btn .like-heart{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex: 0 0 auto;
+  min-width: .88em;
+  height: .88em;
+  border-radius: 999px;
+  font-size: .92em;
+  line-height: 1;
+  color:var(--zc-text-muted);
+  background:var(--zc-ui-soft-bg);
+  border:none;
+  text-shadow:none;
+  padding: 0 .12em;
+  margin-right: .1em;
+}
+.like-btn.is-liked .like-heart{
+  color:#fff;
+  background:var(--zc-danger);
+  border-color:transparent;
+}
+
+.zc-theme-toggle-btn .zc-top-action-ico i {
+  font-size: 0.92rem;
+}
+
+
+#btnAfficherPopup { 
+  max-height: 52px;        /* hauteur mini souhaitée */
+  overflow: hidden;        /* coupe le contenu qui dépasse */
+}
+#btnAfficherPopup .toolbar1 {
+  max-height: 2.6em !important;  /* écrase le 300px inline */
+  overflow: hidden;
+}
+/* Mode sommeil (fenêtre Zoom minimisée) : fond neutre compatible clair/sombre. */
+#btnAfficherPopup.minimized {
+  background: var(--zc-surface) !important;
+  border: none !important;
+  color: var(--zc-text) !important;
+}
+#btnAfficherPopup.minimized .zc-top-action-label,
+#btnAfficherPopup.minimized .zc-title-sync-label,
+#btnAfficherPopup.minimized .toolbar1,
+#btnAfficherPopup.minimized .toolbar1 * {
+  color: var(--zc-text) !important;
+  background: transparent !important;
+}
+/* le bouton réduit ne doit pas relayer les clics internes */
+#btnAfficherPopup.minimized * {
+  pointer-events: none !important;   /* liens, boutons, etc. inactifs */
+}
+
+
+  .bidi-ltr { direction:ltr; unicode-bidi:isolate; }
+  .bidi-rtl { direction:rtl; unicode-bidi:isolate; }
+
+	
+	
+/* === Menu contextuel : icônes (complète les règles button.ctxmenu-item ci-dessus) === */
+#popupContextMenu .ctxmenu-icon {
+  flex: 0 0 24px;            /* taille fixe */
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#popupContextMenu .ctxmenu-icon img,
+#popupContextMenu .ctxmenu-icon svg {
+  width: 24px !important;    /* écrase width:100% inline de la source */
+  height: 24px !important;   /* idem */
+  max-width: 24px !important;
+  max-height: 24px !important;
+  object-fit: contain;
+  display: block;
+}
+#popupContextMenu .ctxmenu-title { flex: 1 1 auto; }
+
+
+/* Menu contextuel sélection (#selectionContextMenu) : désormais dans styles/13-selection-ctx-menu.css (Phase C). */

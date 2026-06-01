@@ -1,0 +1,486 @@
+<!--
+  Fondements civiques — version ARTICLE BLOGGER (HTML + CSS, sans JavaScript)
+  - Blogger : Nouvel article → mode HTML (<>)
+  - Coller tout le contenu ci-dessous. Titre de l’article à saisir dans l’interface Blogger.
+  - Choix de langue : radios + labels (compatible si Blogger supprime les <script>)
+  - Si votre thème retire les <style> des billets, ajoutez le bloc <style>…</style> dans
+    Mise en page → Modifier le HTML du thème (une fois), ou utilisez un gadget HTML.
+-->
+
+
+<style>
+/* Article Blogger — préfixe #ddfKabBlogger pour limiter l’impact sur le thème */
+#ddfKabBlogger.ddf-article{
+  font-family: Arial, Helvetica, sans-serif;
+  color:#111827;
+  background:#f6f7fb;
+  padding:18px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  max-width:100%;
+}
+#ddfKabBlogger *{ box-sizing:border-box; }
+#ddfKabBlogger > input.ddf-radio{
+  position:absolute !important;
+  left:-9999px !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  margin:0 !important;
+}
+#ddfKabBlogger .ddf-header{
+  background:#ffffff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+}
+#ddfKabBlogger .ddf-title{ margin:0 0 6px 0; font-size: 26px; line-height: 1.25; }
+#ddfKabBlogger .ddf-subtitle{ margin:0 0 8px 0; color:#4b5563; font-size: 15px; line-height: 1.55; }
+#ddfKabBlogger .ddf-langbar{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+#ddfKabBlogger .ddf-btn{
+  border:1px solid #d1d5db; background:#ffffff; color:#111827;
+  border-radius:10px; padding:8px 10px; font-weight:700; cursor:pointer; font-size:14px;
+  display:inline-block; margin:0; font-family:inherit;
+}
+#ddfKabBlogger .ddf-btn:hover{ background:#f3f4f6; }
+#ddfKabBlogger .ddf-content{
+  background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; padding:16px;
+}
+#ddfKabBlogger .ddf-content > .ddf-lang{ display:none !important; }
+#ddfKabBlogger #ddfKab-fr:checked ~ .ddf-content > .ddf-lang-fr,
+#ddfKabBlogger #ddfKab-ar:checked ~ .ddf-content > .ddf-lang-ar,
+#ddfKabBlogger #ddfKab-kab:checked ~ .ddf-content > .ddf-lang-kab,
+#ddfKabBlogger #ddfKab-en:checked ~ .ddf-content > .ddf-lang-en,
+#ddfKabBlogger #ddfKab-es:checked ~ .ddf-content > .ddf-lang-es{
+  display:block !important;
+}
+#ddfKabBlogger #ddfKab-fr:checked ~ .ddf-header .ddf-langbar label[for="ddfKab-fr"],
+#ddfKabBlogger #ddfKab-ar:checked ~ .ddf-header .ddf-langbar label[for="ddfKab-ar"],
+#ddfKabBlogger #ddfKab-kab:checked ~ .ddf-header .ddf-langbar label[for="ddfKab-kab"],
+#ddfKabBlogger #ddfKab-en:checked ~ .ddf-header .ddf-langbar label[for="ddfKab-en"],
+#ddfKabBlogger #ddfKab-es:checked ~ .ddf-header .ddf-langbar label[for="ddfKab-es"]{
+  background:#111827; color:#ffffff; border-color:#111827;
+}
+#ddfKabBlogger h2{ margin:16px 0 10px; font-size: 18px; }
+#ddfKabBlogger h3{ margin:14px 0 8px; font-size: 16px; }
+#ddfKabBlogger p{ margin:0 0 10px; line-height:1.7; }
+#ddfKabBlogger ul{ margin:0 0 10px; padding-left:18px; }
+#ddfKabBlogger li{ margin:7px 0; }
+#ddfKabBlogger .ddf-note{
+  margin: 10px 0 14px; padding: 12px; background:#f9fafb;
+  border:1px solid #e5e7eb; border-left:4px solid #111827; border-radius:12px;
+}
+#ddfKabBlogger .ddf-pill{
+  display:inline-flex; align-items:center; gap:8px; padding:8px 10px;
+  border:1px solid #e5e7eb; border-radius:999px; background:#f9fafb; font-weight:700; margin:0 8px 8px 0;
+}
+#ddfKabBlogger .ddf-badge{
+  width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:8px; font-weight:900;
+}
+#ddfKabBlogger .ddf-ok{ background:#e7f7ee; border:1px solid #b7e6cc; }
+#ddfKabBlogger .ddf-no{ background:#fde8e8; border:1px solid #f8b4b4; }
+#ddfKabBlogger .ddf-rtl{
+  direction: rtl; text-align: right; unicode-bidi: isolate;
+  font-family: "Noto Naskh Arabic","Amiri","Scheherazade New",serif;
+  font-size: 16px; line-height: 1.95;
+}
+#ddfKabBlogger .ddf-rtl ul{ padding-right:18px; padding-left:0; }
+#ddfKabBlogger .ddf-rtl .ddf-note{ border-left:none; border-right:4px solid #111827; }
+@media print{
+  #ddfKabBlogger .ddf-langbar{ display:none !important; }
+  #ddfKabBlogger.ddf-article{ background:#fff; border:none; padding:0; }
+  #ddfKabBlogger .ddf-header, #ddfKabBlogger .ddf-content{ border:1px solid #ddd; }
+}
+</style>
+<div class="ddf-article" id="ddfKabBlogger">
+<input class="ddf-radio" type="radio" name="ddfKabLangBlogger" id="ddfKab-fr" checked="checked" />
+<input class="ddf-radio" type="radio" name="ddfKabLangBlogger" id="ddfKab-ar" />
+<input class="ddf-radio" type="radio" name="ddfKabLangBlogger" id="ddfKab-kab" />
+<input class="ddf-radio" type="radio" name="ddfKabLangBlogger" id="ddfKab-en" />
+<input class="ddf-radio" type="radio" name="ddfKabLangBlogger" id="ddfKab-es" />
+<div class="ddf-header">
+  <h1 class="ddf-title">Fondements civiques de la société kabyle</h1>
+  <p class="ddf-subtitle">Neutralité active — texte multilingue (choisir une langue ci-dessous).</p>
+  <div class="ddf-langbar" role="radiogroup" aria-label="Langue">
+    <label class="ddf-btn" for="ddfKab-fr">Français</label>
+    <label class="ddf-btn" for="ddfKab-ar">العربية</label>
+    <label class="ddf-btn" for="ddfKab-kab">Kabyle</label>
+    <label class="ddf-btn" for="ddfKab-en">English</label>
+    <label class="ddf-btn" for="ddfKab-es">Español</label>
+  </div>
+</div>
+<div class="ddf-content">
+    <!-- ===================== FR ===================== -->
+    <div class="ddf-lang ddf-lang-fr">
+      <h2>Neutralité active : les fondements civiques de la société kabyle</h2>
+      <p>
+        Tajmaɛt (gouverner ensemble) • Laɛnaya (protéger l’humain) • Jmaa n lɛemane (préserver l’espace commun).
+        Une doctrine sobre, non violente, et impossible à instrumentaliser.
+      </p>
+
+      <h2>1) Pourquoi une “neutralité active” ?</h2>
+      <p>
+        Dans un contexte de tensions et de risques de chaos, la meilleure protection d’une société n’est pas la surenchère,
+        mais la <b>stabilité civique</b> : non-violence, ordre civil, cohésion sociale et continuité des services.
+      </p>
+      <div class="ddf-note">
+        <b>Neutralité</b> ≠ passivité : posture <b>active</b> de prévention, médiation et protection des civils,
+        tout en refusant d’être un terrain, un couloir ou un levier pour des agendas externes.
+      </div>
+
+      <h2>2) Les trois fondements civiques</h2>
+
+      <h3>Tajmaɛt — gouverner ensemble</h3>
+      <ul>
+        <li>Assemblée du village fondée sur la délibération collective.</li>
+        <li>Responsabilité, consensus, contrôle social.</li>
+        <li>Culture du dialogue et de la stabilité locale.</li>
+      </ul>
+
+      <h3>Laɛnaya — protéger l’humain</h3>
+      <ul>
+        <li>Protection accordée à toute personne menacée, sans distinction.</li>
+        <li>Le bénéficiaire devient inviolable (refuge protégé).</li>
+        <li>Éthique de protection des civils (précède l’asile moderne).</li>
+      </ul>
+
+      <h3>Jmaa n lɛemane — préserver l’espace commun</h3>
+      <ul>
+        <li>Espace des affaires collectives distinct des croyances.</li>
+        <li>Protège l’espace public de la domination idéologique.</li>
+        <li>Racine kabyle d’une laïcité fonctionnelle (séparation des rôles).</li>
+      </ul>
+
+      <h2>3) Charte courte de neutralité active</h2>
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Position</div>
+      <ul>
+        <li>Neutralité régionale : aucun alignement dans les conflits voisins.</li>
+        <li>Dossier de droits : libertés, langue, gouvernance, protection des civils.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Engagements</div>
+      <ul>
+        <li>Non-violence absolue et maintien de l’ordre civil.</li>
+        <li>Transparence des actions et des financements.</li>
+        <li>Tolérance zéro envers rackets, trafics et infiltrations criminelles.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-no">✖</span>Lignes rouges</div>
+      <ul>
+        <li>Aucune militarisation (ni milices, ni armes, ni appels à la violence).</li>
+        <li>Aucune alliance avec acteurs violents ou réseaux criminels.</li>
+        <li>Aucun financement opaque ou conditionné.</li>
+        <li>Aucune surenchère territoriale ni discours de haine.</li>
+      </ul>
+
+      <div class="ddf-note">
+        <b>Verrou :</b> la neutralité active exprime des principes anciens : gouverner ensemble, protéger l’humain, préserver l’espace public.
+      </div>
+
+      <h2>4) Check-list anti-erreurs avant diffusion</h2>
+      <ul>
+        <li><b>Linguistique :</b> aucun mot ambigu/erroné, formulations stables.</li>
+        <li><b>Neutralité :</b> aucun alignement externe, aucun appel au chaos, aucune haine.</li>
+        <li><b>Sécurité :</b> pas de vocabulaire de militarisation (armes, riposte, milice).</li>
+        <li><b>Visuels :</b> aucune arme/uniforme dans la partie ✅ ; symboles sobres (village, assemblée, solidarité).</li>
+        <li><b>Test final :</b> “3 feux verts” → cohérence 🟢 / rien d’exploitable 🟢 / valable dans 6 mois 🟢</li>
+      </ul>
+    </div>
+
+    <!-- ===================== AR ===================== -->
+    <div class="ddf-lang ddf-lang-ar ddf-rtl">
+      <h2>الحياد النشط: الأسس المدنية للمجتمع القبائلي</h2>
+      <p>
+        تجماعت (الحكم معًا) • لَعْنايا (حماية الإنسان) • جْما ن لْإيمان (حفظ المجال المشترك).
+        عقيدة واضحة، لا عنف فيها، ولا تُستعمل كأداة لأجندات خارجية.
+      </p>
+
+      <h2>1) لماذا “حياد نشط”؟</h2>
+      <p>
+        أفضل حماية للمجتمع ليست التصعيد، بل <b>الاستقرار المدني</b>:
+        لا عنف، نظام مدني، تماسك اجتماعي، واستمرارية الخدمات.
+      </p>
+      <div class="ddf-note">
+        <b>الحياد</b> لا يعني السلبية: بل موقف <b>نشط</b> يقوم على الوقاية والوساطة وحماية المدنيين،
+        مع رفض أن تكون المنطقة ممرًا أو ساحة أو أداة لأجندات خارجية.
+      </div>
+
+      <h2>2) ثلاثة أُسس مدنية</h2>
+
+      <h3>تجماعت — الحكم معًا</h3>
+      <ul>
+        <li>مجلس القرية قائم على التشاور الجماعي.</li>
+        <li>مسؤولية، توافق، وضبط اجتماعي.</li>
+        <li>ثقافة الحوار والاستقرار المحلي.</li>
+      </ul>
+
+      <h3>لَعْنايا — حماية الإنسان</h3>
+      <ul>
+        <li>حماية تُمنَح لكل مُهدَّد دون تمييز.</li>
+        <li>يصبح المُستجير مصونًا داخل حماية المجتمع.</li>
+        <li>أخلاق حماية المدنيين (تسبق مفهوم اللجوء الحديث).</li>
+      </ul>
+
+      <h3>جْما ن لْإيمان — حفظ المجال المشترك</h3>
+      <ul>
+        <li>فضاء الشأن العام منفصل عن المعتقدات الفردية.</li>
+        <li>يحمي المجال العمومي من الهيمنة الأيديولوجية.</li>
+        <li>جذر للعلمانية الوظيفية (فصل الأدوار).</li>
+      </ul>
+
+      <h2>3) ميثاق مختصر للحياد النشط</h2>
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>الموقف</div>
+      <ul>
+        <li>حياد إقليمي: لا اصطفاف في صراعات الجوار.</li>
+        <li>ملف حقوق: حريات، لغة، حوكمة، حماية المدنيين.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>الالتزامات</div>
+      <ul>
+        <li>لا عنف مطلقًا مع الحفاظ على النظام المدني.</li>
+        <li>شفافية الأعمال والتمويل.</li>
+        <li>رفض تام للابتزاز والتهريب والعصابات.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-no">✖</span>خطوط حمراء</div>
+      <ul>
+        <li>لا تسليح ولا ميليشيات ولا دعوات للعنف.</li>
+        <li>لا تحالف مع جهات عنيفة أو شبكات إجرامية.</li>
+        <li>لا تمويل غامض أو مشروط.</li>
+        <li>لا مزايدات ترابية ولا خطاب كراهية.</li>
+      </ul>
+
+      <div class="ddf-note">
+        <b>خلاصة:</b> الحياد النشط ترجمة حديثة لمبادئ: الحكم معًا، حماية الإنسان، حفظ المجال العام.
+      </div>
+
+      <h2>4) قائمة تدقيق قبل النشر</h2>
+      <ul>
+        <li><b>لغة:</b> لا كلمات ملتبسة، صياغات ثابتة.</li>
+        <li><b>حياد:</b> لا اصطفاف خارجي، لا دعوة للفوضى، لا كراهية.</li>
+        <li><b>أمن:</b> بلا مفردات عسكرة.</li>
+        <li><b>صور:</b> لا أسلحة/عسكر في ✅، رموز هادئة (قرية، مجلس، تضامن).</li>
+        <li><b>اختبار نهائي:</b> 3 إشارات خضراء 🟢</li>
+      </ul>
+    </div>
+
+    <!-- ===================== KAB ===================== -->
+    <div class="ddf-lang ddf-lang-kab">
+      <h2>Neutralité active: isenfaḍen n tmeddurt tazayert n Leqbayel</h2>
+      <p>
+        Tajmaɛt • Laɛnaya • Jmaa n lɛemane. Tissert tebḍa, ur tesɛi ara tɣuri, ur tettwaseqdac ara s tmerna n wiyaḍ.
+      </p>
+
+      <h2>1) Acuɣer “neutralité active”?</h2>
+      <p>
+        Amezwaru mačči d tmerna, maca d <b>tawenza tazayert</b>: ur telli ara tɣuri, ordre civil, tamedyazt, d tcontinuity n tmeẓla.
+      </p>
+      <div class="ddf-note">
+        <b>Neutralité</b> ur d-tettban ara d ttuqna: d taddart <b>tettqebbel</b> (aseḥḥeḥ, ameslay, aḥraz n yimdanen),
+        s wudem ara ur tettwaseqdac ara d aḥric i wiyaḍ.
+      </div>
+
+      <h2>2) Kraḍ n yisenfaḍen n tmeddurt</h2>
+
+      <h3>Tajmaɛt</h3>
+      <ul>
+        <li>Agraw n taddart ɣef umsawal.</li>
+        <li>Asawal, amsaday, uḥraz n tmezdɣin.</li>
+        <li>Taseɣnit d udiwenni.</li>
+      </ul>
+
+      <h3>Laɛnaya</h3>
+      <ul>
+        <li>Aḥraz i yiwen yellan deg wugur, war asefru.</li>
+        <li>Win i yellan deg Laɛnaya: ur yettwak ara.</li>
+        <li>Uɣawas n uḥraz n yimdanen.</li>
+      </ul>
+
+      <h3>Jmaa n lɛemane</h3>
+      <ul>
+        <li>Amḍiq n tmeẓla n ugraw, yebḍa ɣef tɣawsa n yiman.</li>
+        <li>Yeḥrez seg tṛuḥ ideyulujit.</li>
+        <li>Fṣel n yirganen (laïcité n ttwuri).</li>
+      </ul>
+
+      <h2>3) Tissert taqbuṛt</h2>
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Aẓar</div>
+      <ul>
+        <li>Neutralité tamnaḍt.</li>
+        <li>Afaylu n yizerfan: tilawin, tutlayt, amseḍfar, aḥraz n yimdanen.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Iḍmanen</div>
+      <ul>
+        <li>Ur telli ara tɣuri d uḥraz n ordre civil.</li>
+        <li>Tafrawant n ttwuri d yisriden.</li>
+        <li>Tolérance zéro i rracket d ttṛafiḍ.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-no">✖</span>Izirfan iqeṛṛeḥen</div>
+      <ul>
+        <li>Ulac militarisation.</li>
+        <li>Ulac amlakki d iḥeṛṛen.</li>
+        <li>Ulac sserf n yidrimen i d-yettwafren.</li>
+        <li>Ulac tmerna n tmurt neɣ tkerha.</li>
+      </ul>
+
+      <h2>4) Check-list</h2>
+      <ul>
+        <li>Awalen ifazen, ur d-ittban ara tissas.</li>
+        <li>Neutralité: ulac alignement, ulac aḥerfi n weḍris, ulac tkerha.</li>
+        <li>Aseɣẓan: ulac militarisation.</li>
+        <li>Tugniwin: ulac armas deg ✅, asenqed i taddart/tajmaɛt/tadukli.</li>
+        <li>3 feux verts 🟢</li>
+      </ul>
+    </div>
+
+    <!-- ===================== EN ===================== -->
+    <div class="ddf-lang ddf-lang-en">
+      <h2>Active neutrality: the civic foundations of Kabyle society</h2>
+      <p>
+        Tajmaɛt (governing together) • Laɛnaya (protecting the human) • Jmaa n lɛemane (preserving the common space).
+        A sober, non-violent doctrine designed to resist external instrumentalization.
+      </p>
+
+      <h2>1) Why “active neutrality”?</h2>
+      <p>
+        The strongest protection is <b>civic stability</b>: non-violence, civil order, social cohesion,
+        and continuity of essential services.
+      </p>
+      <div class="ddf-note">
+        <b>Neutrality</b> ≠ passivity: it is an <b>active</b> posture of prevention, mediation, and civilian protection,
+        while refusing to become a corridor or a tool for external agendas.
+      </div>
+
+      <h2>2) Three civic foundations</h2>
+
+      <h3>Tajmaɛt</h3>
+      <ul>
+        <li>Village assembly based on collective deliberation.</li>
+        <li>Responsibility, consensus, accountability.</li>
+        <li>Culture of dialogue and stability.</li>
+      </ul>
+
+      <h3>Laɛnaya</h3>
+      <ul>
+        <li>Protection granted to anyone under threat.</li>
+        <li>The protected person becomes inviolable.</li>
+        <li>Ethic of civilian protection (prefigures asylum).</li>
+      </ul>
+
+      <h3>Jmaa n lɛemane</h3>
+      <ul>
+        <li>Common affairs space, distinct from beliefs.</li>
+        <li>Protects public space from ideological domination.</li>
+        <li>Root of functional secularism (separation of roles).</li>
+      </ul>
+
+      <h2>3) Short charter</h2>
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Position</div>
+      <ul>
+        <li>Regional neutrality: no alignment.</li>
+        <li>Rights-based approach: freedoms, language, governance, civilian protection.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Commitments</div>
+      <ul>
+        <li>Absolute non-violence and civil order.</li>
+        <li>Transparency of actions and funding.</li>
+        <li>Zero tolerance for rackets, trafficking, criminal infiltration.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-no">✖</span>Red lines</div>
+      <ul>
+        <li>No militarization.</li>
+        <li>No alliances with violent actors.</li>
+        <li>No opaque/conditional funding.</li>
+        <li>No hate speech or territorial escalation.</li>
+      </ul>
+
+      <h2>4) Checklist</h2>
+      <ul>
+        <li>Language: no ambiguous words; stable phrasing.</li>
+        <li>Neutrality: no external alignment; no chaos; no hate speech.</li>
+        <li>Security: no militarization vocabulary.</li>
+        <li>Visuals: no weapons/uniforms on ✅; calm symbols.</li>
+        <li>Final test: 3 green lights 🟢</li>
+      </ul>
+    </div>
+
+    <!-- ===================== ES ===================== -->
+    <div class="ddf-lang ddf-lang-es">
+      <h2>Neutralidad activa: los fundamentos cívicos de la sociedad cabileña</h2>
+      <p>
+        Tajmaɛt (gobernar juntos) • Laɛnaya (proteger al ser humano) • Jmaa n lɛemane (preservar el espacio común).
+        Una doctrina sobria, no violenta e imposible de instrumentalizar.
+      </p>
+
+      <h2>1) ¿Por qué “neutralidad activa”?</h2>
+      <p>
+        La mejor protección es la <b>estabilidad cívica</b>: no violencia, orden civil, cohesión social
+        y continuidad de servicios esenciales.
+      </p>
+      <div class="ddf-note">
+        <b>Neutralidad</b> ≠ pasividad: postura <b>activa</b> de prevención, mediación y protección civil,
+        rechazando ser corredor o instrumento de agendas externas.
+      </div>
+
+      <h2>2) Tres fundamentos cívicos</h2>
+
+      <h3>Tajmaɛt</h3>
+      <ul>
+        <li>Asamblea del pueblo basada en deliberación colectiva.</li>
+        <li>Responsabilidad, consenso y control social.</li>
+        <li>Cultura del diálogo y estabilidad local.</li>
+      </ul>
+
+      <h3>Laɛnaya</h3>
+      <ul>
+        <li>Protección para cualquier persona amenazada.</li>
+        <li>La persona protegida se vuelve inviolable.</li>
+        <li>Ética de protección civil (anticipa el asilo).</li>
+      </ul>
+
+      <h3>Jmaa n lɛemane</h3>
+      <ul>
+        <li>Espacio común separado de creencias.</li>
+        <li>Protege el espacio público de dominación ideológica.</li>
+        <li>Raíz de laicidad funcional (separación de roles).</li>
+      </ul>
+
+      <h2>3) Carta breve</h2>
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Posición</div>
+      <ul>
+        <li>Neutralidad regional: sin alineamientos.</li>
+        <li>Enfoque de derechos: libertades, lengua, gobernanza, protección civil.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-ok">✓</span>Compromisos</div>
+      <ul>
+        <li>No violencia absoluta y orden civil.</li>
+        <li>Transparencia de acciones y financiación.</li>
+        <li>Tolerancia cero ante extorsión, tráfico e infiltración criminal.</li>
+      </ul>
+
+      <div class="ddf-pill"><span class="ddf-badge ddf-no">✖</span>Líneas rojas</div>
+      <ul>
+        <li>Nada de militarización.</li>
+        <li>Nada de alianzas con actores violentos.</li>
+        <li>Nada de financiación opaca.</li>
+        <li>Nada de odio ni escalada territorial.</li>
+      </ul>
+
+      <h2>4) Lista de verificación</h2>
+      <ul>
+        <li>Lenguaje: sin ambigüedades; formulaciones estables.</li>
+        <li>Neutralidad: sin alineamientos; sin caos; sin odio.</li>
+        <li>Seguridad: sin vocabulario de militarización.</li>
+        <li>Visual: sin armas/uniformes en ✅; símbolos serenos.</li>
+        <li>Prueba final: 3 luces verdes 🟢</li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,93 @@
+/* public/styles/08-record-languette.css — Gabarit de carte d'enregistrement (Phase C).
+ *
+ * Contient les règles de base des cartes « languettes » type Témoignages / Forum / Zoom / Articles :
+ *   - .zc-record-languette, :hover, :active.
+ *   - .zc-record-languette--lexique / --aya / --article / --target (bordures d'accent).
+ *   - .zc-record-languette__body (bloc texte du bas).
+ *   - .toolbar1.zc-record-languette (combinaison toolbar + languette, avec overrides).
+ *   - .zc-term-hit (surlignage des hits).
+ *
+ * NB : les règles de la 1re ligne (puces, flex nowrap) sont dans styles/06-cards.css.
+ */
+
+.zc-record-languette {
+  box-sizing: border-box;
+  border: none;
+  border-radius: 14px;
+  background: var(--zc-surface);
+  padding: 12px 14px;
+  box-shadow: var(--zc-shadow);
+  transition: background 0.2s ease, transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.zc-record-languette:hover {
+  background: var(--zc-hover-bg);
+}
+
+.zc-record-languette:active {
+  transform: translateY(1px);
+}
+
+.zc-record-languette--lexique {
+  border-left: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-accent);
+}
+
+.zc-record-languette--aya {
+  border-left: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-link);
+}
+
+.zc-record-languette--article {
+  border-left: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-link);
+}
+
+.zc-record-languette--target {
+  background: var(--zc-target-bg) !important;
+  border: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-danger);
+}
+
+.zc-record-languette__body {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: none;
+  color: var(--zc-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Bloc verset / résultat : garde .toolbar1 pour cohérence outils, aspect carte témoignages */
+.toolbar1.zc-record-languette {
+  background: var(--zc-surface);
+  border: none;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin: 0 0 10px 0;
+  box-shadow: var(--zc-shadow);
+}
+
+.toolbar1.zc-record-languette:hover {
+  background: var(--zc-hover-bg);
+}
+
+/* Rétablit l’accent gauche (sinon .toolbar1.zc-record-languette écrase border-color) */
+.toolbar1.zc-record-languette.zc-record-languette--aya {
+  border-left: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-link);
+}
+
+.toolbar1.zc-record-languette.zc-record-languette--target {
+  background: var(--zc-target-bg) !important;
+  border-color: transparent;
+  border-left: none;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-danger);
+}
+
+.zc-term-hit {
+  background: var(--zc-hit-bg);
+  color: var(--zc-text);
+  border-radius: 3px;
+  padding: 0 1px;
+}

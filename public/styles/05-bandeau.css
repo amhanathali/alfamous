@@ -1,0 +1,483 @@
+/* public/styles/05-bandeau.css — Bandeau #infosProgEnCours & barres d'outils (Phase C).
+ *
+ * Contient :
+ *   - Barres de paramètres (.zc-popup-header-tools-row, --uniform, .zc-popup-zoom-params-frame).
+ *   - Bandeau #infosProgEnCours (fond transparent, liens, chips, mot rouge, ref cible, cible SV).
+ *   - Barre « Copier tout / sélection / effacer » (.zc-popup-zoom-copy-tools et --linkrow).
+ *   - Compteurs (.zc-popup-zoom-stats-lines).
+ *
+ * S'appuie sur les tokens de styles/01-tokens.css.
+ */
+
+.zc-popup-header-tools-row {
+  gap: 2px !important;
+}
+
+.zc-popup-selection-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zc-popup-selection-row--compact .bouton {
+  min-height: 1.6rem;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.zc-popup-selection-row--compact .badgeSel {
+  font-size: 0.72rem;
+  min-width: 1.1rem;
+  min-height: 1.1rem;
+  padding: 0 0.3rem;
+}
+
+.zc-popup-header-tools-row--uniform {
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Zoom popup : cadre discret pour la barre ME / MC / commentaires / Historik */
+.zc-popup-zoom-params-frame {
+  border: none;
+  background: var(--zc-ui-soft-bg);
+  border-radius: 6px;
+  padding: 3px 5px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+/* Dans la popup : paramètres plus compacts que le titre, sans gras excessif */
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame.zc-popup-header-tools-row--uniform {
+  gap: 3px !important;
+  margin-top: 2px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame.zc-popup-header-tools-row--uniform {
+  margin-top: 0;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .zc-popup-toggle-btn {
+  min-width: 1.55rem;
+  height: 1.22rem;
+  padding: 0 0.28rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: 5px;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .zc-popup-toggle-btn.is-on {
+  font-weight: 800;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .menu-button.zc-top-action-btn,
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .zc-trad-pick-btn.menu-button {
+  min-height: 1.22rem !important;
+  padding: 1px 4px !important;
+  font-weight: 700;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .zc-trad-pick-btn .zc-trad-pick-label {
+  max-width: 6.2rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame .bouton {
+  font-weight: 700;
+  font-size: 0.65rem;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame [id^="btnTradFromPopup"],
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame [id^="btnHistorikFromPopup"],
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame [id^="btnTradFromLexique"],
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame [id^="btnHistorikFromLexique"] {
+  min-height: 1.22rem !important;
+  font-weight: 700 !important;
+  font-size: 0.62rem !important;
+  line-height: 1.15 !important;
+  padding: 1px 4px !important;
+}
+
+/* Loupe + libellé Historik (zoom 0–3, pas Lexique) */
+.zc-popup-zoom-tier .zc-btn-historik-with-loupe {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.2em;
+}
+
+.zc-popup-zoom-tier .zc-btn-historik-with-loupe .fa-search {
+  font-size: 0.9em;
+  opacity: 0.92;
+}
+
+/*
+ * Bandeau #infosProgEnCours : fond porté par .popup-header.zc-popup-header-unified ; ici transparent pour un aplats continu (Zoom 3 Lexique inclus).
+ * Texte courant noir gras ; contrôles : léger fond sans cadre pour le contraste ; liens & libellés bleus gras.
+ * Variables locales dérivées des tokens globaux (garde la rétro-compat des usages existants).
+ */
+.zc-popup-zoom-tier .zc-popup-resultats-infos {
+  --zc-popup-bandeau-bg: var(--zc-popup-bg);
+  --zc-popup-bandeau-lien: var(--zc-popup-link);
+  --zc-popup-bandeau-chip: var(--zc-popup-chip-bg);
+  --zc-popup-bandeau-chip-on: var(--zc-popup-chip-bg-hover);
+  background: transparent;
+  color: var(--zc-text) !important;
+  font-weight: 700;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  padding: 2px 0 !important;
+  margin-top: 4px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .toolbar1 {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ligne « Mots == … » / « Racines == » (Zoom 0–3, Lexique) : pas de fond ni cadre — même aplats que le bandeau / titre */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-motline {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 2px 0 6px !important;
+  padding: 3px 0 !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos a {
+  color: var(--zc-popup-bandeau-lien) !important;
+  font-weight: 700 !important;
+}
+
+/* Mot / racine recherchés : rouge ; lien ☰ menu : bleu (hors .rouge) */
+.zc-popup-zoom-tier .zc-popup-resultats-infos a.zc-popup-mot-hit,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .rouge a.zc-popup-mot-hit {
+  color: var(--zc-danger) !important;
+  font-weight: 700 !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos a.zc-popup-ctx-tab {
+  color: var(--zc-popup-bandeau-lien) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  margin-left: 0.2em;
+}
+
+/* Zoom 0 : référence « cible S.V » (ex. 3.14) en rouge comme mot / racine ; corps aligné sur « Copier tout » */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-cible-ref {
+  color: var(--zc-danger) !important;
+  font-weight: 700;
+  font-size: var(--zc-fs-xs);
+  line-height: var(--zc-lh-tight);
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos button,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .bouton {
+  background: var(--zc-popup-bandeau-chip) !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-popup-bandeau-lien) !important;
+  font-weight: 700 !important;
+  border-radius: 6px;
+}
+
+/* Zoom 0 sourate : audio + lire-écouter — sans pastille (écrase le fond chip des boutons), taille alignée */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom0-verse-tools a.zc-popup-zoom0-iconbtn,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom0-verse-tools button.zc-popup-zoom0-iconbtn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  color: var(--zc-popup-bandeau-lien) !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom0-verse-tools .zc-popup-zoom0-iconbtn .fas {
+  font-size: 0.8125rem !important;
+  line-height: 1 !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom0-verse-tools .zc-popup-zoom0-iconbtn:hover {
+  opacity: 0.88;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom0-verse-tools .zc-popup-zoom0-iconbtn:focus-visible {
+  outline: 2px solid var(--zc-popup-bandeau-lien);
+  outline-offset: 2px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-toggle-btn {
+  background: var(--zc-popup-bandeau-chip) !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-popup-bandeau-lien) !important;
+  font-weight: 700 !important;
+  border-radius: 6px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-toggle-btn.is-on {
+  background: var(--zc-popup-bandeau-chip-on) !important;
+  border: none !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-trad-pick-label {
+  color: var(--zc-popup-bandeau-lien) !important;
+  font-weight: 700 !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .badgeSel,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-sel-badge {
+  color: var(--zc-text) !important;
+  font-weight: 700 !important;
+  background: var(--zc-popup-bandeau-chip-on) !important;
+  border: none !important;
+  border-radius: 4px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-sel-btn.bouton {
+  font-weight: 700 !important;
+  color: var(--zc-popup-bandeau-lien) !important;
+  background: var(--zc-popup-bandeau-chip) !important;
+  border: none !important;
+  border-radius: 6px;
+}
+
+/* ME / MC / livre / H : sans pastille (comme lien ☰ à côté du mot) */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .zc-popup-toggle-btn,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .bouton.zc-trad-pick-btn,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .bouton.zc-btn-historik-inline {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .zc-popup-toggle-btn.is-on {
+  background: transparent !important;
+  color: var(--zc-popup-link-hover) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .zc-popup-toggle-btn,
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-params-frame .bouton.zc-btn-historik-inline {
+  min-height: 1.58rem;
+  padding: 0 0.52rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+}
+
+/* Ligne copier / effacer : pas de fond sur le conteneur (fond uniquement sur les boutons) */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--labeled {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Copier / effacer sélection : deux icônes séparées, sans cadre commun */
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 5px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--zc-text);
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: none;
+  line-height: 1;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-icon-btn:hover {
+  background: var(--zc-hover-bg);
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-icon-btn .fas {
+  font-size: 0.95rem;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-icon-badge.badgeSel {
+  font-size: 0.62rem;
+  font-weight: 500;
+  min-width: 0.95rem;
+  min-height: 0.95rem;
+  padding: 0 0.22rem;
+}
+
+/* Copier / Effacer sélection : après les languettes, icônes + libellés */
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--labeled {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 4px;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-sel-btn.bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.65rem;
+  padding: 2px 8px;
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-sel-btn .zc-popup-zoom-sel-label {
+  white-space: nowrap;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-sel-badge.badgeSel {
+  font-size: var(--zc-fs-xxs);
+  font-weight: 600;
+  min-width: 1rem;
+  min-height: 1rem;
+  padding: 0 0.28rem;
+}
+
+/* Zoom 0–2 : Copier tout / sélection / effacer — une ligne, style lien + icône (sans cadre bandeau) */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow.zc-popup-zoom-copy-tools--labeled,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow.zc-popup-zoom-copy-tools--labeled {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.55rem;
+  margin: 4px 0 2px;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn.bouton,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn.bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex: 0 0 auto;
+  min-height: 0 !important;
+  padding: 0 1px !important;
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--zc-popup-link) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn.bouton:hover,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn.bouton:hover {
+  color: var(--zc-popup-link-hover) !important;
+  background: var(--zc-popup-link-soft) !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn .fas,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-btn .fas {
+  font-size: 0.8rem;
+  text-decoration: none;
+  opacity: 0.95;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-label,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-label {
+  white-space: nowrap;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-badge.badgeSel,
+.zc-popup-zoom-tier .zc-popup-zoom-copy-tools--linkrow .zc-popup-zoom-sel-badge.badgeSel {
+  font-size: 0.58rem;
+  min-width: 0.85rem;
+  min-height: 0.85rem;
+  padding: 0 0.18rem;
+  margin-left: 0.1rem;
+  text-decoration: none;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+.zc-popup-zoom-selection-before-info {
+  margin-bottom: 2px;
+}
+
+/* Lexique (et autres) : compteurs sous la barre d’outils — même corps que « Copier tout » (linkrow) */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-stats-lines {
+  font-size: var(--zc-fs-xs);
+  font-weight: 500;
+  line-height: var(--zc-lh-tight);
+  color: var(--zc-text);
+  margin: var(--zc-space-2) 0 0;
+  text-align: center;
+}
+
+/* Même typo en ligne (Zoom 0 : flex « versets affichés ») */
+.zc-popup-zoom-tier .zc-popup-resultats-infos .zc-popup-zoom-stats-lines.zc-popup-zoom-stats-lines--inline {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+  vertical-align: baseline;
+}

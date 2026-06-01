@@ -1,0 +1,226 @@
+﻿/* public/styles/18-popup-context-menu.css — Menu hamburger #popupContextMenu (Phase C).
+ *
+ * Contient toutes les règles scopées pour #popupContextMenu et ses variantes .ctxmenu-* :
+ *   - Conteneur .popup-container (override des règles génériques).
+ *   - .ctxmenu-popup__card / __header / __title / __close / __body / __inner-header.
+ *   - Groupes (.ctxmenu-group, .ctxmenu-group-title), liste (.ctxmenu-list), items.
+ *   - Variantes --ctl, toggles, RTL, preview, empty.
+ *
+ * S'appuie sur les tokens de 01-tokens.css et le shell de 04-popup-shell.css.
+ */
+/* largeur du menu contextuel */
+/* === Menu hamburger (#popupContextMenu) — même langage visuel que l’app === */
+#popupContextMenu.popup-container {
+  position: fixed;
+  inset: auto;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  padding: 10px;
+  display: block;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  /* tokens locaux (alignés --zc-*) */
+  --ctxmenu-section-accent: var(--zc-accent, #0d9488);
+  --ctxmenu-section-bg: rgba(13, 148, 136, 0.09);
+  --ctxmenu-section-border: rgba(13, 148, 136, 0.28);
+}
+
+#popupContextMenu.popup-container {
+  pointer-events: none;
+}
+
+#popupContextMenu .popup-content {
+  pointer-events: auto;
+}
+
+/* Carte flottante */
+#popupContextMenu .popup-content.ctxmenu-popup__card,
+#popupContextMenu.ctxmenu-popup .popup-content {
+  width: var(--zc-popup-unified-max-width, min(98vw, 980px));
+  max-width: var(--zc-popup-unified-max-width, min(98vw, 980px));
+  max-height: var(--zc-popup-unified-max-height, 100dvh);
+  display: flex;
+  flex-direction: column;
+  background: var(--zc-surface, #fff);
+  border: none;
+  border-radius: var(--zc-radius, 12px);
+  box-shadow: var(--zc-shadow-md, 0 8px 32px rgba(15, 23, 42, 0.12));
+  overflow: hidden;
+}
+
+/* En-tête draggable (index.html) */
+#popupContextMenu .ctxmenu-popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  margin: 0;
+  background: linear-gradient(180deg, var(--zc-ui-soft-bg) 0%, var(--zc-hover-bg) 100%);
+  border-bottom: none;
+  cursor: move;
+  flex-shrink: 0;
+}
+
+#popupContextMenu .ctxmenu-popup__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--zc-text, #0f172a);
+  letter-spacing: -0.02em;
+}
+
+#popupContextMenu .ctxmenu-popup__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--zc-radius-sm, 8px);
+  background: var(--zc-surface, #fff);
+  color: var(--zc-text, #0f172a);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  box-shadow: var(--zc-shadow, 0 1px 2px rgba(15, 23, 42, 0.06));
+}
+
+#popupContextMenu .ctxmenu-popup__close:hover {
+  background: var(--zc-hover-bg);
+  color: var(--zc-text, #0f172a);
+  border-color: transparent;
+}
+
+#popupContextMenu .ctxmenu-popup__close:active {
+  transform: scale(0.96);
+}
+
+/* Corps scrollable */
+#popupContextMenu .ctxmenu-popup__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding: 8px 10px 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* En-tête optionnel généré dans le corps (includeHeader) */
+#popupContextMenu .ctxmenu-popup__inner-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 4px 10px;
+  margin: -4px 0 8px;
+  border-bottom: none;
+  background: var(--zc-surface, #fff);
+  cursor: move;
+}
+
+#popupContextMenu .ctxmenu-group {
+  margin: 12px 4px 16px;
+}
+
+#popupContextMenu .ctxmenu-group-title {
+  background: var(--ctxmenu-section-bg);
+  border: none;
+  border-radius: var(--zc-radius-sm, 8px);
+  padding: 0.45em 0.65em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: var(--zc-fs-md);
+  color: var(--zc-text, #0f172a);
+  border-inline-start: none;
+  box-shadow: inset 4px 0 0 var(--ctxmenu-section-accent);
+  margin: 6px 0 8px;
+}
+
+#popupContextMenu .ctxmenu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#popupContextMenu .ctxmenu-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--zc-radius-sm, 8px);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--zc-text, #0f172a);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+#popupContextMenu .ctxmenu-item:hover {
+  background: var(--zc-hover-bg);
+}
+
+#popupContextMenu .ctxmenu-item:active {
+  background: var(--zc-border);
+}
+
+#popupContextMenu .ctxmenu-item--ctl {
+  border-color: var(--zc-border, #e2e8f0);
+  background: var(--zc-ui-soft-bg);
+}
+
+#popupContextMenu .ctxmenu-title {
+  text-align: start;
+}
+
+#popupContextMenu .ctxmenu-toggle {
+  margin: 0;
+}
+
+#popupContextMenu .ctxmenu-root[dir="rtl"] .ctxmenu-item {
+  direction: rtl;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+#popupContextMenu .ctxmenu-root[dir="rtl"] .ctxmenu-title {
+  text-align: right;
+}
+
+#popupContextMenu .ctxmenu-root[dir="rtl"] .ctxmenu-list {
+  direction: rtl;
+}
+
+#popupContextMenu .ctxmenu-root[dir="rtl"] .ctxmenu-icon {
+  margin-inline-start: 8px;
+  margin-inline-end: 0;
+}
+
+#popupContextMenu .ctxmenu-preview {
+  opacity: 0.72;
+  font-size: 0.86em;
+  margin-inline-start: 0.35em;
+  color: var(--zc-text-muted, #64748b);
+}
+
+#popupContextMenu .ctxmenu-empty {
+  padding: 16px 12px;
+  text-align: center;
+  color: var(--zc-text-muted, #64748b);
+  font-size: 0.95rem;
+}

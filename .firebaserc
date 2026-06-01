@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "alfamous-amha"
+  },
+  "targets": {},
+  "etags": {
+    "alfamous-amha": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
+}

@@ -1,0 +1,7 @@
+{
+  "_comment": "MODÈLE — copiez ce fichier vers quick-login.json et remplissez vos valeurs. Ne JAMAIS committer quick-login.json (contient des données personnelles).",
+  "niv0": { "email": "utilisateur0@example.com", "name": "Nom0" },
+  "niv1": { "email": "utilisateur1@example.com", "name": "Nom1" },
+  "niv2": { "email": "utilisateur2@example.com", "name": "Nom2" },
+  "niv3": { "email": "admin@example.com", "name": "Admin" }
+}

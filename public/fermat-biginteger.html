@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Factorisation — Approximations (c,r) & Fermat (BigInt)</title>
+<style>
+  :root { --bg:#0b1020; --card:#111832; --ink:#e7ecff; --muted:#9fb0ff; --accent:#7aa2ff; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font:16px/1.45 system-ui, Segoe UI, Roboto, Arial; }
+  .wrap { max-width:1100px; margin:32px auto; padding:0 16px; }
+  h1 { font-size:1.6rem; margin:0 0 12px; }
+  .card { background:var(--card); border-radius:16px; padding:16px; box-shadow:0 10px 30px #0006; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  .col { flex:1 1 260px; min-width:260px; }
+  label { display:block; font-size:0.95rem; color:var(--muted); margin-bottom:6px; }
+  input[type=text], input[type=number], select {
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #2a3a7a;
+    background:#0b1330; color:var(--ink); outline:none;
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px #7aa2ff33; }
+  .btn { appearance:none; border:none; border-radius:12px; padding:12px 16px; background:var(--accent);
+         color:#0b1330; font-weight:700; cursor:pointer; transition:transform .05s ease; }
+  .btn:active { transform:translateY(1px); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip { padding:6px 10px; border:1px solid #3650a8; border-radius:999px; cursor:pointer; color:var(--muted); }
+  .muted { color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .result { background:#0b1330; border:1px solid #2a3a7a; border-radius:12px; padding:12px; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:0.95rem; }
+  .ok { color:#8be38b; }
+  .warn { color:#ffd479; }
+  .err { color:#ff8b8b; }
+  .small { font-size:0.9rem; }
+  .footer { margin-top:20px; color:var(--muted); font-size:0.9rem; }
+  .log { white-space:pre-wrap; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#0b1330; border:1px solid #2a3a7a; border-radius:12px; padding:10px; max-height:260px; overflow:auto; }
+  .divider { border:none; border-top:1px solid #2a3a7a; margin:16px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Factorisation — <span class="muted">Méthode A (approximations c,r accélérées) & Méthode B (Fermat + Rho/GCD)</span></h1>
+
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label for="nInput">N (impair &gt; 1) ou expression : 1571, 0xDEAD, (13*17), 3*77-2^9+1…</label>
+        <input id="nInput" type="text" placeholder="ex : 1571" spellcheck="false" />
+        <div class="chips" id="chips"></div>
+        <div class="small muted" style="margin-top:6px">
+          Opérateurs : <b>+ − × ÷ % ^ **</b>, parenthèses. <b>^</b>/<b>**</b> = puissance (droite-associative). Division BigInt entière.
+        </div>
+      </div>
+      <div class="col">
+        <label>Options</label>
+        <div class="row" style="gap:8px">
+          <div class="col" style="min-width:160px">
+            <label>Limite d’itérations</label>
+            <input id="maxSteps" type="number" value="1000000" min="1" step="1" />
+          </div>
+          <div class="col" style="min-width:360px">
+            <label>&nbsp;</label>
+            <label class="small"><input id="smallPrimes" type="checkbox" checked /> Essais petits premiers (≤10 000)</label><br>
+            <label class="small"><input id="refineCmax" type="checkbox" checked /> Affiner \(c_{\max}\) via \((N/p+p)/2\)</label><br>
+            <label class="small"><input id="useRho" type="checkbox" checked /> Pollard–Rho (secours)</label>
+            <label class="small"><input id="usePeriodicGcd" type="checkbox" checked /> GCD périodique</label>
+          </div>
+        </div>
+        <div id="status" class="muted small" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="row">
+      <div class="col">
+        <label><b>Méthode A — Approximations (accélérées)</b></label>
+        <div class="row" style="gap:8px">
+          <div class="col" style="min-width:140px"><input id="cStart" type="text" placeholder="cStart (opt.)" /></div>
+          <div class="col" style="min-width:140px"><input id="rStart" type="text" placeholder="rStart (opt.)" /></div>
+          <div class="col" style="min-width:200px">
+            <label class="small"><input id="showLog" type="checkbox" /> Afficher le log</label>
+          </div>
+        </div>
+        <button id="btnA" class="btn" style="margin-top:8px">Lancer — Méthode A</button>
+      </div>
+
+      <div class="col">
+        <label><b>Méthode B — Fermat (avec Rho/GCD)</b></label>
+        <label class="small"><input id="useViaI" type="checkbox" /> Départ via <span class="mono">c=(N-2·i+1)/2</span></label>
+        <button id="btnB" class="btn" style="margin-top:8px">Lancer — Méthode B</button>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div>
+      <h3>Méthode A — Résultat</h3>
+      <div id="outA" class="grid"></div>
+      <div id="log" class="log" style="display:none; margin-top:8px"></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <h3>Méthode B — Résultat</h3>
+      <div id="outB" class="grid"></div>
+    </div>
+
+    <div class="footer">
+      Identité : \(N=c^2-r^2=(c-r)(c+r)\). Bornes : \(\lceil\sqrt N\rceil \le c \le \frac{N+1}{2}\) (ou \(\le \tfrac{p+N/p}{2}\) si aucun facteur &lt; p).
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Helpers UI ===== */
+const el = id => document.getElementById(id);
+const fmt = (x) => { const s=x.toString(); const neg=s.startsWith('-'); const abs=neg?s.slice(1):s; return (neg?'-':'')+abs.replace(/\B(?=(\d{3})+(?!\d))/g,' '); };
+const card = (title, value, css='') => `<div class="result"><div class="muted small">${title}</div><div class="mono ${css}">${value}</div></div>`;
+function setStatus(html){ el('status').innerHTML = html; }
+
+/* ===== BigInt math ===== */
+function isqrt(n){ if(n<0n) throw new Error("isqrt: négatif."); if(n<2n) return n; let x0=1n<<(BigInt(n.toString(2).length)>>1n); let x1=(x0+n/x0)>>1n; while(x1<x0){ x0=x1; x1=(x0+n/x0)>>1n; } return x0; }
+function safeIsqrt(n){ return (n<=0n) ? 0n : isqrt(n); }
+function ceilSqrt(n){ const r=isqrt(n); return r*r===n?r:r+1n; }
+const abs = x => x>=0n ? x : -x;
+function gcd(a,b){ a=abs(a); b=abs(b); while(b){ const t=a%b; a=b; b=t; } return a; }
+
+/* ===== Petits premiers (≤ 10 000) & raffinement cmax ===== */
+const SMALL_LIMIT=10000;
+const SMALL_PRIMES=(function(){const a=[],L=SMALL_LIMIT,s=new Array(L+1).fill(true);s[0]=s[1]=false;for(let p=2;p*p<=L;p++)if(s[p])for(let q=p*p;q<=L;q+=p)s[q]=false;for(let i=2;i<=L;i++)if(s[i])a.push(BigInt(i));return a;})();
+function smallPrimeTrial(N){ for(const p of SMALL_PRIMES){ if(N===p) continue; if(N%p===0n) return {a:p,b:N/p,pHit:p}; } return null; }
+function nextPrimeAfter(n){ function isP(k){ if(k<2) return false; if(k%2===0) return k===2; for(let d=3; d*d<=k; d+=2){ if(k%d===0) return false; } return true; } let k=Math.max(2,Math.floor(n)+1); while(!isP(k)) k++; return k; }
+function refinedCmax(N, baseCmax, enabled){
+  if(!enabled) return baseCmax;
+  const p=BigInt(nextPrimeAfter(1000));
+  const c2=(N/p + p)/2n;
+  return c2<baseCmax?c2:baseCmax;
+}
+
+/* ===== Parsing d'expressions BigInt ===== */
+function tokenizeExpr(raw){
+  const s=raw.replace(/[\s_,]/g,''); const t=[]; let i=0;
+  function prev(){ return t.length && (t[t.length-1].type==='num' || t[t.length-1].type===')'); }
+  while(i<s.length){
+    const ch=s[i];
+    if(/[0-9]/.test(ch)){
+      if(s.slice(i,i+2).toLowerCase()==='0x'){ let j=i+2; while(j<s.length && /[0-9a-f]/i.test(s[j])) j++; if(j===i+2) throw Error("Hex invalide."); t.push({type:'num',val:BigInt(s.slice(i,j))}); i=j; continue; }
+      if(s.slice(i,i+2).toLowerCase()==='0b'){ let j2=i+2; while(j2<s.length && /[01]/.test(s[j2])) j2++; if(j2===i+2) throw Error("Bin invalide."); t.push({type:'num',val:BigInt(s.slice(i,j2))}); i=j2; continue; }
+      if(s.slice(i,i+2).toLowerCase()==='0o'){ let j3=i+2; while(j3<s.length && /[0-7]/.test(s[j3])) j3++; if(j3===i+2) throw Error("Oct invalide."); t.push({type:'num',val:BigInt(s.slice(i,j3))}); i=j3; continue; }
+      let j4=i; while(j4<s.length && /[0-9]/.test(s[j4])) j4++; t.push({type:'num',val:BigInt(s.slice(i,j4))}); i=j4; continue;
+    }
+    if(ch==='*'&&s[i+1]==='*'){ t.push({type:'op',op:'**'}); i+=2;continue; }
+    if(ch==='^'){ t.push({type:'op',op:'^'}); i++;continue; }
+    if((ch==='+'||ch==='-')&&!prev()){ t.push({type:'op',op:(ch==='+')?'u+':'u-'}); i++; continue; }
+    if('+-*/%'.includes(ch)){ t.push({type:'op',op:ch}); i++; continue; }
+    if(ch==='('||ch===')'){ t.push({type:ch}); i++; continue; }
+    throw Error("Caractère inattendu: '"+ch+"'");
+  }
+  return t;
+}
+function parseBigIntExpression(str){
+  if(!str) throw Error("Veuillez saisir un entier ou une expression.");
+  const tk=tokenizeExpr(str); let p=0;
+  function peek(){ return tk[p]; }
+  function eat(t,v){ const x=tk[p]; if(!x||x.type!==t||(v&&((x.op!==undefined?x.op:x.val)!==v))) throw Error("Expression invalide."); p++; return x; }
+  function expr(){ let x=mul(); while(peek()&&peek().type==='op'&&(peek().op==='+'||peek().op==='-')){ const op=eat('op').op; const y=mul(); x=(op==='+')?(x+y):(x-y);} return x; }
+  function mul(){ let x=pow(); while(peek()&&peek().type==='op'&&(['*','/','%'].indexOf(peek().op)!==-1)){ const op=eat('op').op; const y=pow(); if(op==='*')x=x*y; else if(op==='/'){ if(y===0n) throw Error("Division par zéro."); x=x/y; } else { if(y===0n) throw Error("Modulo par zéro."); x=x%y; } } return x; }
+  function pow(){ let x=una(); while(peek()&&peek().type==='op'&&(peek().op==='^'||peek().op==='**')){ eat('op'); const y=pow(); if(y<0n) throw Error("Exposant négatif non supporté."); x=x**y; } return x; }
+  function una(){ if(peek()&&peek().type==='op'&&(peek().op==='u+'||peek().op==='u-')){ const op=eat('op').op; const v=una(); return (op==='u-')?(-v):v; } return pri(); }
+  function pri(){ const t=peek(); if(!t) throw Error("Expression incomplète."); if(t.type==='num'){ eat('num'); return t.val; } if(t.type==='('){ eat('('); const v=expr(); eat(')'); return v; } throw Error("Terme attendu."); }
+  const V=expr(); if(p!==tk.length) throw Error("Jetons superflus."); return V;
+}
+
+/* ===== Bornes & seeds ===== */
+function baseBounds(N, refine){
+  const c0 = ceilSqrt(N);
+  let cMax = (N + 1n)/2n;
+  cMax = refinedCmax(N, cMax, refine);
+  return { c0, cMax };
+}
+function clampSeeds(N, cSeed, rSeed, refine){
+  const { c0, cMax } = baseBounds(N, refine);
+  let c = (cSeed===null||cSeed===undefined)? c0 : cSeed;
+  if (c < c0) c = c0;
+  if (c > cMax) c = cMax;
+  let t = c*c - N; if (t < 0n) { c = c0; t = c*c - N; }
+  let r = (rSeed===null||rSeed===undefined)? safeIsqrt(t) : rSeed;
+  if (r > c-1n) r = c-1n;
+  if (r < 0n) r = 0n;
+  // parité c ≡ r (N impair)
+  if ( (c & 1n) !== (r & 1n) ){
+    if (r+1n <= c-1n) r += 1n; else if (r>0n) r -= 1n;
+  }
+  return { c, r, c0, cMax };
+}
+
+/* ===== MÉTHODE A — "c-only" à pas adaptatifs + r local optimal ===== */
+function bestRlocal(N, c, W){
+  let t = c*c - N; if (t < 0n) t = 0n;
+  let r0 = safeIsqrt(t);
+  const rMin = 0n, rMax = c-1n;
+  if (r0 > rMax) r0 = rMax;
+
+  let bestR = r0, bestAbs = abs(N - (c*c - r0*r0));
+  function tryR(r){
+    if (r < rMin || r > rMax) return;
+    if ( (c & 1n) !== (r & 1n) ) return; // parité
+    const val = abs(N - (c*c - r*r));
+    if (val < bestAbs){ bestAbs = val; bestR = r; }
+  }
+  const Wn = 8n; // fenêtre fixe (8) — tu peux régler
+  tryR(r0);
+  for (let k=1n; k<=Wn; k++){ tryR(r0 - k); tryR(r0 + k); }
+  return { r: bestR, resid: bestAbs };
+}
+
+function guided(N, opts){
+  opts = opts || {};
+  const maxSteps = Number(opts.maxSteps ?? 1000000);
+  const log      = !!opts.log;
+  const maxLog   = Number(opts.maxLog ?? 2000);
+  const refine   = (opts.refine===undefined)?  true  : opts.refine;
+  const cStart   = (opts.cStart===undefined)? null : opts.cStart;
+  const rStart   = (opts.rStart===undefined)? null : opts.rStart;
+
+  if (N<=1n) throw Error("N doit être > 1.");
+  if (N%2n===0n) return { type:'even', a:2n, b:N/2n, logText:"" };
+
+  const { c0, cMax } = baseBounds(N, refine);
+  let { c, r } = clampSeeds(N, cStart, rStart, refine);
+
+  let logText = "";
+  if (log) logText += `init: c0=${c0} cMax=${cMax}\n`;
+
+  const seen = new Map();
+  const keyOf = (C,R)=> C.toString()+":"+R.toString();
+  const JUMP_CAP = 1_000_000n;
+
+  for (let step=0; step<maxSteps; step++){
+    const loc = bestRlocal(N, c, 8);
+    r = loc.r;
+    const Delta = N - (c*c - r*r);
+    if (Delta === 0n){
+      return { type:'guided', a:c-r, b:c+r, c, r, steps:step, logText };
+    }
+
+    if (log && step<maxLog){
+      logText += `step ${step}: c=${c} r≈${r} |Δ|=${Delta}\n`;
+    }
+
+    const k = keyOf(c,r);
+    if (seen.has(k)){
+      let dc = (Delta / (2n*c+1n)) + 1n; if (dc<1n) dc=1n;
+      const rep = BigInt(Math.min(8, (step - seen.get(k)) + 1));
+      dc *= rep;
+      if (dc > JUMP_CAP) dc = JUMP_CAP;
+      c += dc;
+      if (c > cMax) c = cMax;
+      continue;
+    } else {
+      seen.set(k, step);
+      if (seen.size > 64){
+        const it = seen.keys().next().value;
+        seen.delete(it);
+      }
+    }
+
+    let dc = (Delta / (2n*c+1n));
+    if (dc < 1n) dc = 1n;
+    if (dc > JUMP_CAP) dc = JUMP_CAP;
+    c += dc;
+    if (c > cMax) c = cMax;
+  }
+
+  if (c===cMax){
+    return { type:'guided', a:1n, b:N, c, r:c-1n, steps:null, reachedMax:true, logText };
+  }
+  return { type:'limit', a:null, b:null, c, r, logText };
+}
+
+/* ===== Pollard–Rho (Brent) & Fermat amélioré ===== */
+function randBigIntBelow(max){
+  const hasCrypto=(typeof crypto!=='undefined' && crypto.getRandomValues);
+  const bits=BigInt(max.toString(2).length), bytes=Number((bits+7n)/8n);
+  function one(){
+    if(hasCrypto){ const buf=new Uint8Array(bytes); crypto.getRandomValues(buf); let v=0n; for(let i=0;i<buf.length;i++) v=(v<<8n)|BigInt(buf[i]); return v%max; }
+    let v2=0n; for(let k=0;k<6;k++) v2=(v2<<21n)|BigInt(Math.floor(Math.random()*2097152)); return v2%max;
+  }
+  let r=one(); if(r===0n) r=1n; return r;
+}
+function pollardRhoBrent(n, maxIter){
+  if(n%2n===0n) return 2n;
+  let y=randBigIntBelow(n-1n)+1n, c=randBigIntBelow(n-1n)+1n, m=randBigIntBelow(n-1n)+1n;
+  let g=1n, r=1n, q=1n, x=0n, ys=0n; let iter=0;
+  function f(v){ return ((v*v % n) + c) % n; }
+  while(g===1n && iter<maxIter){
+    x=y;
+    for(let i=0n;i<r;i++) y=f(y);
+    let k=0n;
+    while(k<r && g===1n){
+      ys=y;
+      const lim = (m< (r-k)? m : (r-k));
+      for(let i2=0n;i2<lim;i2++){
+        y=f(y);
+        const diff = x>y? x-y : y-x;
+        q = (q * diff) % n;
+      }
+      g=gcd(q,n);
+      k+=lim; iter+=Number(lim);
+    }
+    r <<= 1n;
+  }
+  if(g===n){
+    do{ ys=f(ys); const diff2= x>ys? x-ys : ys-x; g=gcd(diff2,n); } while(g===1n);
+  }
+  return g;
+}
+function rhoFactor(n, attempts, eachIters){
+  if(n%2n===0n) return 2n;
+  for(let t=0;t<attempts;t++){
+    const d=pollardRhoBrent(n, eachIters);
+    if(d>1n && d<n) return d;
+  }
+  return 1n;
+}
+
+function cFromN_via_i(N){
+  if(N<=0n||N%2n===0n) throw Error("N doit être un impair > 0.");
+  const c0=ceilSqrt(N), half=(N+1n)/2n;
+  let iMax=half-c0; if(iMax<0n)iMax=0n;
+  let c=half-iMax; if(c<c0) c=c0;
+  return { c, c0, iMax };
+}
+function fermat(N, maxSteps=1000000, useViaI=false, refine=true, useRho=true, usePeriodicGcd=true){
+  if(N<0n) N=-N;
+  if(N<=1n) throw Error("N doit être > 1.");
+  if(N%2n===0n) return { type:'even', a:2n, b:N/2n, steps:0, c:null, r:null };
+
+  if(useRho){
+    const d0 = rhoFactor(N, 3, 20000);
+    if(d0>1n && d0<N){
+      return { type:'fermat', a:d0, b:N/d0, c:null, r:null, steps:0, note:'rho-pre' };
+    }
+  }
+
+  const { c0, cMax } = baseBounds(N,refine);
+  let c = useViaI ? cFromN_via_i(N).c : c0;
+  if(c<c0) c=c0;
+
+  const GCD_PERIOD = 4096;
+  const RHO_PERIOD = 8192;
+
+  for(let s=0; s<maxSteps && c<=cMax; s++, c++){
+    const t = c*c - N;
+    const r = safeIsqrt(t);
+    if(r*r===t){ return { type:'fermat', a:c-r, b:c+r, c, r, steps:s, reachedMax:(c===cMax) }; }
+
+    if(usePeriodicGcd && (s % GCD_PERIOD === 0) && s>0){
+      const g = gcd(t, N);
+      if(g>1n && g<N) return { type:'fermat', a:g, b:N/g, c, r, steps:s, note:'gcd-periodic' };
+    }
+    if(useRho && (s % RHO_PERIOD === 0) && s>0){
+      const d = rhoFactor(N, 1, 5000);
+      if(d>1n && d<N) return { type:'fermat', a:d, b:N/d, c, r, steps:s, note:'rho-periodic' };
+    }
+  }
+  if(c>cMax){ return { type:'fermat', a:1n, b:N, c:cMax, r:(N-1n)/2n, steps:null, reachedMax:true }; }
+  return { type:'limit', a:null, b:null, c, r:null, steps:maxSteps, reachedMax:false };
+}
+
+/* ===== Exemples ===== */
+(function(){
+  const EX=['1571','(13*17)','35','0x6FDB7','0b110111','3*77-2^9+1','820551413279'];
+  el('chips').innerHTML=EX.map(v=>`<span class="chip" data-v="${v}">${v}</span>`).join('');
+  el('chips').addEventListener('click',e=>{
+    const t=e.target.closest('.chip'); if(t){
+      el('nInput').value=t.getAttribute('data-v');
+      el('outA').innerHTML=''; el('outB').innerHTML=''; setStatus(''); el('log').style.display='none'; el('log').textContent='';
+    }
+  });
+})();
+
+/* ===== Utilitaires communs ===== */
+function commonN(){
+  const raw = el('nInput').value;
+  let N = parseBigIntExpression(raw); // ← let (pas const)
+  if (N < 0n) N = -N;                 // ok: on peut réassigner
+  if (N <= 1n) throw Error("N doit être > 1.");
+  return { raw, N, evalCard: card("Valeur évaluée", fmt(N)) };
+}
+
+const timeNowMs = ()=>performance.now();
+
+/* ===== Actions — Méthode A ===== */
+el('btnA').addEventListener('click', function(){
+  el('outA').innerHTML=''; el('log').style.display='none'; el('log').textContent='';
+  try{
+    const t0=timeNowMs();
+    const {raw,N,evalCard}=commonN();
+
+    if(N%2n===0n){
+      const a0=2n,b0=N/2n; const ms0=(timeNowMs()-t0).toFixed(2);
+      setStatus('<span class="warn">N est pair — division immédiate (Méthode A) — ('+fmt(a0)+'*'+fmt(b0)+').</span>');
+      el('outA').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("a", fmt(a0)) + card("b", fmt(b0)) + card("Vérif", fmt(a0*b0)) + card("Temps", `${ms0} ms`);
+      return;
+    }
+    if(el('smallPrimes').checked){
+      const hit=smallPrimeTrial(N);
+      if(hit){
+        const ms1=(timeNowMs()-t0).toFixed(2);
+        setStatus('<span class="ok">Division rapide par '+hit.pHit+' — ('+fmt(hit.a)+'*'+fmt(hit.b)+').</span>');
+        el('outA').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("a", fmt(hit.a)) + card("b", fmt(hit.b)) + card("Vérif", fmt(hit.a*hit.b)) + card("Temps", `${ms1} ms`);
+        return;
+      }
+    }
+
+    const maxSteps=Math.max(1, Number(el('maxSteps').value||1000000));
+    const cStart=(el('cStart').value||"").trim()? parseBigIntExpression(el('cStart').value): null;
+    const rStart=(el('rStart').value||"").trim()? parseBigIntExpression(el('rStart').value): null;
+    const res=guided(N,{cStart,rStart,maxSteps,log:el('showLog').checked,maxLog:2000,refine:el('refineCmax').checked});
+
+    if(el('showLog').checked){
+      el('log').style.display='block';
+      el('log').textContent = res.logText || '(aucune trace)';
+    }
+
+    const ms=(timeNowMs()-t0).toFixed(2);
+    if(res.type==='guided' && res.a!=null){
+      const ok=(res.a*res.b===N);
+      const trivial = (res.a===1n || res.b===1n);
+      const pairStr = trivial ? '(1*N)' : '('+fmt(res.a)+'*'+fmt(res.b)+')';
+      const note=(res.reachedMax&&trivial)?' — borne atteinte : triviale':(res.reachedCycle?' — cycle':'');
+      setStatus('<span class="ok">Méthode A'+(res.steps!==null?` en ${res.steps} itérations`:``)+`${note} — ${pairStr}.</span>`);
+      el('outA').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) +
+        card("a=c-r", fmt(res.a)) + card("b=c+r", fmt(res.b)) + card("c", fmt(res.c)) + card("r", fmt(res.r)) +
+        (res.steps!==null? card("Itérations", String(res.steps)) : "") +
+        card("Vérif", `<span class="${ok?'ok':'err'} mono">${fmt(res.a*res.b)}</span>`) + card("Temps", `${ms} ms`);
+    } else if(res.type==='even'){
+      setStatus('<span class="warn">N est pair — (a*b).</span>');
+      el('outA').innerHTML = card("N", fmt(N)) + card("a", fmt(res.a)) + card("b", fmt(res.b));
+    } else {
+      setStatus('<span class="warn">Méthode A : limite atteinte sans convergence — (1*N).</span>');
+      el('outA').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("c courant", fmt(res.c)) + card("r courant", fmt(res.r));
+    }
+  } catch(e){ setStatus(`<span class="err">${e.message||e}</span>`); }
+});
+
+/* ===== Actions — Méthode B ===== */
+el('btnB').addEventListener('click', function(){
+  el('outB').innerHTML='';
+  try{
+    const t0=timeNowMs();
+    const {raw,N,evalCard}=commonN();
+    if(N%2n===0n){
+      const a0=2n,b0=N/2n; const ms0=(timeNowMs()-t0).toFixed(2);
+      setStatus('<span class="warn">N est pair — division immédiate (Méthode B) — ('+fmt(a0)+'*'+fmt(b0)+').</span>');
+      el('outB').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("a", fmt(a0)) + card("b", fmt(b0)) + card("Vérif", fmt(a0*b0)) + card("Temps", `${ms0} ms`);
+      return;
+    }
+
+    if(el('smallPrimes').checked){
+      const hit=smallPrimeTrial(N);
+      if(hit){
+        const ms1=(timeNowMs()-t0).toFixed(2);
+        setStatus('<span class="ok">Division rapide par '+hit.pHit+' — ('+fmt(hit.a)+'*'+fmt(hit.b)+').</span>');
+        el('outB').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("a", fmt(hit.a)) + card("b", fmt(hit.b)) + card("Vérif", fmt(hit.a*hit.b)) + card("Temps", `${ms1} ms`);
+        return;
+      }
+    }
+
+    const maxSteps=Math.max(1, Number(el('maxSteps').value||1000000));
+    const useViaI=el('useViaI').checked;
+    const res=fermat(N, maxSteps, useViaI, el('refineCmax').checked, el('useRho').checked, el('usePeriodicGcd').checked);
+    const ms=(timeNowMs()-t0).toFixed(2);
+
+    if(res.type==='fermat'){
+      const ok=(res.a*res.b===N);
+      const trivial=(res.a===1n || res.b===1n);
+      const pairStr = trivial ? '(1*N)' : '('+fmt(res.a)+'*'+fmt(res.b)+')';
+      const note=res.reachedMax&&trivial?' — borne atteinte : triviale':(res.note?(' — '+res.note):'');
+      setStatus('<span class="ok">Méthode B (Fermat)'+(res.steps!==null?` en ${res.steps} itérations`:``)+`${note} — ${pairStr}.</span>`);
+      el('outB').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) +
+        card("a", fmt(res.a)) + card("b", fmt(res.b)) +
+        (res.c!==null? card("c", fmt(res.c)) : "") +
+        (res.r!==null? card("r", fmt(res.r)) : "") +
+        (res.steps!==null? card("Itérations", String(res.steps)) : "") +
+        card("Vérif", `<span class="${ok?'ok':'err'} mono">${fmt(res.a*res.b)}</span>`) + card("Temps", `${ms} ms`);
+    } else {
+      setStatus('<span class="warn">Méthode B : limite d’itérations atteinte — (1*N).</span>');
+      el('outB').innerHTML = card("N (brut)", `<span class="mono">${raw}</span>`) + evalCard + card("N", fmt(N)) + card("c courant", fmt(res.c)) + card("Itérations", String(res.steps));
+    }
+  } catch(e){ setStatus(`<span class="err">${e.message||e}</span>`); }
+});
+
+/* ===== Entrée : Enter -> Méthode A ===== */
+el('nInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); el('btnA').click(); }});
+</script>
+</body>
+</html>

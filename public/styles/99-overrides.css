@@ -1,0 +1,770 @@
+/* public/styles/99-overrides.css — Règles d'override « en dernier » (Phase C).
+ *
+ * Ce fichier est importé EN DERNIER dans styles.css, APRÈS tous les autres modules
+ * et après le contenu propre de styles.css. Il est réservé aux règles qui doivent
+ * impérativement gagner la cascade face à d'autres `!important` définis ailleurs.
+ *
+ * NE PAS y mettre :
+ *   - des tokens (→ 01-tokens.css).
+ *   - des règles d'un module donné (→ fichier du module).
+ *   - quoi que ce soit qui puisse être scopé plus finement.
+ *
+ * Règles actuelles :
+ *   - Fermeture des panneaux repliés (.zc-panel-collapsed) : masque tout sauf l'en-tête.
+ *     Doit écraser les `display:flex !important` définis dans les modules.
+ */
+
+/* Panneaux repliés : masquer tout sauf l'en-tête (collapse via JS qui pose .zc-panel-collapsed). */
+.toolbar1.zc-module-panel.zc-panel-collapsed > :not(.zc-module-head),
+.toolbar1.zc-module-panel.zc-panel-collapsed .zc-module-toolbar-inner,
+.toolbar1.zc-module-panel.zc-panel-collapsed .zc-soura-panel-body,
+.toolbar1.zc-module-panel.zc-panel-collapsed .zc-versets-panel-body,
+.toolbar1.zc-module-panel.zc-panel-collapsed .zc-footer-toolbar {
+  display: none !important;
+}
+
+/* Lisibilité textes longs (dark/light) : force un contraste stable. */
+.zc-popup-zoom-tier .zc-popup-resultats-body,
+#popupHtml #contenuLocal,
+.zc-forum-read-body,
+.zc-forum-reader-list,
+.zc-result-card-comment,
+.zc-record-languette > p {
+  color: var(--zc-text) !important;
+}
+
+.zc-result-card-comment,
+.zc-record-languette > p,
+.zc-forum-read-body {
+  line-height: 1.55;
+}
+
+/* Etats de surbrillance unifiés (évite le "quasi invisible" en mode sombre). */
+.zc-record-languette--target,
+.zc-forum-reader-li--highlight,
+.zc-forum-post--highlight,
+.zc-record-languette[data-cible="1"] {
+  background: var(--zc-target-bg) !important;
+  border-color: var(--zc-target-border) !important;
+  color: var(--zc-text) !important;
+}
+
+.zc-term-hit,
+.rouge .zc-term-hit,
+mark {
+  background: var(--zc-hit-bg) !important;
+  color: var(--zc-text) !important;
+}
+
+/* Suggestions : lisibilité forte (liste + item survol/sélection). */
+.suggestions-liste,
+.suggestions-liste li,
+.suggestion-item {
+  color: var(--zc-text) !important;
+}
+
+.suggestions-liste li:hover,
+.suggestion-item:hover,
+.suggestions-liste li[aria-selected="true"],
+.suggestions-liste li.is-selected,
+.suggestion-item.is-selected {
+  background: var(--zc-selected-bg) !important;
+  color: var(--zc-text) !important;
+}
+
+/* Welcome / textes d'entête forum : pas de noir fixe en dark. */
+.zc-forum-welcome-greet,
+.zc-forum-welcome-name,
+.zc-forum-page-title,
+.zc-forum-head-title .zc-forum-page-title {
+  color: var(--zc-text) !important;
+}
+
+/* Panneaux/languettes: ne jamais rester en noir fixe en mode sombre. */
+.toolbar1.zc-module-panel,
+.toolbar1.zc-module-panel .zc-module-head,
+.toolbar1.zc-module-panel .zc-module-head *,
+.toolbar1.zc-module-panel .zc-module-toolbar-inner,
+.toolbar1.zc-module-panel .zc-module-toolbar-inner *,
+.toolbar1.zc-module-panel .zc-top-action-label,
+.toolbar1.zc-module-panel .zc-title-sync-label,
+.toolbar1.zc-module-panel .zc-top-action-ico,
+.toolbar1.zc-module-panel .zc-top-action-ico i,
+.toolbar1.zc-module-panel .zc-module-head-action-ico {
+  color: var(--zc-text) !important;
+}
+
+/* Fonds de panneaux uniformes (clair/sombre selon thème) */
+.toolbar1.zc-module-panel,
+.toolbar1.zc-module-panel .zc-module-head,
+.toolbar1.zc-module-panel .zc-module-toolbar-inner {
+  background: var(--zc-surface) !important;
+  border-color: var(--zc-border) !important;
+}
+
+/* Exceptions couleur autorisées */
+.toolbar1.zc-module-panel a,
+.toolbar1.zc-module-panel .zc-popup-link,
+.toolbar1.zc-module-panel .zc-forum-subject-link,
+.toolbar1.zc-module-panel .zc-forum-subject-link-btn {
+  color: var(--zc-popup-link) !important;
+}
+
+.toolbar1.zc-module-panel .rouge,
+.toolbar1.zc-module-panel .zc-popup-cible-ref {
+  color: var(--zc-danger) !important;
+}
+
+/* Icone Livre Ibn Fares (panel + bloc deroule clone + titres popup) */
+.zc-ibn-fares-ico {
+  color: var(--zc-danger) !important;
+}
+
+.zc-ibn-fares-ico i {
+  color: inherit !important;
+}
+
+/* Priorite haute contre les overrides toolbar (panel + bloc deroule + strip). */
+#btnIbnFaresLexique .zc-ibn-fares-ico,
+#btnIbnFaresLexique .zc-ibn-fares-ico i,
+#ctxBody__btnIbnFaresLexique .zc-ibn-fares-ico,
+#ctxBody__btnIbnFaresLexique .zc-ibn-fares-ico i,
+#ctxTip__btnIbnFaresLexique .zc-ibn-fares-ico,
+#ctxTip__btnIbnFaresLexique .zc-ibn-fares-ico i,
+#tipTab__btnIbnFaresLexique .zc-ibn-fares-ico,
+#tipTab__btnIbnFaresLexique .zc-ibn-fares-ico i {
+  color: var(--zc-danger) !important;
+}
+
+/* Renfort context menu: même si le clone perd .zc-ibn-fares-ico, garder l'icône rouge. */
+#selectionContextMenu #ctxTip__btnIbnFaresLexique .zc-top-action-ico,
+#selectionContextMenu #ctxTip__btnIbnFaresLexique .zc-top-action-ico i,
+#selectionContextMenu #ctxBody__btnIbnFaresLexique .zc-top-action-ico,
+#selectionContextMenu #ctxBody__btnIbnFaresLexique .zc-top-action-ico i,
+#popupContextMenu #ctxTip__btnIbnFaresLexique .zc-top-action-ico,
+#popupContextMenu #ctxTip__btnIbnFaresLexique .zc-top-action-ico i,
+#popupContextMenu #ctxBody__btnIbnFaresLexique .zc-top-action-ico,
+#popupContextMenu #ctxBody__btnIbnFaresLexique .zc-top-action-ico i {
+  color: var(--zc-danger) !important;
+}
+
+/* Exception demandee: l'icone SearchVersets reste rouge dans les menus contextuels. */
+#selectionContextMenu .fa-search,
+#popupContextMenu .fa-search,
+#selectionContextMenu .ctxmenu-icon .fa-search,
+#popupContextMenu .ctxmenu-icon .fa-search {
+  color: var(--zc-danger) !important;
+}
+
+/* panelVersets: la loupe doit rester bleue. */
+#panelVersets .zc-module-head-action-ico.fa-search {
+  color: var(--zc-link) !important;
+}
+
+/* Correctif ciblé: mode sombre uniquement (texte noir -> lisible) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+  :root:not([data-theme="light"]) .zc-comment-popup-mode-indicator,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon {
+    color: var(--zc-text) !important;
+  }
+
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn *,
+  :root:not([data-theme="light"]) .zc-comment-popup-mode-indicator *,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile *,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn *,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon * {
+    color: inherit !important;
+  }
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+:root[data-theme="dark"] .zc-comment-popup-mode-indicator,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon {
+  color: var(--zc-text) !important;
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn *,
+:root[data-theme="dark"] .zc-comment-popup-mode-indicator *,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile *,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn *,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon * {
+  color: inherit !important;
+}
+
+/* Renfort final (priorité max) : dark mode, textes boutons/languettes visibles */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn .zc-top-action-label,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-label,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-ajouter,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-ajouter .zc-top-action-label,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-supprimer,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-supprimer .zc-top-action-label,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn .toggle-sign,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-comment-popup-action-tile,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-popup-tool-btn,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .af-btn.af-btn-icon,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-top-action-label,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-title-sync-label,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico {
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn .zc-top-action-label,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-label,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-ajouter,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-ajouter .zc-top-action-label,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-supprimer,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar #btn-supprimer .zc-top-action-label,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn .toggle-sign,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-comment-popup-action-tile,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-popup-tool-btn,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .af-btn.af-btn-icon,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-top-action-label,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-title-sync-label,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+/* ========================================================================== */
+/* Mes Notes uniquement (#afModalOverlay) — correctif lisibilité panneau Actions */
+/* ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-popup-tool-btn,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .af-btn.af-btn-icon,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-comment-popup-action-tile {
+    background: transparent !important;
+    border: none !important;
+    color: var(--zc-text) !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-top-action-label,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-title-sync-label,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico i {
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-popup-tool-btn,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .af-btn.af-btn-icon,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-comment-popup-action-tile {
+  background: transparent !important;
+  border: none !important;
+  color: var(--zc-text) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-top-action-label,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-title-sync-label,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico,
+:root[data-theme="dark"] #afModalOverlay .zc-af-actions-toolbar .zc-top-action-ico i {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+/* Mes Commentaires: même correction que Mes Notes (dark mode). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile {
+    background: transparent !important;
+    border: none !important;
+    color: var(--zc-text) !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-label,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-title-sync-label,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-ico,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-ico i {
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile {
+  background: transparent !important;
+  border: none !important;
+  color: var(--zc-text) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-label,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-title-sync-label,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-ico,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-ico i {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+/* Mes Commentaires: texte "Edit/Add" (mode indicator) forcé lisible. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #popupCommentaireOverlay #zc-comment-popup-mode-indicator,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-comment-popup-mode-indicator {
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    background: var(--zc-surface) !important;
+    border-color: var(--zc-accent) !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #popupCommentaireOverlay #zc-comment-popup-mode-indicator,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-comment-popup-mode-indicator {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  background: var(--zc-surface) !important;
+  border-color: var(--zc-accent) !important;
+  opacity: 1 !important;
+}
+
+/* Mes Notes: lien/label Replies forcé lisible en dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #afModalOverlay #afModalRepliesLink,
+  :root:not([data-theme="light"]) #afModalOverlay .af-modal-replies-link {
+    color: var(--zc-popup-link) !important;
+    -webkit-text-fill-color: var(--zc-popup-link) !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #afModalOverlay #afModalRepliesLink,
+:root[data-theme="dark"] #afModalOverlay .af-modal-replies-link {
+  color: var(--zc-popup-link) !important;
+  -webkit-text-fill-color: var(--zc-popup-link) !important;
+  opacity: 1 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #afModalOverlay #afModalRepliesLink:hover,
+  :root:not([data-theme="light"]) #afModalOverlay .af-modal-replies-link:hover {
+    color: var(--zc-popup-link-hover) !important;
+    -webkit-text-fill-color: var(--zc-popup-link-hover) !important;
+  }
+}
+
+:root[data-theme="dark"] #afModalOverlay #afModalRepliesLink:hover,
+:root[data-theme="dark"] #afModalOverlay .af-modal-replies-link:hover {
+  color: var(--zc-popup-link-hover) !important;
+  -webkit-text-fill-color: var(--zc-popup-link-hover) !important;
+}
+
+/* ========================================================================== */
+/* Forçage global panneaux: +/- et commandes lisibles (dark mode)             */
+/* ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-panel-collapse-btn .toggle-sign {
+    background: var(--zc-surface) !important;
+    border: none !important;
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .menu-button.zc-top-action-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-popup-tool-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .af-btn.af-btn-icon,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-comment-popup-action-tile {
+    background: var(--zc-surface) !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-label,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-title-sync-label,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-ico,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-ico i {
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+
+  /* Listes déroulées : pas de cadre (écrase le forçage du bloc ci-dessus). */
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .menu-button.zc-top-action-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list label.menu-button.zc-top-action-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .like-btn.zc-top-action-btn,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .bouton.zc-top-action-btn {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .menu-button.zc-top-action-btn:hover,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list label.menu-button.zc-top-action-btn:hover,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .like-btn.zc-top-action-btn:hover,
+  :root:not([data-theme="light"]) .toolbar1.zc-module-panel .zc-module-actions-list .bouton.zc-top-action-btn:hover {
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-panel-collapse-btn .toggle-sign {
+  background: var(--zc-surface) !important;
+  border: none !important;
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .menu-button.zc-top-action-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-popup-tool-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .af-btn.af-btn-icon,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-comment-popup-action-tile {
+  background: var(--zc-surface) !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-label,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-title-sync-label,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-ico,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-toolbar-inner .zc-top-action-ico i {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+/* Listes déroulées des panneaux : pas de cadre (écrase le forçage dark ci-dessus + .zc-panel-soura). */
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .menu-button.zc-top-action-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list label.menu-button.zc-top-action-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .like-btn.zc-top-action-btn,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .bouton.zc-top-action-btn {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .menu-button.zc-top-action-btn:hover,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list label.menu-button.zc-top-action-btn:hover,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .like-btn.zc-top-action-btn:hover,
+:root[data-theme="dark"] .toolbar1.zc-module-panel .zc-module-actions-list .bouton.zc-top-action-btn:hover {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Contexte menu: titre + icônes 3-barres et fermer forcés en couleur token. */
+#popupContextMenu .ctxmenu-popup__title,
+#popupContextMenu #ctxmenuHeaderTitle,
+#popupContextMenu .ctxmenu-popup__close,
+#popupContextMenu .ctxmenu-popup__close *,
+#t-popup-resultats-ctx-menu,
+#t-popup-resultats-ctx-menu-z1,
+#t-popup-resultats-ctx-menu-z2,
+#t-popup-resultats-ctx-menu-z3,
+#t-popup-resultats-ctx-menu *,
+#t-popup-resultats-ctx-menu-z1 *,
+#t-popup-resultats-ctx-menu-z2 *,
+#t-popup-resultats-ctx-menu-z3 *,
+#t-minimiser-la-fenêtre,
+#t-minimiser-resultats-z1,
+#t-minimiser-resultats-z2,
+#t-minimiser-resultats-z3,
+#t-minimiser-la-fenêtre *,
+#t-minimiser-resultats-z1 *,
+#t-minimiser-resultats-z2 *,
+#t-minimiser-resultats-z3 *,
+#popupHtml .zc-popup-ctx-tab,
+#popupHtml .zc-popup-ctx-tab *,
+#popupHtml .zc-forum-head-close,
+#popupHtml .zc-forum-head-close * {
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: var(--zc-text) !important;
+  opacity: 1 !important;
+}
+
+/* Bouton +/- : forcer fond sombre + signe clair dans les deux popups. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #afModalOverlay .zc-panel-collapse-btn,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-panel-collapse-btn,
+  :root:not([data-theme="light"]) #afModalOverlay .zc-panel-collapse-btn .toggle-sign,
+  :root:not([data-theme="light"]) #popupCommentaireOverlay .zc-panel-collapse-btn .toggle-sign {
+    background: var(--zc-surface) !important;
+    border-color: var(--zc-accent) !important;
+    color: var(--zc-text) !important;
+    -webkit-text-fill-color: unset !important;
+    opacity: 1 !important;
+  }
+}
+
+:root[data-theme="dark"] #afModalOverlay .zc-panel-collapse-btn,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-panel-collapse-btn,
+:root[data-theme="dark"] #afModalOverlay .zc-panel-collapse-btn .toggle-sign,
+:root[data-theme="dark"] #popupCommentaireOverlay .zc-panel-collapse-btn .toggle-sign {
+  background: var(--zc-surface) !important;
+  border-color: var(--zc-accent) !important;
+  color: var(--zc-text) !important;
+  -webkit-text-fill-color: unset !important;
+  opacity: 1 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mes Commentaires = même apparence que Mes Notes (@afModalOverlay)          */
+/* -------------------------------------------------------------------------- */
+#popupCommentaireOverlay .zc-comment-popup-box.popup-box {
+  background: var(--zc-ui-soft-bg) !important;
+  color: var(--zc-text) !important;
+  border-color: var(--zc-border) !important;
+}
+
+#popupCommentaireOverlay .zc-comment-popup-title,
+#popupCommentaireOverlay .zc-comment-popup-header,
+#popupCommentaireOverlay .zc-comment-popup-header * {
+  color: var(--zc-text) !important;
+}
+
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-top-action-label,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-label {
+  color: var(--zc-text-muted) !important;
+}
+
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn.zc-popup-tab,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-comment-popup-action-tile {
+  background: transparent !important;
+  border: none !important;
+  color: var(--zc-text) !important;
+  box-shadow: none !important;
+}
+
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar.zc-module-actions-list > .menu-button.zc-top-action-btn:hover,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .popup-mode-btn.zc-popup-tab:hover,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .zc-popup-tool-btn:hover,
+#popupCommentaireOverlay .zc-comment-popup-actions-toolbar .af-btn.af-btn-icon:hover {
+  background: color-mix(in srgb, var(--zc-text) 10%, transparent) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Champs sujet/texte : fond surface + texte principal (adaptatif clair/sombre). */
+#popupCommentaireOverlay #popupInputMot.zc-ui-search-field,
+#popupCommentaireOverlay #commentaires.zc-ui-search-field {
+  background: var(--zc-surface) !important;
+  color: var(--zc-text) !important;
+  border: 1px solid var(--zc-border) !important;
+}
+
+#popupCommentaireOverlay #popupInputMot.zc-ui-search-field::placeholder,
+#popupCommentaireOverlay #commentaires.zc-ui-search-field::placeholder {
+  color: var(--zc-text-muted) !important;
+}
+
+#popupCommentaireOverlay #suggestions-container-popupInputMot.suggestions-liste,
+#popupCommentaireOverlay #suggestions-container-popupInputMot.suggestions-liste li {
+  background: var(--zc-surface) !important;
+  color: var(--zc-text) !important;
+  border-color: var(--zc-border) !important;
+}
+
+/* ========================================================================== */
+/* POPUPS: rendu homogène strict (clair/sombre)                               */
+/* Règle demandée: texte uniforme, liens bleus, rouge conservé.               */
+/* ========================================================================== */
+
+/* Coquilles de popups / modales */
+.zc-popup-zoom-tier .popup-content,
+#popupHtml .popup-content,
+#popupContextMenu .ctxmenu-popup__card,
+#selectionContextMenu,
+.popupCommentaireOverlay .popup-box,
+.zc-historik-dialog,
+.zc-login-card,
+.zc-forum-notify-panel,
+.messagePopup,
+#forumReadOverlay .zc-forum-read-box,
+#forumEditOverlay .zc-forum-edit-box,
+#forumReplyOverlay .zc-forum-reply-popup-box {
+  background: var(--zc-surface) !important;
+  color: var(--zc-text) !important;
+  border-color: var(--zc-border) !important;
+}
+
+/* Texte: plus de nuances (hors liens bleus / rouge). */
+.zc-popup-zoom-tier .popup-content :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+#popupHtml .popup-content :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+#popupContextMenu .ctxmenu-popup__card :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+#selectionContextMenu :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+.popupCommentaireOverlay .popup-box :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+.zc-historik-dialog :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+.zc-login-card :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+.zc-forum-notify-panel :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit),
+.messagePopup :not(a):not(.rouge):not(.zc-popup-cible-ref):not(.zc-term-hit) {
+  color: var(--zc-text) !important;
+}
+
+/* Liens bleus (seule couleur autorisée hors rouge). */
+.zc-popup-zoom-tier .popup-content a,
+#popupHtml .popup-content a,
+#popupContextMenu .ctxmenu-popup__card a,
+#selectionContextMenu a,
+.popupCommentaireOverlay .popup-box a,
+.zc-historik-dialog a,
+.zc-login-card a,
+.zc-forum-notify-panel a,
+.messagePopup a {
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-popup-zoom-tier .popup-content a:hover,
+#popupHtml .popup-content a:hover,
+#popupContextMenu .ctxmenu-popup__card a:hover,
+#selectionContextMenu a:hover,
+.popupCommentaireOverlay .popup-box a:hover,
+.zc-historik-dialog a:hover,
+.zc-login-card a:hover,
+.zc-forum-notify-panel a:hover,
+.messagePopup a:hover {
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* Toolbar lecture forum: conserver le bleu des actions (Reply / Share / Notes). */
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action .zc-forum-read-btn-label,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action i,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action .zc-forum-read-notes-emoji {
+  color: var(--zc-popup-link) !important;
+  -webkit-text-fill-color: var(--zc-popup-link) !important;
+}
+
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:hover,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:focus-visible,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:hover .zc-forum-read-btn-label,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:focus-visible .zc-forum-read-btn-label,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:hover i,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:focus-visible i,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:hover .zc-forum-read-notes-emoji,
+#forumReadOverlay .zc-forum-read-toolbar .zc-forum-read-action:focus-visible .zc-forum-read-notes-emoji {
+  color: var(--zc-popup-link-hover) !important;
+  -webkit-text-fill-color: var(--zc-popup-link-hover) !important;
+}
+
+/* Rouge conservé */
+.rouge,
+.zc-popup-cible-ref,
+.zc-term-hit.rouge {
+  color: var(--zc-danger) !important;
+}
+
+/* Fonds internes homogènes dans popups (champs, listes, sous-cartes) */
+.zc-popup-zoom-tier .popup-content textarea,
+.zc-popup-zoom-tier .popup-content input,
+.zc-popup-zoom-tier .popup-content select,
+.zc-popup-zoom-tier .popup-content .suggestions-liste,
+.zc-popup-zoom-tier .popup-content .zc-forum-thread-box,
+.zc-popup-zoom-tier .popup-content .zc-forum-read-body,
+.zc-popup-zoom-tier .popup-content .zc-forum-thread-replies,
+#popupHtml .popup-content textarea,
+#popupHtml .popup-content input,
+#popupHtml .popup-content select,
+#popupHtml .popup-content .suggestions-liste,
+#popupHtml .popup-content .zc-forum-thread-box,
+#popupHtml .popup-content .zc-forum-read-body,
+#popupHtml .popup-content .zc-forum-thread-replies,
+.popupCommentaireOverlay .popup-box textarea,
+.popupCommentaireOverlay .popup-box input,
+.popupCommentaireOverlay .popup-box select,
+.popupCommentaireOverlay .popup-box .suggestions-liste,
+.zc-login-card input,
+.zc-login-card select,
+.zc-historik-dialog select {
+  background: var(--zc-surface) !important;
+  color: var(--zc-text) !important;
+  border-color: var(--zc-border) !important;
+}
+
+/* Popup "Choix du livre de commentaires" : options plus aérées. */
+#zcTraductionDialog #Traduction {
+  line-height: 1.45;
+}
+
+#zcTraductionDialog #Traduction option {
+  padding: 6px 8px;
+  line-height: 1.45;
+}
+
+/* Uniformise les bandeaux/états qui utilisaient jaune/vert/orange */
+.zc-forum-status-banner:not(:empty),
+.zc-forum-read-body .zc-forum-replies-start,
+.zc-forum-reader-count,
+.zc-forum-reader-row-meta,
+.zc-forum-card-meta,
+.zc-forum-author,
+.zc-forum-notify-item-meta,
+.zc-forum-notify-item-when,
+.zc-forum-welcome-level-tag,
+.zc-forum-niveau-pill {
+  background: transparent !important;
+  border-color: var(--zc-border) !important;
+  color: var(--zc-text) !important;
+}
+
+/* Niveau [n] à côté du titre : conserver l’accent (règle ci-dessus le neutralisait). */
+.zc-forum-head-welcome-cluster .zc-forum-welcome-level-tag {
+  color: var(--zc-accent-hover) !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Forum popup : ME/MC doivent refléter visuellement l'état global */
+#popupHtml [id="btnForumInlineME"].zc-param-toggle-on,
+#popupHtml [id="btnForumInlineMC"].zc-param-toggle-on,
+#forum-container [id="btnForumInlineME"].zc-param-toggle-on,
+#forum-container [id="btnForumInlineMC"].zc-param-toggle-on {
+  color: var(--zc-accent) !important;
+}
+
+#popupHtml [id="btnForumInlineME"].zc-param-toggle-off,
+#popupHtml [id="btnForumInlineMC"].zc-param-toggle-off,
+#forum-container [id="btnForumInlineME"].zc-param-toggle-off,
+#forum-container [id="btnForumInlineMC"].zc-param-toggle-off {
+  color: var(--zc-text-muted) !important;
+}
+
+#popupHtml [id="btnForumInlineME"].zc-param-toggle-on .zc-module-tab-short-label,
+#popupHtml [id="btnForumInlineMC"].zc-param-toggle-on .zc-module-tab-short-label,
+#forum-container [id="btnForumInlineME"].zc-param-toggle-on .zc-module-tab-short-label,
+#forum-container [id="btnForumInlineMC"].zc-param-toggle-on .zc-module-tab-short-label {
+  color: var(--zc-accent) !important;
+}
+
+#popupHtml [id="btnForumInlineME"].zc-param-toggle-off .zc-module-tab-short-label,
+#popupHtml [id="btnForumInlineMC"].zc-param-toggle-off .zc-module-tab-short-label,
+#forum-container [id="btnForumInlineME"].zc-param-toggle-off .zc-module-tab-short-label,
+#forum-container [id="btnForumInlineMC"].zc-param-toggle-off .zc-module-tab-short-label {
+  color: var(--zc-text-muted) !important;
+}

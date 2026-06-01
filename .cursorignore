@@ -1,0 +1,51 @@
+﻿# Dépendances (toutes occurrences)
+node_modules/
+
+# Builds & artefacts
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.vercel/
+.parcel-cache/
+.turbo/
+.cache/
+
+# Firebase
+.firebase/
+
+# Tests & couverture
+coverage/
+.nyc_output/
+lib-cov/
+
+# Logs & caches outils
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log*
+firebase-debug.*.log*
+.eslintcache
+.grunt/
+.npm/
+
+# Secrets & env (ne pas indexer)
+.env
+.env.*
+!.env.example
+
+# Fichiers générés / pack
+*.tgz
+.dataconnect/
+
+# Dossier projet
+other/
+*.rar
+
+# OS & IDE (optionnel — réduit le bruit)
+.DS_Store
+Thumbs.db

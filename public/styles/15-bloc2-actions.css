@@ -1,0 +1,126 @@
+﻿/* public/styles/15-bloc2-actions.css — Bloc 2 « Recherche versets » (Phase C).
+ *
+ * Contient :
+ *   - .zc-block2-actions : format compact des boutons top-action + toolbar du 2ᵉ bloc.
+ *   - Sous-bloc Historik (.zc-block2-historik) : largeur auto.
+ *   - Variantes compactes #TraduireInput, #t-aide-modules, #t-Historique-des-mots-par-défaut.
+ *   - Media query mobile (<= 520px) : compression des panneaux modules (head + actions).
+ *
+ * S'appuie sur les tokens de 01-tokens.css et les règles modules de 14-modules-toolbar.css.
+ */
+/* Bloc 2 (Recherche versets): mêmes principes mais format compact */
+.zc-block2-actions .zc-top-action-btn {
+  min-width: 106px;
+  min-height: 34px;
+  padding: 4px 6px;
+  gap: 5px;
+  border-radius: 10px;
+  color: var(--zc-text);
+}
+
+.zc-block2-actions .zc-top-action-label {
+  font-size: 12px;
+}
+
+.zc-block2-actions #btnToggleZoneA {
+  flex-basis: auto;
+  width: auto;
+  min-width: 150px;
+  justify-content: center;
+}
+
+/* Harmoniser le fond des sous-blocs du 2e panneau (plus de gris "champ") */
+.zc-block2-actions .toolbar {
+  background: linear-gradient(180deg, var(--zc-surface-muted) 0%, var(--zc-bg) 100%) !important;
+  border: none !important;
+  border-radius: 10px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  max-width: 100%;
+  gap: var(--zc-module-toolbar-gap);
+}
+
+/* Sous-bloc Historik : ne pas étirer sur toute la ligne — largeur = contenu */
+.zc-block2-historik {
+  flex: 0 1 auto !important;
+  width: max-content;
+  max-width: 100% !important;
+  min-width: 0;
+  padding: 3px 4px !important;
+  justify-content: center;
+}
+
+.zc-block2-actions #btnToggleZoneA {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.zc-block2-actions select,
+.zc-block2-actions #historiqueMots {
+  background: var(--zc-surface);
+  border: 1px solid var(--zc-panel-action-border);
+}
+
+.zc-block2-actions #historiqueMots {
+  width: 10ch;
+  min-width: 10ch;
+  max-width: 10ch;
+}
+
+/* Ligne des actions de recherche: version compacte (icônes seules sauf besoin) */
+.zc-block2-actions #TraduireInput {
+  min-width: 34px;
+  width: 34px;
+  padding-inline: 0;
+}
+
+.zc-block2-actions #TraduireInput .zc-top-action-label {
+  display: none;
+}
+
+.zc-block2-actions #t-aide-modules,
+.zc-block2-actions #t-Historique-des-mots-par-défaut {
+  min-width: 34px;
+  width: 34px;
+  padding-inline: 0;
+}
+
+.zc-block2-actions #t-aide-modules .zc-top-action-label,
+.zc-block2-actions #t-Historique-des-mots-par-défaut .zc-top-action-label {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  /* Compression mobile globale : réduit la hauteur visuelle des panneaux */
+  .toolbar1.zc-module-panel .zc-module-head.Modules {
+    padding: 5px 8px 6px !important;
+    gap: 4px 6px !important;
+    font-size: 13px;
+  }
+
+  .toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn {
+    min-height: 18px;
+    padding: 0 3px;
+  }
+
+  .toolbar1.zc-module-panel .zc-module-actions-list {
+    padding: 4px 6px 7px !important;
+  }
+
+  .toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn,
+  .toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn,
+  .toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn {
+    min-height: 36px;
+    padding: 6px 8px !important;
+    gap: 8px !important;
+  }
+
+  .toolbar1.zc-module-panel .zc-module-actions-list > * + * {
+    margin-top: 3px !important;
+  }
+
+  .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-label {
+    line-height: 1.2;
+    font-size: 0.95em;
+  }
+}

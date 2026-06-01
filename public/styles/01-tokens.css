@@ -1,0 +1,245 @@
+/* public/styles/01-tokens.css — Design tokens unifiés Alfamous (Phase C de l'audit).
+ *
+ * Toutes les variables globales (palette, typo, icônes, espaces, rayons, ombres,
+ * popup, modules, etc.) sont centralisées ici. Importé en premier par styles.css.
+ *
+ * Les noms `--zc-*` existants sont conservés pour rétro-compat ;
+ * les nouvelles échelles `--zc-fs-*`, `--zc-icon-*`, `--zc-space-*`, `--zc-popup-*`
+ * peuvent être utilisées progressivement à travers le projet.
+ */
+:root {
+  /* ---- Palette ---- */
+  --zc-bg: #e7f2f7;
+  --zc-surface: #f8fbfd;
+  --zc-surface-muted: #eef6f4;
+  --zc-border: #d7e2ea;
+  --zc-text: #0f172a;
+  /* Mode clair: assombri pour améliorer le contraste des labels. */
+  --zc-text-muted: #475569;
+  --zc-accent: #0d9488;
+  --zc-accent-hover: #0f766e;
+  --zc-link: #0369a1;
+  --zc-link-strong: #1d4ed8;
+  --zc-focus-ring: rgba(13, 148, 136, 0.2);
+  --zc-overlay-bg: rgba(2, 6, 23, 0.6);
+  --zc-success-bg: #dff0d8;
+  --zc-success-text: #14532d;
+  --zc-success-border: #bbf7d0;
+  --zc-danger-bg: #ff5c5c;
+  --zc-danger-text: #ffffff;
+  --zc-ui-soft-bg: #f1f6fa;
+  --zc-ui-soft-border: #c4d0db;
+  --zc-hover-bg: #eef4f8;
+  --zc-selected-bg: #ecfdf5;
+  --zc-selected-border: #99f6e4;
+  --zc-target-bg: #fff5f5;
+  --zc-target-border: #ffcdd2;
+  --zc-hit-bg: #fff2a8;
+  /* Accent « popup résultats » (bleu, distinct du turquoise des modules). */
+  --zc-popup-link: #1d4ed8;
+  --zc-popup-link-hover: #172554;
+  --zc-popup-chip-bg: rgba(248, 251, 253, 0.78);
+  --zc-popup-chip-bg-hover: rgba(248, 251, 253, 0.94);
+  --zc-popup-link-soft: rgba(29, 78, 216, 0.12);
+  --zc-popup-bg: #e6f0ff;
+  --zc-popup-bg-border: #cfe0ff;
+  --zc-popup-title-color: #334155;
+  --zc-danger: #dc2626;
+  /* Gris utilitaire (anciennement --grey-color). Conservé sous les deux noms. */
+  --zc-grey: #999;
+  --grey-color: var(--zc-grey);
+
+  /* ---- Typographie ---- */
+  --zc-font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", "Noto Naskh Arabic", Arial, sans-serif;
+  --zc-fs-xxs: 0.68rem;  /* stats, badges, sublabels */
+  --zc-fs-xs:  0.75rem;  /* boutons compacts (Copier tout, linkrow) */
+  --zc-fs-sm:  0.82rem;  /* cartes, 1re ligne, titre popup */
+  --zc-fs-md:  0.9rem;   /* texte courant bandeaux */
+  --zc-fs-base: 1rem;    /* corps standard */
+  --zc-fs-lg:  1.15rem;  /* titres secondaires */
+  --zc-fs-xl:  1.3rem;   /* titres principaux modaux */
+  --zc-lh-tight: 1.15;
+  --zc-lh-normal: 1.4;
+  --zc-lh-loose: 1.6;
+
+  /* ---- Icônes ---- */
+  --zc-icon-xs: 0.7rem;
+  --zc-icon-sm: 0.85rem;
+  --zc-icon-md: 1rem;
+  --zc-icon-lg: 1.2rem;
+  --zc-popup-head-icon-box: 2.5rem;
+  --zc-popup-head-icon-fs: 1.35rem;
+
+  /* ---- Espacement (stack / gap) ---- */
+  --zc-space-1: 2px;
+  --zc-space-2: 4px;
+  --zc-space-3: 6px;
+  --zc-space-4: 8px;
+  --zc-space-5: 12px;
+  --zc-space-6: 16px;
+
+  /* ---- Rayons / ombres ---- */
+  --zc-radius: 12px;
+  --zc-radius-sm: 8px;
+  --zc-radius-xs: 5px;
+  --zc-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --zc-shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+
+  /* ---- Panneaux / boutons harmonisés ---- */
+  --zc-panel-action-bg: #f7fbfd;
+  --zc-panel-action-bg-hover: #edf4f8;
+  --zc-panel-action-border: rgba(13, 148, 136, 0.32);
+
+  /* ---- Languette / titre modules ---- */
+  --zc-module-tab-bg: linear-gradient(180deg, #e8eef2 0%, #d9e2ea 100%);
+  --zc-module-tab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  --zc-module-tab-icons-gap: 5px;
+  --zc-module-head-gap: 5px 7px;
+  --zc-module-toolbar-gap: 6px 7px;
+
+  /* ---- Barre du haut ---- */
+  --zc-topline-bg: #dfe5ea;
+
+  /* ---- Champs recherche / #mot ---- */
+  --zc-ui-search-pad-x-icon: 30px;
+  --zc-ui-search-min-h: 40px;
+
+  /* ---- Animations ---- */
+  --annonce-speed: 20; /* 0 = pas d’animation ; 30 lent, 100 rapide */
+
+  /* ---- Gabarit popup plein viewport (Zoom 0–3, Forum, Articles…) ---- */
+  --zc-popup-unified-max-width: min(98vw, 980px);
+  --zc-popup-unified-max-height: 100dvh;
+
+  /* ---- Aliases sémantiques (pointent vers les tokens --zc-* ci-dessus) ----
+   * Ces variables sont les points d'entrée recommandés pour tout nouveau code.
+   * Les overrides dark mode ci-dessous les affectent automatiquement via --zc-*.
+   * ---- Fond ---- */
+  --bg-main:    var(--zc-bg);       /* fond de page principal */
+  --bg-surface: var(--zc-surface);  /* fond des cartes, inputs, popups */
+  --bg-muted:   var(--zc-ui-soft-bg); /* zones secondaires, hover */
+  /* ---- Texte ---- */
+  --text-main:  var(--zc-text);     /* corps de texte et titres */
+  --text-muted: var(--zc-text-muted); /* labels, placeholders, métadonnées */
+  /* ---- Accents ---- */
+  --accent-teal: var(--zc-accent);  /* couleur de marque principale (turquoise) */
+  --accent-red:  var(--zc-danger);  /* recherches, highlights, alertes */
+  --accent-blue: var(--zc-link);    /* liens, actions principales */
+  /* ---- Bordures ---- */
+  --border-color: var(--zc-border);
+  /* ---- États ---- */
+  --state-success-bg:   var(--zc-success-bg);
+  --state-success-text: var(--zc-success-text);
+  --state-danger-bg:    var(--zc-danger-bg);
+}
+
+/* ============================================================================
+ * Dark mode (Phase D) : overrides des tokens de palette.
+ * Deux déclencheurs :
+ *   1) Media query `(prefers-color-scheme: dark)` — choix système.
+ *   2) Attribut `[data-theme="dark"]` sur <html> — toggle manuel possible via JS.
+ *
+ * Les modules CSS qui utilisent les tokens (via `var(--zc-*)`) basculeront
+ * automatiquement. Les règles qui contiennent encore des couleurs hardcodées
+ * (ex : `#f8fafc`, `#cbd5e1`…) resteront claires tant qu'elles ne sont pas
+ * tokenisées — migration progressive dans les lots suivants.
+ * ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --zc-bg: #0f172a;
+    --zc-surface: #1e293b;
+    --zc-surface-muted: #0b1220;
+    --zc-border: #334155;
+    --zc-text: #f1f5f9;
+    --zc-text-muted: #94a3b8;
+    --zc-accent: #2dd4bf;
+    --zc-accent-hover: #5eead4;
+    --zc-link: #60a5fa;
+    --zc-link-strong: #93c5fd;
+    --zc-focus-ring: rgba(45, 212, 191, 0.35);
+    --zc-overlay-bg: rgba(2, 6, 23, 0.78);
+    --zc-success-bg: #14532d;
+    --zc-success-text: #dcfce7;
+    --zc-success-border: #166534;
+    --zc-danger-bg: #7f1d1d;
+    --zc-danger-text: #fecaca;
+    --zc-ui-soft-bg: #1e293b;
+    --zc-ui-soft-border: #475569;
+    --zc-hover-bg: #1f2937;
+    --zc-selected-bg: #0f2d2a;
+    --zc-selected-border: #1f766d;
+    --zc-target-bg: #3a1f25;
+    --zc-target-border: #7f1d1d;
+    --zc-hit-bg: #7c5b18;
+
+    /* Popup résultats : teinte bleue plus soutenue sur fond sombre. */
+    --zc-popup-link: #60a5fa;
+    --zc-popup-link-hover: #93c5fd;
+    --zc-popup-link-soft: rgba(96, 165, 250, 0.18);
+    --zc-popup-chip-bg: rgba(255, 255, 255, 0.08);
+    --zc-popup-chip-bg-hover: rgba(255, 255, 255, 0.14);
+    --zc-popup-bg: #1e3a5c;
+    --zc-popup-bg-border: #1e40af;
+    --zc-popup-title-color: #cbd5e1;
+
+    /* Accent "danger" / gris. */
+    --zc-danger: #f87171;
+    --zc-grey: #94a3b8;
+
+    /* Panneaux / modules. */
+    --zc-panel-action-bg: #1e293b;
+    --zc-panel-action-bg-hover: #253243;
+    --zc-panel-action-border: rgba(45, 212, 191, 0.32);
+    --zc-module-tab-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    --zc-module-tab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+    /* Barre du haut. */
+    --zc-topline-bg: #0b1220;
+  }
+}
+
+/* Permet un toggle manuel : <html data-theme="dark"> force le dark même en mode clair système. */
+:root[data-theme="dark"] {
+  --zc-bg: #0f172a;
+  --zc-surface: #1e293b;
+  --zc-surface-muted: #0b1220;
+  --zc-border: #334155;
+  --zc-text: #f1f5f9;
+  --zc-text-muted: #94a3b8;
+  --zc-accent: #2dd4bf;
+  --zc-accent-hover: #5eead4;
+  --zc-link: #60a5fa;
+  --zc-link-strong: #93c5fd;
+  --zc-focus-ring: rgba(45, 212, 191, 0.35);
+  --zc-overlay-bg: rgba(2, 6, 23, 0.78);
+  --zc-success-bg: #14532d;
+  --zc-success-text: #dcfce7;
+  --zc-success-border: #166534;
+  --zc-danger-bg: #7f1d1d;
+  --zc-danger-text: #fecaca;
+  --zc-ui-soft-bg: #1e293b;
+  --zc-ui-soft-border: #475569;
+  --zc-hover-bg: #1f2937;
+  --zc-selected-bg: #0f2d2a;
+  --zc-selected-border: #1f766d;
+  --zc-target-bg: #3a1f25;
+  --zc-target-border: #7f1d1d;
+  --zc-hit-bg: #7c5b18;
+  --zc-popup-link: #60a5fa;
+  --zc-popup-link-hover: #93c5fd;
+  --zc-popup-link-soft: rgba(96, 165, 250, 0.18);
+  --zc-popup-chip-bg: rgba(255, 255, 255, 0.08);
+  --zc-popup-chip-bg-hover: rgba(255, 255, 255, 0.14);
+  --zc-popup-bg: #1e3a5c;
+  --zc-popup-bg-border: #1e40af;
+  --zc-popup-title-color: #cbd5e1;
+  --zc-danger: #f87171;
+  --zc-grey: #94a3b8;
+  --zc-panel-action-bg: #1e293b;
+  --zc-panel-action-bg-hover: #253243;
+  --zc-panel-action-border: rgba(45, 212, 191, 0.32);
+  --zc-module-tab-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --zc-module-tab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --zc-topline-bg: #0b1220;
+}

@@ -1,0 +1,175 @@
+/* public/styles/07-ctx-tab.css — Bouton menu contextuel ☰ / fa-bars (Phase C).
+ *
+ * Règles partagées pour le lien/bouton `.zc-popup-ctx-tab` utilisé dans :
+ *   - Zoom 0–3 (popupResultats, à côté du mot / racine).
+ *   - Lexique (mêmes popups).
+ *   - Comment popup (en-tête).
+ *   - Articles forum modal (en-tête).
+ *   - Medias actions tab.
+ *   - Hamburger header #popupResultats.
+ *
+ * Tokens : --zc-popup-link, --zc-popup-link-hover, --zc-popup-link-soft.
+ */
+
+a.zc-popup-ctx-tab {
+  display: inline;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-popup-link) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.2em;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+
+a.zc-popup-ctx-tab:hover {
+  color: var(--zc-popup-link-hover) !important;
+  text-decoration: none !important;
+  background: var(--zc-popup-link-soft) !important;
+  border-radius: 2px;
+}
+
+button.zc-popup-ctx-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-popup-link) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.1;
+  vertical-align: middle;
+}
+
+button.zc-popup-ctx-tab:hover {
+  color: var(--zc-popup-link-hover) !important;
+  background: var(--zc-popup-link-soft) !important;
+}
+
+button.zc-popup-ctx-tab .zc-top-action-ico {
+  color: inherit !important;
+  font-size: var(--zc-fs-lg);
+  line-height: 1;
+  margin: 0;
+}
+
+button.zc-popup-ctx-tab .zc-top-action-label {
+  display: none !important;
+}
+
+button.zc-popup-ctx-tab i.fas,
+button.zc-popup-ctx-tab .fas {
+  color: inherit !important;
+}
+
+button.zc-popup-ctx-tab.menu-button,
+button.zc-popup-ctx-tab.menu-button.active,
+button.zc-popup-ctx-tab.menu-button.active:hover {
+  border-radius: 0 !important;
+  min-height: auto !important;
+  margin: 0 !important;
+}
+
+button.zc-popup-ctx-tab.menu-button:hover {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn.zc-popup-ctx-tab {
+  min-width: auto !important;
+  width: auto !important;
+  min-height: auto !important;
+  height: auto !important;
+  padding: 2px 6px !important;
+}
+
+.zc-comment-popup-header #btn-commentCtxMenu.zc-comment-popup-iconbtn.zc-popup-ctx-tab {
+  width: var(--zc-popup-head-icon-box);
+  height: var(--zc-popup-head-icon-box);
+  min-width: var(--zc-popup-head-icon-box);
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--zc-popup-head-icon-fs) !important;
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-comment-popup-header #btn-commentCtxMenu.zc-comment-popup-iconbtn.zc-popup-ctx-tab:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+#afModalOverlay .af-modal-head #afModalCtxMenu.zc-comment-popup-iconbtn.zc-popup-ctx-tab {
+  width: var(--zc-popup-head-icon-box);
+  height: var(--zc-popup-head-icon-box);
+  min-width: var(--zc-popup-head-icon-box);
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--zc-popup-head-icon-fs) !important;
+  color: var(--zc-popup-link) !important;
+}
+
+#afModalOverlay .af-modal-head #afModalCtxMenu.zc-comment-popup-iconbtn.zc-popup-ctx-tab:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons #zcMediasCtxMenuBtn {
+  border-radius: 0 !important;
+  color: var(--zc-popup-link) !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons #zcMediasCtxMenuBtn:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+button.zc-popup-ctx-tab.zc-comment-popup-iconbtn {
+  color: var(--zc-popup-link) !important;
+  width: auto !important;
+  min-width: auto !important;
+  height: auto !important;
+  min-height: auto !important;
+  padding: 2px 6px !important;
+  border-radius: 0 !important;
+  font-size: var(--zc-fs-lg) !important;
+  background: transparent !important;
+}
+
+button.zc-popup-ctx-tab.zc-comment-popup-iconbtn:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* Hamburger en-tête popup résultats (fa-bars) : même bleu que lien ☰ du bandeau */
+#t-popup-resultats-ctx-menu.zc-forum-head-close.zc-popup-ctx-tab,
+#t-popup-resultats-ctx-menu-z1.zc-forum-head-close.zc-popup-ctx-tab,
+#t-popup-resultats-ctx-menu-z2.zc-forum-head-close.zc-popup-ctx-tab,
+#t-popup-resultats-ctx-menu-z3.zc-forum-head-close.zc-popup-ctx-tab {
+  background: transparent !important;
+  color: var(--zc-popup-link) !important;
+  font-size: 1.05rem;
+}
+
+#t-popup-resultats-ctx-menu.zc-forum-head-close.zc-popup-ctx-tab:hover,
+#t-popup-resultats-ctx-menu-z1.zc-forum-head-close.zc-popup-ctx-tab:hover,
+#t-popup-resultats-ctx-menu-z2.zc-forum-head-close.zc-popup-ctx-tab:hover,
+#t-popup-resultats-ctx-menu-z3.zc-forum-head-close.zc-popup-ctx-tab:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}

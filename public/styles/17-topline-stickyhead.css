@@ -1,0 +1,157 @@
+﻿/* public/styles/17-topline-stickyhead.css — Barre supérieure figée + sélecteur de langue (Phase C).
+ *
+ * Contient :
+ *   - .zc-app-sticky-head : bloc figé en haut (sticky) englobant topline + Recherche.
+ *   - .topline : barre du haut (logo / lang-picker / annonce).
+ *   - .zc-lang-picker* : sélecteur de langue (btn, menu, option).
+ *   - .zc-panels-start-marker* : ancre de début des panneaux.
+ *   - Media query mobile (<=480px) : version compacte de .topline .annonce-bar.
+ */
+/* Bloc figé en haut : barre du haut + recherche Soura + recherche versets (#panelVersets) ; outils mot = #panelVersetsTools (languette repliable) */
+.zc-app-sticky-head {
+  position: sticky;
+  top: max(0px, env(safe-area-inset-top, 0px));
+  z-index: 45;
+  background: var(--zc-surface, #fff);
+  margin: -12px -10px 0;
+  padding: 2px 8px 1px;
+  box-sizing: border-box;
+  border-radius: var(--zc-radius) var(--zc-radius) 0 0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+@media print {
+  .zc-app-sticky-head {
+    position: static;
+    z-index: auto;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}
+
+/* Barre supérieure: bouton + annonce sur une seule ligne */
+.topline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1px 4px 2px;
+  flex-wrap: nowrap;
+  border-bottom: none;
+  margin-bottom: 0px;
+  background: var(--zc-topline-bg);
+  border-radius: var(--zc-radius-sm) var(--zc-radius-sm) 0 0;
+}
+
+.topline .zc-lang-picker {
+  position: relative;
+  flex: 0 0 auto;
+  z-index: 12;
+}
+
+.topline #uiLangSelect {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.topline .zc-lang-picker-btn {
+  font-family: var(--zc-font);
+  font-size: 0.88rem;
+  min-width: 56px;
+  padding: 4px 22px 4px 8px;
+  border-radius: var(--zc-radius-sm);
+  border: none;
+  background: var(--zc-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M3 4.5L6 8l3-3.5'/%3E%3C/svg%3E") no-repeat right 8px center;
+  background-size: 12px;
+  color: var(--zc-text);
+  cursor: pointer;
+  box-shadow: none;
+  line-height: 1.1;
+}
+
+.topline .zc-lang-picker-btn:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+}
+
+.topline .zc-lang-picker-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 150px;
+  padding: 6px;
+  border: none;
+  border-radius: var(--zc-radius-sm);
+  background: var(--zc-surface);
+  box-shadow: var(--zc-shadow-md);
+  /* Doit rester au-dessus des boutons absolus des champs Soura/Versets (loupe, etc.). */
+  z-index: 20;
+}
+
+.topline .zc-lang-picker-option {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--zc-radius-sm);
+  background: transparent;
+  color: var(--zc-text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.topline .zc-lang-picker-option:hover,
+.topline .zc-lang-picker-option:focus-visible,
+.topline .zc-lang-picker-option[aria-selected="true"] {
+  background: var(--zc-hover-bg);
+  outline: none;
+}
+
+.topline .annonce-container {
+  flex: 1 1 auto;
+  /* prend tout l’espace restant */
+  min-width: 0;
+  /* autorise l’ellipsisation */
+}
+
+.zc-panels-start-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.zc-panels-start-marker-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.3rem;
+  color: var(--zc-popup-link);
+  font-size: var(--zc-fs-base);
+  line-height: 1;
+}
+
+.topline .annonce-bar {
+  white-space: nowrap;
+  /* reste sur une ligne */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* coupe proprement si trop long */
+}
+
+/* Optionnel: un peu plus compact sur petit écran */
+@media (max-width: 480px) {
+  .topline .annonce-bar {
+    font-size: .95em;
+  }
+}

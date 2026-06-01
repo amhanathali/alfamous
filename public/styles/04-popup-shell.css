@@ -1,0 +1,182 @@
+/* public/styles/04-popup-shell.css — Gabarit commun des popups (Phase C).
+ *
+ * Regroupe les règles partagées par toutes les popups :
+ *   - .popup-container : enveloppe fixe (centrée, tailles limites) ;
+ *   - variantes IDs : #popupHtml, #popupResultats (Zoom 0–3 + Forum + Articles + Témoignages…) ;
+ *   - .popup-content : colonne flex scrollable ;
+ *   - .popup-header : barre d'en-tête générique (fond neutre par défaut) ;
+ *   - .popup-body : zone corps par défaut ;
+ *   - .popup-overlay / .popup-box / .popup-box .popup-header : popup « Enregistrer » ;
+ *   - .popup-close : bouton ✕.
+ *
+ * Les variantes spécifiques (comment, forum reply, témoignages, medias, sélection copiée)
+ * restent dans leur module ou dans styles.css ; elles s'appuient sur ce shell.
+ */
+
+.popup-container {
+  display: none;
+  position: fixed;
+  top: 5vh;
+  left: 1vw;
+  width: 98vw;
+  max-height: 90vh;
+  background-color: var(--zc-surface, #fff);
+  border: none;
+  border-radius: var(--zc-radius, 12px);
+  box-shadow: var(--zc-shadow-md, 0 8px 32px rgba(15, 23, 42, 0.12));
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shell unifié pour toutes les fenêtres applicatives majeures. */
+.zc-window-shell {
+  width: var(--zc-popup-unified-max-width);
+  max-width: var(--zc-popup-unified-max-width);
+  height: var(--zc-popup-unified-max-height);
+  max-height: var(--zc-popup-unified-max-height);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Gabarit commun des popups déclenchées par les commandes (tailles unifiées, plein viewport). */
+#popupHtml.popup-container,
+#popupResultats.popup-container,
+#popupResultatsZ1.popup-container,
+#popupResultatsZ2.popup-container,
+#popupResultatsZ3.popup-container {
+  width: var(--zc-popup-unified-max-width);
+  max-width: var(--zc-popup-unified-max-width);
+  max-height: var(--zc-popup-unified-max-height);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Pas de z-index CSS fixe : empilement = style inline calculé (getNextZIndex / zcBringToFront),
+   * même logique pour Zoom 0–3 et #popupHtml (Warsh, forum, etc.). */
+  z-index: auto;
+}
+
+/* Zoom 0–1–2–3 : même sans résultats, occuper toute la hauteur utile. */
+#popupResultats.popup-container,
+#popupResultatsZ1.popup-container,
+#popupResultatsZ2.popup-container,
+#popupResultatsZ3.popup-container {
+  top: 0;
+  height: var(--zc-popup-unified-max-height);
+  min-height: var(--zc-popup-unified-max-height);
+}
+
+/* popupHtml (Forum / Articles / Témoignages / iframes) : même logique plein viewport. */
+#popupHtml.popup-container {
+  height: var(--zc-popup-unified-max-height);
+  min-height: var(--zc-popup-unified-max-height);
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+/* Pleine hauteur utile pour les modules hébergés dans la popup principale. */
+#popupHtml .popup-content,
+#popupResultats .popup-content,
+#popupResultatsZ1 .popup-content,
+#popupResultatsZ2 .popup-content,
+#popupResultatsZ3 .popup-content {
+  max-height: none;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Barre d’en-tête commune de popup (pour les popups non unifiées).
+ * #popupResultats la remplace via .zc-popup-header-unified (fond --zc-popup-bg). */
+.popup-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--zc-space-5);
+  padding: var(--zc-space-5);
+  background-color: var(--zc-ui-soft-bg);
+  border-bottom: none;
+}
+
+.popup-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  padding-bottom: 40px;
+  direction: rtl;
+  font-size: var(--zc-fs-base, 1rem);
+  line-height: var(--zc-lh-loose, 1.7);
+  max-height: 500px;
+}
+
+/* Zoom 0–1–2–3 : la zone résultats doit consommer toute la hauteur disponible. */
+#popupResultats .popup-body,
+#popupResultatsZ1 .popup-body,
+#popupResultatsZ2 .popup-body,
+#popupResultatsZ3 .popup-body {
+  max-height: none;
+  min-height: 0;
+}
+
+#popupResultats #popupResultatsBody,
+#popupResultatsZ1 #popupResultatsBodyZ1,
+#popupResultatsZ2 #popupResultatsBodyZ2,
+#popupResultatsZ3 #popupResultatsBodyZ3 {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Popup « Enregistrer » (overlay + box centrée). SCOPÉ pour éviter le conflit
+ * avec la .popup-header générique de #popupResultats / #popupHtml. */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 95vw;
+  height: 95vh;
+  background-color: var(--zc-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: var(--zc-surface);
+  padding: 20px;
+  border-radius: var(--zc-radius);
+  width: 95%;
+  max-width: 550px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.popup-box .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: var(--zc-fs-lg);
+  margin-bottom: 10px;
+}
+
+.popup-close {
+  background: transparent;
+  border: none;
+  color: var(--zc-text);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--zc-radius-sm);
+  padding: 2px var(--zc-space-4);
+}
+
+.popup-close:hover {
+  background: var(--zc-hover-bg);
+  color: var(--zc-text);
+}

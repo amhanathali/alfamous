@@ -1,0 +1,240 @@
+/* public/styles/21-no-chrome-borders.css — Dernier mot : pas de traits sur panneaux & boutons.
+ * Chargé après styles/99-overrides.css. Les champs de saisie sont rétablis en fin de fichier.
+ */
+
+/* --- Popups & coquilles --- */
+.popup-container,
+.popup-header,
+.helpPopup,
+.form-box,
+.annonce-container,
+.message-boxVersets,
+.suggestions-container-mot,
+.suggestions-liste {
+  border: none !important;
+}
+
+.popup-container {
+  box-shadow: var(--zc-shadow-md) !important;
+}
+
+.popup-header {
+  border-bottom: none !important;
+}
+
+/* --- Base boutons (styles.css) --- */
+.bouton,
+.menu-button,
+.popup-mode-btn,
+.toggle-btn,
+.toggle-sign,
+.styled-button,
+.chip {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.menu-button.active,
+.menu-button:hover {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.like-btn {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+.like-btn .like-heart {
+  border: none !important;
+}
+
+.like-btn.is-liked .like-heart {
+  border: none !important;
+}
+
+#btnAfficherPopup.minimized {
+  border: none !important;
+}
+
+/* Submit / reset restent sans cadre type « champ » */
+button:not(.zc-lang-picker-option),
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+  border: none !important;
+}
+
+/* --- Login : carte & messages (pas les champs) --- */
+.zc-login-card {
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18) !important;
+}
+
+.zc-login-msg,
+.zc-login-msg .zc-login-spam-hint {
+  border: none !important;
+}
+
+.zc-login-btn-secondary {
+  border: none !important;
+}
+
+.zc-login-inscription {
+  border-top: none !important;
+}
+
+/* --- Shell popup module --- */
+.zc-popup-zoom-tier .popup-content,
+#popupHtml .popup-content {
+  border: none !important;
+}
+
+/* --- Cartes & languettes --- */
+.zc-record-languette,
+.toolbar1.zc-record-languette {
+  border: none !important;
+  border-left: none !important;
+}
+
+.zc-record-languette--lexique,
+.zc-record-languette--aya,
+.zc-record-languette--article,
+.zc-record-languette--target,
+.toolbar1.zc-record-languette.zc-record-languette--aya,
+.toolbar1.zc-record-languette.zc-record-languette--target {
+  border-left: none !important;
+}
+
+.zc-record-languette__body {
+  border-top: none !important;
+}
+
+/* --- Forum --- */
+.zc-forum-root,
+.zc-forum-notify-bell,
+.zc-forum-notify-panel,
+.zc-forum-notify-panel-head,
+.zc-forum-notify-item,
+.zc-forum-niveau-pill,
+.zc-forum-welcome-auth-btn,
+.zc-forum-dedupe-btn,
+#messagesContainerForum.zc-forum-messages,
+.zc-forum-head-icon,
+.zc-forum-thread-box,
+.zc-forum-reply-editor,
+.zc-forum-reply-del,
+.zc-forum-reply-edit,
+.zc-forum-status-banner {
+  border: none !important;
+}
+
+.zc-forum-notify-bell:hover,
+.zc-forum-notify-bell--has {
+  border-color: transparent !important;
+}
+
+.zc-forum-notify-panel {
+  box-shadow: var(--zc-shadow-md) !important;
+}
+
+.zc-forum-notify-panel-head {
+  border-bottom: none !important;
+}
+
+.zc-forum-actions,
+.zc-forum-admin,
+.zc-forum-replies-start {
+  border-top: none !important;
+}
+
+.zc-forum-reply-line {
+  border-bottom: none !important;
+}
+
+#messagesContainerForum .message-box.zc-forum-post {
+  border: none !important;
+  border-left: none !important;
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-accent) !important;
+}
+
+/* Cartes forum liste lecteur : garder relief + accent sans trait */
+.zc-forum-reader-li.zc-record-languette {
+  box-shadow: var(--zc-shadow), inset 4px 0 0 var(--zc-accent) !important;
+}
+
+/* --- Versets liste --- */
+.verset {
+  border-bottom: none !important;
+}
+
+/* --- Menus contextuels --- */
+#popupContextMenu,
+#popupContextMenu .ctxmenu-panel,
+#selectionContextMenu,
+.ctxmenu-root {
+  border: none !important;
+  box-shadow: var(--zc-shadow-md) !important;
+}
+
+/* --- Newsletter : aperçu = bloc ; champ .newsletter-input rétabli ci-dessous --- */
+.newsletter-preview-wrap {
+  border: none !important;
+}
+
+/* --- Modules restants --- */
+.zc-popup-toggle-btn,
+.zc-params-swing-btn,
+.zc-params-row-chk:checked + .zc-params-swing-btn {
+  border: none !important;
+}
+
+.zc-params-tafsir-row.menu-button.zc-top-action-btn {
+  border: none !important;
+}
+
+/* --- Médias : cadre lecteur & popup détails --- */
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame,
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup.zc-medias-actions-details-popup {
+  border: none !important;
+}
+
+.zc-popup-zoom-tier .zc-popup-zoom-params-frame {
+  border: none !important;
+}
+
+/* --- Forum overrides liste (99-overrides) --- */
+.zc-forum-niveau-pill,
+.zc-forum-welcome-level-tag {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+/* ========== Champs de saisie : conserver un contour lisible ========== */
+textarea.zc-ui-search-field,
+input.zc-ui-search-field,
+textarea.textArea,
+input.textArea,
+.custom-input,
+.zc-login-input,
+.zc-login-select,
+.zc-block2-actions select,
+#historiqueMots,
+.zc-historik-dialog select,
+#popupCommentaireOverlay #popupInputMot.zc-ui-search-field,
+#popupCommentaireOverlay #commentaires.zc-ui-search-field,
+.popupCommentaireOverlay .popup-box input[type="text"],
+.popupCommentaireOverlay .popup-box textarea,
+.popupCommentaireOverlay .popup-box select,
+.newsletter-input {
+  border: 1px solid var(--zc-border) !important;
+}
+
+textarea.zc-ui-search-field:focus,
+input.zc-ui-search-field:focus,
+.custom-input:focus,
+.zc-login-input:focus,
+.zc-login-select:focus,
+#popupCommentaireOverlay #popupInputMot.zc-ui-search-field:focus,
+#popupCommentaireOverlay #commentaires.zc-ui-search-field:focus {
+  border-color: var(--zc-accent) !important;
+}

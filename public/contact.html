@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+	<title>Contact</title>
+	<!-- Firebase Libraries -->
+	<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+	<script src="jsZC/firebase-local-init.js"></script>
+	<script src="jsZC/z-index-stack.js"></script>
+	<link rel="icon" href="img/ZC2.png" type="image/jpg" />
+	<!-- Thème global + tokens --zc-* -->
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="styles/99-overrides.css">
+	<link rel="stylesheet" href="styles/21-no-chrome-borders.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+
+	<div class="container-center light-background">
+		<h3 id="titre" style="background-color: var(--zc-ui-soft-bg); padding: 10px; border-radius: 5px;">Contactez-nous</h3>
+		<!-- Retour button with arrow-left icon
+		<button id="retourBouton"title="Ferme l'application et retour en arrière"  class="bouton">
+			<i class="fas fa-arrow-left"  ></i>Retour
+		</button>
+   <br><br> -->
+		<!-- Formulaire de contact -->
+		<div id="formulaire">
+			<input id="nom" type="text" placeholder="Votre nom"
+				style="width: 100%; height: 40px; margin-bottom: 10px; font-size: 16px;">
+			<input id="mail" type="email" placeholder="Votre email"
+				style="width: 100%; height: 40px; margin-bottom: 10px; font-size: 16px;">
+			<!-- Honeypot anti-spam: invisible pour l'humain -->
+			<div aria-hidden="true"
+				style="position:absolute; left:-99999px; top:auto; width:1px; height:1px; overflow:hidden;">
+				<label for="website">Site web</label>
+				<input id="website" type="text" tabindex="-1" autocomplete="off" />
+			</div>
+			<textarea id="commentaire" placeholder="Votre message"
+				style="width: 100%; height: 80px; margin-bottom: 10px; font-size: 16px;"></textarea>
+			<button onclick="envoyerMessage()"
+				style="width: 100%; padding: 10px; background-color: var(--zc-accent); color: #fff; border: none; cursor: pointer;">Envoyer</button>
+		</div>
+		<div id="messagesSection"
+			style="display: none; padding: 10px; background-color: var(--zc-ui-soft-bg); border: 1px solid var(--zc-border); border-radius: 5px;">
+			<label id="messagesNonTraites"></label>
+			<div id="messagesContainer"></div>
+		</div>
+
+		<script defer src="contact.js"></script>
+		<style>
+			.bouton {
+				margin: 1 1px;
+				padding: 1px 1px;
+				font-size: 16px;
+				cursor: pointer;
+				color: var(--zc-popup-link);
+			}
+			.bouton.enabled {
+				background-color: var(--zc-accent);
+				color: #fff;
+			}
+			.bouton.disabled {
+				background-color: var(--zc-text-muted);
+				color: #fff;
+				cursor: not-allowed;
+			}
+		</style>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,214 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Contact public : création sans compte (contact.html), schéma strict anti-spam.
+    match /messagesContact/{docId} {
+      allow read: if true;
+      allow create: if
+        request.resource.data.keys().hasOnly(['nom', 'mail', 'commentaire', 'traite', 'date']) &&
+        request.resource.data.nom is string &&
+        request.resource.data.mail is string &&
+        request.resource.data.commentaire is string &&
+        request.resource.data.traite == false &&
+        request.resource.data.nom.size() > 0 &&
+        request.resource.data.nom.size() <= 80 &&
+        request.resource.data.mail.size() > 3 &&
+        request.resource.data.mail.size() <= 190 &&
+        request.resource.data.commentaire.size() > 0 &&
+        request.resource.data.commentaire.size() <= 3000 &&
+        request.resource.data.date is timestamp;
+      allow update, delete: if request.auth != null;
+    }
+
+    // Abonnés newsletter : visiteurs non connectés (docId = e-mail, comme dans l’app).
+    match /newsletterSubscribers/{emailDoc} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.email == emailDoc &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() > 3 &&
+        request.resource.data.email.size() <= 190 &&
+        request.resource.data.status in ['active', 'inactive'] &&
+        request.resource.data.keys().hasAll(['email', 'status', 'updatedAt']) &&
+        (!('name' in request.resource.data) ||
+          (request.resource.data.name is string && request.resource.data.name.size() <= 200)) &&
+        (!('lang' in request.resource.data) ||
+          (request.resource.data.lang is string && request.resource.data.lang.size() <= 16)) &&
+        (!('source' in request.resource.data) ||
+          (request.resource.data.source is string && request.resource.data.source.size() <= 64));
+    }
+
+    // J’aime (sessions.js) : ID appareil en localStorage, pas de Firebase Auth requis.
+    // Schéma aligné sur doLike() / undoLike().
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if
+        likeId.size() > 0 && likeId.size() <= 450 &&
+        request.resource.data.keys().hasOnly(
+          ['targetId', 'clientId', 'ua', 'tz', 'lang', 'createdAt']
+        ) &&
+        request.resource.data.targetId is string &&
+        request.resource.data.clientId is string &&
+        request.resource.data.ua is string &&
+        request.resource.data.tz is string &&
+        request.resource.data.lang is string &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.targetId.size() > 0 &&
+        request.resource.data.targetId.size() <= 500 &&
+        request.resource.data.clientId.size() > 0 &&
+        request.resource.data.clientId.size() <= 128 &&
+        request.resource.data.ua.size() <= 900 &&
+        request.resource.data.tz.size() <= 120 &&
+        request.resource.data.lang.size() <= 40;
+      allow update: if false;
+      allow delete: if true;
+    }
+
+    match /likesCounters/{targetId} {
+      allow read: if true;
+      allow create: if
+        targetId.size() > 0 && targetId.size() <= 500 &&
+        request.resource.data.keys().hasAll(['count', 'updatedAt']) &&
+        request.resource.data.keys().hasOnly(['count', 'updatedAt']) &&
+        request.resource.data.count is int &&
+        request.resource.data.count >= 1 &&
+        request.resource.data.count <= 2000000 &&
+        request.resource.data.updatedAt == request.time;
+      allow update: if
+        targetId.size() > 0 && targetId.size() <= 500 &&
+        request.resource.data.keys().hasAll(['count', 'updatedAt']) &&
+        request.resource.data.keys().hasOnly(['count', 'updatedAt']) &&
+        request.resource.data.count is int &&
+        request.resource.data.count >= 0 &&
+        request.resource.data.count <= 2000000 &&
+        request.resource.data.updatedAt == request.time &&
+        resource.data.keys().hasAll(['count']) &&
+        resource.data.count is int &&
+        (
+          request.resource.data.count == resource.data.count + 1 ||
+          request.resource.data.count == resource.data.count - 1
+        );
+      allow delete: if false;
+    }
+
+    // Témoignages : création sans compte (anonyme), schéma aligné sur temoignages-module.js.
+    // Mise à jour / suppression : utilisateur Firebase connecté (modération).
+    match /temoignages/{docId} {
+      allow read: if true;
+      allow create: if
+        request.resource.data.keys().hasOnly([
+          'authorAlias', 'mailUser', 'title', 'content', 'clientAt', 'createdAt', 'source', 'status'
+        ]) &&
+        request.resource.data.authorAlias is string &&
+        request.resource.data.mailUser is string &&
+        request.resource.data.title is string &&
+        request.resource.data.content is string &&
+        request.resource.data.clientAt is string &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.source == 'temoignages-module' &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.authorAlias.size() >= 1 &&
+        request.resource.data.authorAlias.size() <= 80 &&
+        request.resource.data.mailUser.size() >= 3 &&
+        request.resource.data.mailUser.size() <= 190 &&
+        request.resource.data.title.size() <= 200 &&
+        request.resource.data.content.size() >= 40 &&
+        request.resource.data.content.size() <= 20000 &&
+        request.resource.data.clientAt.size() >= 10 &&
+        request.resource.data.clientAt.size() <= 40;
+      allow update, delete: if request.auth != null;
+    }
+
+    // Forum : fils publics lisibles par tous ; fils privés (isPrivate == true) réservés à l’auteur (champ mail == email Auth).
+    // Les écritures sur messages publics restent ouvertes à tout utilisateur connecté (modération côté app, niveau stocké hors Auth).
+    match /forumMessages/{docId} {
+      function forumAuthedEmail() {
+        return request.auth != null && request.auth.token.email != null;
+      }
+      function forumIsPrivate() {
+        return resource.data.get('isPrivate', false) == true;
+      }
+      function forumAuthorEmailMatches() {
+        return forumAuthedEmail()
+          && 'mail' in resource.data
+          && resource.data.mail is string
+          && resource.data.mail == request.auth.token.email;
+      }
+      function forumNewAuthorEmailMatches() {
+        return forumAuthedEmail()
+          && 'mail' in request.resource.data
+          && request.resource.data.mail is string
+          && request.resource.data.mail == request.auth.token.email;
+      }
+
+      allow read: if !forumIsPrivate() || forumAuthorEmailMatches();
+
+      allow create: if forumNewAuthorEmailMatches();
+
+      // Mise à jour : auteur du document, ou tout compte connecté si le fil n’est pas privé (comportement proche de l’ancienne règle globale).
+      allow update: if forumAuthedEmail() && (
+        forumAuthorEmailMatches()
+        || !forumIsPrivate()
+      );
+
+      // Suppression : idem (modérateurs sur fils publics uniquement côté serveur).
+      allow delete: if forumAuthedEmail() && (
+        forumAuthorEmailMatches()
+        || !forumIsPrivate()
+      );
+    }
+
+    // --- Présence temps réel, stats, clients, historique (sessions.js / connexion.js) ---
+    // Règles explicites : évite de dépendre uniquement du fourre-tout si déploiement / path.match diverge.
+    match /rtPresenceCounter/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /rtPresenceTabs/{tabId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /daily/{dateId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /counters/{counterId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /clients/{clientId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /historiqueActions/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /demandeCollaborerLexique/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Liens partagés Médias (medias1.js) : même logique que le fourre-tout (toute session Firebase authentifiée).
+    match /LiensMedias/{docId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // Favoris Médias (medias1.js) : idem — pas de contrainte sur docId (souvent e-mail) pour éviter les faux refus.
+    match /FavorisMedias/{docId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // Tout le reste : lecture ouverte, écriture si connecté (Auth).
+    // Exclure forumMessages du fourre-tout (éviter de court-circuiter les règles spécifiques du forum).
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && !request.path.matches('/databases/' + database + '/documents/forumMessages/.*')
+        && !request.path.matches('databases/' + database + '/documents/forumMessages/.*');
+    }
+  }
+}

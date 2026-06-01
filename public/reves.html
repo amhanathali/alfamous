@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lexique des rêves — AR/FR (viewer)</title>
+  <style>
+    :root {
+      --bg: #f8f9fb;
+      --card: #ffffff;
+      --ink: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      -webkit-font-smoothing: antialiased
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      z-index: 10
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 16px
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 8px 0
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      grid-template-rows: auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* iPhone/mobile: stack everything, search 100% width */
+    @media (max-width: 640px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 10px
+      }
+
+      .controls-row {
+        flex-wrap: wrap
+      }
+    }
+
+    .toolbar input[type="search"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px
+    }
+
+    .select,
+    .btn {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      cursor: pointer;
+      font-size: 14px
+    }
+
+    .btn {
+      font-weight: 600
+    }
+
+    .btn:active {
+      transform: translateY(1px)
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    .count {
+      font-variant-numeric: tabular-nums
+    }
+
+    main .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden
+    }
+
+    .table-wrap {
+      max-height: 75vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      background: #fafbfc;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top
+    }
+
+    tbody tr:hover {
+      background: #fcfcfe
+    }
+
+    .ar {
+      font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+      font-size: 18px;
+      line-height: 1.6
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .stars {
+      color: #f59e0b
+    }
+
+    footer {
+      padding: 20px 0;
+      color: var(--muted)
+    }
+
+    .nowrap {
+      white-space: nowrap
+    }
+
+    .wrap {
+      word-break: break-word
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin: 2px;
+      font-size: 12px
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      align-items: center;
+      margin-top: 8px;
+      overflow: auto
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      white-space: nowrap
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <h1>Lexique des rêves — Arabe / Français <span class="pill"><span id="count" class="count">0</span> entrées</span>
+      </h1>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Rechercher (FR + AR) — ex. 'poisson', 'سمك'…" autocomplete="off"
+          enterkeyhint="search">
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <select id="ctx" class="select" title="Filtrer par contexte de scène">
+            <option value="">Tous contextes</option>
+          </select>
+          <select id="tag" class="select" title="Filtrer par tag (culture/source)">
+            <option value="">Tous tags</option>
+          </select>
+          <select id="minRel" class="select" title="Fiabilité minimale">
+            <option value="0">Fiabilité ≥ 0</option>
+            <option value="1">Fiabilité ≥ 1</option>
+            <option value="2">Fiabilité ≥ 2</option>
+            <option value="3">Fiabilité ≥ 3</option>
+          </select>
+          <select id="sort" class="select" title="Trier">
+            <option value="arabic_term.asc">AR ↑</option>
+            <option value="arabic_term.desc">AR ↓</option>
+            <option value="french_gloss.asc">FR ↑</option>
+            <option value="french_gloss.desc">FR ↓</option>
+            <option value="reliability.desc">Fiabilité ↓</option>
+            <option value="id.asc">ID ↑</option>
+          </select>
+        </div>
+        <button id="exportBtn" class="btn">Exporter JSON</button>
+      </div>
+      <div class="controls-row">
+        <label class="chip"><input type="checkbox" id="toggleTranslit" checked> translit.</label>
+        <label class="chip"><input type="checkbox" id="toggleNotes" checked> notes</label>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="nowrap">ID</th>
+              <th>Terme arabe</th>
+              <th>Translit.</th>
+              <th>Gloss FR</th>
+              <th>Interprétations</th>
+              <th>Contexte</th>
+              <th>Tags (source/culture)</th>
+              <th class="nowrap">Fiab.</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <footer>
+      <p class="muted">Les tags indiquent la **provenance culturelle** (ex. <em>classique_arabe</em>,
+        <em>maghreb_populaire</em>, <em>levantin</em>, <em>greco_arabe</em>, <em>religieux</em>, etc.). Utiliser avec
+        esprit critique.</p>
+    </footer>
+  </main>
+
+  <script src="./reves.js"></script>
+  <script>
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+    const removeArabicDiacritics = (s) => s.normalize('NFC').replace(/[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED]/g, '');
+    const normalize = (s) => removeArabicDiacritics((s || '').toString().toLowerCase())
+      .normalize('NFD').replace(/\p{Diacritic}+/gu, '').replace(/\s+/g, ' ').trim();
+
+    function uniq(arr) { return Array.from(new Set(arr)) }
+
+    function buildOptionsFromSet(selectEl, values) {
+      values.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.textContent = v;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    function buildFacetOptions(data) {
+      const ctxSet = new Set();
+      const tagSet = new Set();
+      data.forEach(r => {
+        (r.scene_context || '').split(';').map(v => v.trim()).filter(Boolean).forEach(v => ctxSet.add(v));
+        (r.tags || []).forEach(t => tagSet.add(t));
+      });
+      buildOptionsFromSet($("#ctx"), Array.from(ctxSet).sort((a, b) => a.localeCompare(b)));
+      buildOptionsFromSet($("#tag"), Array.from(tagSet).sort((a, b) => a.localeCompare(b)));
+    }
+
+    function stars(n) {
+      const full = '★'.repeat(n | 0);
+      const empty = '☆'.repeat(3 - (n | 0));
+      return `<span class="stars" title="Fiabilité: ${n}/3">${full}${empty}</span>`;
+    }
+
+    function render() {
+      const q = normalize($("#q").value);
+      const ctx = $("#ctx").value;
+      const tag = $("#tag").value;
+      const minRel = parseInt($("#minRel").value, 10);
+      const showTranslit = $("#toggleTranslit").checked;
+      const showNotes = $("#toggleNotes").checked;
+      const [sortKey, sortDir] = $("#sort").value.split('.');
+
+      let rows = REVES.slice();
+
+      // Fiabilité
+      rows = rows.filter(r => (r.reliability || 0) >= minRel);
+
+      // Contexte
+      if (ctx) {
+        const want = normalize(ctx);
+        rows = rows.filter(r => (r.scene_context || '').split(';').some(x => normalize(x) === want));
+      }
+
+      // Tag (culture/source)
+      if (tag) {
+        rows = rows.filter(r => (r.tags || []).includes(tag));
+      }
+
+      // Recherche FR + AR seulement
+      if (q) {
+        rows = rows.filter(r => {
+          const fr = normalize(r.french_gloss);
+          const ar = normalize(r.arabic_term);
+          return fr.includes(q) || ar.includes(q);
+        });
+      }
+
+      // Tri
+      rows.sort((a, b) => {
+        let av = a[sortKey], bv = b[sortKey];
+        if (typeof av === "string") return (av.localeCompare(bv, 'fr')) * (sortDir === 'asc' ? 1 : -1);
+        return ((av || 0) - (bv || 0)) * (sortDir === 'asc' ? 1 : -1);
+      });
+
+      // Rendu
+      $("#count").textContent = rows.length;
+      const tbody = $("#tbody");
+      tbody.innerHTML = rows.map(r => {
+        const interp = Array.isArray(r.typical_interpretations) ? r.typical_interpretations : (r.typical_interpretations || '').split(';').map(x => x.trim()).filter(Boolean);
+        const interpTags = interp.map(x => `<span class="tag">${x}</span>`).join(' ');
+        const ctxTags = (r.scene_context || '').split(';').map(x => x.trim()).filter(Boolean).map(x => `<span class="tag">${x}</span>`).join(' ');
+        const srcTags = (r.tags || []).map(x => `<span class="tag">${x}</span>`).join(' ');
+        return `<tr>
+          <td class="nowrap">${r.id}</td>
+          <td class="ar wrap">${r.arabic_term}</td>
+          <td class="muted">${showTranslit ? (r.transliteration || '') : ''}</td>
+          <td class="wrap">${r.french_gloss}</td>
+          <td>${interpTags}</td>
+          <td class="muted">${ctxTags}</td>
+          <td>${srcTags}</td>
+          <td class="nowrap">${stars(r.reliability || 0)}</td>
+          <td class="wrap">${showNotes ? (r.notes || '') : ''}</td>
+        </tr>`
+      }).join('');
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(REVES, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'reves.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    buildFacetOptions(REVES);
+    ["q", "ctx", "tag", "minRel", "sort", "toggleTranslit", "toggleNotes"].forEach(id => $("#" + id).addEventListener('input', render));
+    $("#exportBtn").addEventListener('click', exportJSON);
+    render();
+  </script>
+</body>
+
+</html>

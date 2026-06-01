@@ -1,0 +1,147 @@
+/* public/styles/06-cards.css — Cartes d'enregistrements (Zoom 0–3 + Lexique) (Phase C).
+ *
+ * Contient les règles visuelles des cartes résultats dans #popupResultats :
+ *   - .zc-result-card-head (1re ligne compacte Zoom 1/2, flex nowrap).
+ *   - .zc-record-languette > p (1re ligne des cartes Zoom 0–3 + Lexique, même rendu).
+ *   - Puces <a> (chips) dans ces lignes, avec hover.
+ *   - .zc-result-copy-sel (case + icône « Copier versets multiples »).
+ *
+ * Tokens : --zc-fs-sm, --zc-fs-xs, --zc-lh-tight, --zc-space-*, --zc-radius-xs,
+ *          --zc-popup-chip-bg, --zc-popup-chip-bg-hover, --zc-popup-link*.
+ */
+
+/*
+ * Cartes d’enregistrements (#popupResultats) : mêmes « puces » que le bandeau titre
+ * (fond blanc léger, sans cadre, liens bleus gras).
+ * Zoom 1/2 : la 1ʳᵉ ligne doit tenir sur UNE ligne — flex nowrap + puces compactes.
+ */
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-card-head,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-card-head {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--zc-space-1);
+  min-width: 0;
+  font-size: var(--zc-fs-sm);
+  line-height: var(--zc-lh-tight);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Le texte libre « nom phon | nom AR » doit pouvoir rétrécir (ellipsis) sans pousser les icônes à la ligne suivante. */
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-card-head > *,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-card-head > * {
+  flex: 0 0 auto;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-card-head a,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-card-head a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--zc-space-1);
+  min-height: 1.2rem;
+  padding: 1px var(--zc-space-2);
+  margin: 0;
+  vertical-align: middle;
+  background: var(--zc-popup-chip-bg);
+  border: none !important;
+  border-radius: var(--zc-radius-xs);
+  box-shadow: none;
+  color: var(--zc-popup-link) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  font-size: inherit;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-card-head a:hover,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-card-head a:hover {
+  background: var(--zc-popup-chip-bg-hover);
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* Harmonisation Zoom 0–3 + Lexique : la 1ʳᵉ ligne d'une carte (p) se comporte comme .zc-result-card-head. */
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette > p,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette > p {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--zc-space-1);
+  min-width: 0;
+  margin: 0;
+  font-size: var(--zc-fs-sm);
+  line-height: var(--zc-lh-tight);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette > p > *,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette > p > * {
+  flex: 0 0 auto;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette--aya > p a,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette--aya > p a,
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette--lexique > p a,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette--lexique > p a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--zc-space-1);
+  min-height: 1.2rem;
+  padding: 1px var(--zc-space-2);
+  margin: 0;
+  vertical-align: middle;
+  background: var(--zc-popup-chip-bg);
+  border: none !important;
+  border-radius: var(--zc-radius-xs);
+  box-shadow: none;
+  color: var(--zc-popup-link) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  font-size: inherit;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette--aya > p a:hover,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette--aya > p a:hover,
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-record-languette--lexique > p a:hover,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-record-languette--lexique > p a:hover {
+  background: var(--zc-popup-chip-bg-hover);
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* Copier + case : même puce que le bandeau — compactée pour rester sur la 1ʳᵉ ligne. */
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-copy-sel,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-copy-sel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zc-space-1);
+  margin-left: var(--zc-space-1);
+  padding: 1px var(--zc-space-2);
+  border-radius: var(--zc-radius-xs);
+  background: var(--zc-popup-chip-bg);
+  border: none !important;
+  box-shadow: none;
+  font-size: var(--zc-fs-xs);
+  line-height: 1;
+  box-sizing: border-box;
+  color: var(--zc-popup-link);
+  font-weight: 700;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-copy-sel .fas,
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-copy-sel .fas {
+  font-size: 0.72rem;
+  color: inherit;
+  opacity: 1;
+}
+
+.zc-popup-zoom-tier .zc-popup-resultats-body .zc-result-copy-sel input[type="checkbox"],
+.zc-popup-zoom-tier .zc-zoom-result-main .zc-result-copy-sel input[type="checkbox"] {
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0;
+  flex-shrink: 0;
+}

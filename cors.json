@@ -1,0 +1,16 @@
+[
+  {
+    "origin": [
+      "http://127.0.0.1:8080",
+      "http://localhost:8080",
+      "https://alfamous.ca",
+      "https://alfamous-amha.web.app",
+      "https://alfamous-amha.firebaseapp.com",
+      "https://www.alfamous.ca",
+      "file:///C:/Users/gmpcd/Desktop/Alfamous/public/index.html"
+	
+    ],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]

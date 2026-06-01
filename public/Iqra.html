@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqra</title>
+</head>
+
+<body>
+    <!-- Variables pour les liens -->
+    <script>
+        const pdfLinks = [
+            {
+                //https://drive.google.com/file/d/1AoJNRxszYoBHxg_dh6xjsP7-8x7tWAty/view?usp=drive_link
+                title: "DesCartes_Discours_de_la_méthode",
+                pdfLink: "https://drive.google.com/file/d/1AoJNRxszYoBHxg_dh6xjsP7-8x7tWAty",
+                imageLink: "img/DesCartes_DiscoursDeLaMethode.jpg",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1AoJNRxszYoBHxg_dh6xjsP7-8x7tWAty",
+                //previewLink: "https://drive.google.com/file/d/1AoJNRxszYoBHxg_dh6xjsP7-8x7tWAty/preview",
+                previewLink: "https://drive.google.com/file/d/1AoJNRxszYoBHxg_dh6xjsP7-8x7tWAty/preview",
+                amazonPrintLink: "",
+                amazonPrintLabel: ""
+            },
+            {
+                title: "Einstein_Albert_Comment_je_vois_le_monde_1934",
+                pdfLink: "https://drive.google.com/file/d/1zzrQwlVyEMTF0uXNyDl-qKGcIiD2QXT1",
+                imageLink: "img/Einstein_Albert_Comment_je_vois_le_monde_1934.jpg",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1zzrQwlVyEMTF0uXNyDl-qKGcIiD2QXT1",
+                previewLink: "https://drive.google.com/file/d/1zzrQwlVyEMTF0uXNyDl-qKGcIiD2QXT1/preview",
+                amazonPrintLink: "",
+                amazonPrintLabel: ""
+            },
+            {
+                title: "Le_Koran_Kazimirski (1808-1887) V1865",
+                pdfLink: "https://drive.google.com/file/d/1yQtbz6iIfZ25SS0vkoqx6DCVz9OISkhP",
+                imageLink: "img/Le_Koran_Kazimirski (1808-1887) V1865.JPG",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1yQtbz6iIfZ25SS0vkoqx6DCVz9OISkhP",
+                previewLink: "https://drive.google.com/file/d/1yQtbz6iIfZ25SS0vkoqx6DCVz9OISkhP/preview",
+                amazonPrintLink: "",
+                amazonPrintLabel: ""
+            },
+            {
+                title: "Coran Version Warsh",//https://drive.google.com/file/d/1KXSmrtK7NYWK7LwjCxfr7kWLiIibv9bY/view?usp=sharing
+                pdfLink: "https://drive.google.com/file/d/1KXSmrtK7NYWK7LwjCxfr7kWLiIibv9bY",
+                imageLink: "img/AlFatiha.JPG",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1KXSmrtK7NYWK7LwjCxfr7kWLiIibv9bY",
+                previewLink: "https://drive.google.com/file/d/1KXSmrtK7NYWK7LwjCxfr7kWLiIibv9bY/preview",
+                amazonPrintLink: "",
+                amazonPrintLabel: ""
+            },
+            {
+                title: "Comment savoir Dieu<br>Perspective coranique<br>Afficher le PDF",
+                pdfLink: "https://drive.google.com/file/d/1KOlT5UPVaGtKq5EJjsyojwgXv_OXB9Pg",
+                imageLink: "img/Comment%20Sa-voir%20Dieu%20FB.JPG",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1KOlT5UPVaGtKq5EJjsyojwgXv_OXB9Pg",
+                previewLink: "https://drive.google.com/file/d/1KOlT5UPVaGtKq5EJjsyojwgXv_OXB9Pg/preview",
+                amazonPrintLink: "https://www.amazon.ca/-/fr/Amha-Nathali/dp/2982054329/ref=sr_1_1?__mk_fr_CA=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=35ZDDUW0W4AGE&keywords=amha+nathali&qid=1707852110&rnid=5499102011&sprefix=amha+nathali%2Caps%2C80&sr=8-1",
+                amazonPrintLabel: "Imprimer sur Amazon (Livre 2)"
+            },
+            {
+                title: "BOUGE-TOI ET TU SAURAS !<br>Autobiographie & Sens de la vie<br>Afficher le PDF",
+                pdfLink: "https://drive.google.com/file/d/1WxiX0PG8tZn540h68l4RZRdm1dHxqJ6S",
+                imageLink: "img/COV-E-Book-320p.pdf.JPG",
+                downloadLink: "https://drive.google.com/uc?export=download&id=1WxiX0PG8tZn540h68l4RZRdm1dHxqJ6S",
+                previewLink: "https://drive.google.com/file/d/1WxiX0PG8tZn540h68l4RZRdm1dHxqJ6S/preview",
+                amazonPrintLink: "https://www.amazon.ca/-/fr/Amha-Nathali/dp/2982054302/ref=sr_1_2?__mk_fr_CA=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=35ZDDUW0W4AGE&keywords=amha+nathali&qid=1707852110&rnid=5499102011&sprefix=amha+nathali%2Caps%2C80&sr=8-2",
+                amazonPrintLabel: "Imprimer sur Amazon (Livre 1)"
+            },
+            {
+                title: "PLURALITÉ DES PRAXIS DÉPLOYÉES PAR LES ENTREPRENEURS DU SECTEUR DE LA CONSTRUCTION EN QUÊTE DE NOUVEAUX PROJETS D’AFFAIRES<br>UNE ÉTUDE DE LA CONTINGENCE<br>Afficher le PDF",
+                pdfLink: "https://drive.google.com/file/d/1my3vVvb2_ID357pCZYAs7C8RTqC_bFc2",
+                imageLink: "img/GMPC%20topo.jpg",
+                //downloadLink: "https://drive.google.com/uc?export=download&id=1my3vVvb2_ID357pCZYAs7C8RTqC_bFc2",
+                downloadLink: "http://di.uqo.ca/id/eprint/1169/",
+                previewLink: "https://drive.google.com/file/d/1my3vVvb2_ID357pCZYAs7C8RTqC_bFc2/preview",
+                amazonPrintLink: "http://di.uqo.ca/id/eprint/1169/",
+                amazonPrintLabel: "Lien institutionnel (UQO)"
+            }
+        ];
+
+        // Fonction pour afficher ou cacher un PDF en fonction de l'état du bouton à cocher
+        function togglePdfVisibility(pdfIndex) {
+            var iframe = document.getElementById('IframePDF_' + pdfIndex);
+            var downloadLink = document.getElementById('pdfDownloadLink_' + pdfIndex);
+            var checkbox = document.getElementById('showPdfCheckbox_' + pdfIndex);
+            iframe.style.display = checkbox.checked ? 'block' : 'none';
+            downloadLink.style.display = checkbox.checked ? 'none' : 'block';
+        }
+    </script>
+
+    <!-- Boucle pour afficher tous les PDF -->
+    <div style="text-align: center;">
+        <hr />
+        <div class="separator" style="clear: both; text-align: center;">
+            <!-- Utilisez une boucle pour afficher tous les PDF -->
+            <script>
+                for (let i = 0; i < pdfLinks.length; i++) {
+                    var link = pdfLinks[i];
+                    document.write(`
+                        <div>
+                            <a href="${link.pdfLink}" imageanchor="1" style="font-weight: normal; margin-left: 1em; margin-right: 1em;">
+                                <img alt="${link.title}" border="0" height="320" src="${link.imageLink}" title="${link.title}" width="211" />
+                            </a>
+                        </div>
+
+                        <!-- Bouton à cocher pour afficher le PDF -->
+                        <label>Afficher ${link.title}</label>
+                        <input id="showPdfCheckbox_${i}" type="checkbox" onchange="togglePdfVisibility(${i})" />
+
+                        <!-- Lien de téléchargement du PDF -->
+                        <a id="pdfDownloadLink_${i}" href="${link.downloadLink}" style="display: block;">Télécharger le PDF</a>
+
+                        <!-- iframe pour afficher le PDF -->
+                        <iframe height="600px" id="IframePDF_${i}" src="${link.previewLink}" style="display: none;" width="100%"></iframe>
+
+                        <!-- Lien pour imprimer sur Amazon -->
+                        <a href="${link.amazonPrintLink}" target="_blank">${link.amazonPrintLabel}</a>
+
+                        <hr />
+                    `);
+                }
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

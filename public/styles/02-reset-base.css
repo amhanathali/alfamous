@@ -1,0 +1,25 @@
+/* public/styles/02-reset-base.css — Reset léger + styles de base (Phase C).
+ *
+ * Contient :
+ *   - html, body : typo et scroll de base.
+ *   - .light-background : utilitaire transparent.
+ *
+ * S'appuie sur les tokens de 01-tokens.css.
+ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--zc-font);
+  color: var(--zc-text);
+  background: var(--zc-bg);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.light-background {
+  background: transparent;
+}

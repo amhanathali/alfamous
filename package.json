@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "sync-quick-login": "node -e \"const fs=require('fs');const path=require('path');const src=path.join('other','quick-login.json');const dst=path.join('functions','quick-login.json');if(!fs.existsSync(src)){console.error('Fichier manquant:',src,'— copiez other/quick-login.example.json vers other/quick-login.json');process.exit(1);}const j=JSON.parse(fs.readFileSync(src,'utf8'));const out={};Object.keys(j||{}).forEach(k=>{if(String(k).startsWith('_'))return;const v=j[k]||{};const email=String(v.email||'').trim().toLowerCase();if(!email)return;out[String(k).toLowerCase()]={email,name:String(v.name||'').trim()};});fs.mkdirSync(path.dirname(dst),{recursive:true});fs.writeFileSync(dst,JSON.stringify(out,null,2)+'\\n','utf8');console.log('OK →',dst,'(email+name, sans mot de passe)');\""
+  },
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^6.4.1",
+    "@sendgrid/mail": "^8.1.4",
+    "axios": "^1.15.2",
+    "body-parser": "^1.20.3",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.0",
+    "firebase-functions": "^5.1.0",
+    "fs-extra": "^11.3.4",
+    "googleapis": "^142.0.0",
+    "nodemailer": "^6.9.15",
+    "openai": "^4.86.1",
+    "pdf-parse": "^2.4.5"
+  }
+}

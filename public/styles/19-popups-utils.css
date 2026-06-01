@@ -1,0 +1,200 @@
+/* public/styles/19-popups-utils.css — Popups utilitaires & suggestions (Phase C).
+ *
+ * Contient :
+ *   - .messagePopup (toast global), variantes msg-success/error/warning/info.
+ *   - .popupOverlay : arrière-plan sombre commun.
+ *   - .messagePopup .popup-content / .popup-close : contenu & bouton ✕.
+ *   - @keyframes zcMsgPopupIn : animation d'entrée.
+ *   - .textArea::placeholder : couleur placeholder.
+ *   - .suggestions-liste : liste déroulante de suggestions + items + hover.
+ *   - #inputSoura : champ texte soura (centré).
+ *   - #mediaContainer, #audioContainer : conteneur flex colonne.
+ *   - .suggestion-item (:nth-child(odd/even)/:hover) : styles génériques de lignes.
+ *
+ * S'appuie sur les tokens de 01-tokens.css.
+ */
+.messagePopup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 560px);
+  max-height: min(82vh, 700px);
+  overflow: auto;
+  padding: 14px 16px 12px;
+  border-radius: 12px;
+  border: none;
+  background: var(--zc-surface);
+  color: var(--zc-text);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+  text-align: left;
+  box-sizing: border-box;
+  font: 500 18px/1.45 "Segoe UI", Roboto, Arial, sans-serif;
+  animation: zcMsgPopupIn 0.16s ease-out;
+}
+
+/* Arrière-plan sombre */
+.popupOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--zc-overlay-bg);
+  backdrop-filter: blur(1.2px);
+}
+
+.messagePopup .popup-content {
+  padding-inline-end: 30px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.messagePopup .popup-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--zc-text);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.messagePopup .popup-close:hover {
+  background: color-mix(in srgb, var(--zc-text) 12%, transparent);
+  color: var(--zc-text);
+}
+
+.messagePopup.msg-success {
+  border-color: transparent;
+}
+.messagePopup.msg-error {
+  border-color: transparent;
+}
+.messagePopup.msg-warning {
+  border-color: transparent;
+}
+.messagePopup.msg-info {
+  border-color: transparent;
+}
+
+@keyframes zcMsgPopupIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Styles pour le placeholder */
+.textArea::placeholder {
+  color: var(--zc-text-muted);
+  /* Assurez-vous que la couleur est visible */
+  opacity: 1;
+}
+
+
+/* Style pour la liste de suggestions */
+.suggestions-liste {
+  position: absolute;
+  top: 100%;
+  /* Positionne la liste directement sous l'input */
+  width: 100%;
+  /* Fait correspondre la largeur de l'input */
+  max-height: 300px;
+  /* Limite la hauteur de la liste */
+  overflow-y: auto;
+  background-color: var(--zc-surface);
+	font-size: 14px;
+	color: var(--zc-text);
+  /* border: 1px solid #ccc; */
+  border-radius: 8px;
+  /* Coins arrondis pour un rendu plus élégant */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* z-index: 100; */
+  text-align: center;
+  box-shadow: var(--zc-shadow-md);
+  /* Ombre douce */
+}
+
+/* Style des éléments individuels dans la liste */
+.suggestions-liste li {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--zc-text);
+  border-bottom: none;
+}
+
+/* Changement de couleur au survol */
+.suggestions-liste li:hover {
+  background-color: var(--zc-hover-bg);
+}
+
+.suggestions-liste li[aria-selected="true"],
+.suggestions-liste li.is-selected,
+.suggestion-item.is-selected {
+  background-color: var(--zc-selected-bg);
+  color: var(--zc-text);
+  border-inline-start: none;
+  box-shadow: inset 3px 0 0 var(--zc-selected-border);
+}
+
+/* Style pour aligner le texte dans l'input */
+#inputSoura {
+  text-align: center;
+  /* Aligne le texte à gauche */
+  padding-left: 2px;
+  /* Espacement pour plus de lisibilité */
+  width: 100%;
+	/*color: blue;*/
+  /* Prend toute la largeur disponible */
+  box-sizing: border-box;
+  /* Assure une largeur cohérente avec le padding */
+  font-size: 16px;
+  /* border: 1px solid #ccc; */
+  border-radius: 4px;
+}
+
+#mediaContainer,
+#audioContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 2px;
+  width: 100%;
+}
+
+
+.suggestion-item:nth-child(odd) {
+  background-color: color-mix(in srgb, var(--zc-hover-bg) 60%, var(--zc-surface));
+  /* Fond gris clair pour lignes impaires */
+}
+
+.suggestion-item:nth-child(even) {
+  background-color: var(--zc-surface);
+  /* Fond blanc pour lignes paires */
+}
+
+.suggestion-item:hover {
+  background-color: var(--zc-hover-bg);
+  /* Fond plus foncé au survol */
+}
+
+.suggestion-item {
+  padding: 10px;
+  /* Ajout d'espacement */
+  cursor: pointer;
+  /* Indicateur de clic */
+}

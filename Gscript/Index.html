@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #1976D2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #status {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>🔄 Mise à jour du fichier <code>articles-blog.js</code></h3>
+
+    <button onclick="mettreAJour()">Mettre à jour</button>
+
+    <p id="status">Statut : en attente...</p>
+
+    <script>
+      function mettreAJour() {
+        document.getElementById("status").textContent = "Mise à jour en cours...";
+        google.script.run
+          .withSuccessHandler(function (msg) {
+            document.getElementById("status").textContent = msg;
+          })
+          .withFailureHandler(function (error) {
+            document.getElementById("status").textContent = "Erreur : " + error.message;
+          })
+          .uploadArticlesHtmlToFirebase(); // Nom exact de la fonction dans le fichier .gs
+      }
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+﻿/* public/styles/16-newsletter.css — Popup Newsletter (Phase C).
+ *
+ * Contient les règles pour la boîte d'envoi de newsletter :
+ *   - .newsletter-box, .newsletter-pane, .newsletter-input.
+ *   - .newsletter-preview-wrap, .newsletter-preview, .newsletter-send-actions.
+ *
+ * La popup réutilise .popup-box.zc-comment-popup-box (03-comment-popup.css).
+ */
+/* Newsletter popup */
+.newsletter-box {
+  width: min(820px, 96vw);
+  max-width: min(820px, 96vw);
+  max-height: 90vh;
+}
+
+.newsletter-pane {
+  overflow: auto;
+  max-height: 68vh;
+  padding-right: 0.15rem;
+}
+
+.newsletter-input {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+  background: var(--zc-surface);
+}
+
+.newsletter-preview-wrap {
+  border: none;
+  border-radius: 10px;
+  padding: 0.4rem 0.5rem;
+  background: var(--zc-ui-soft-bg);
+  margin-top: 0.35rem;
+}
+
+.newsletter-preview {
+  margin: 0.35rem 0 0 0;
+  white-space: pre-wrap;
+  font-size: 0.87rem;
+  line-height: 1.45;
+  color: var(--zc-text);
+}
+
+.newsletter-send-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.nl-email-hint {
+  margin: 0.25rem 0 0.4rem;
+  padding: 0 0.05rem;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--zc-text-muted);
+}
+
+/* Deux boutons abonnement : même ligne, même gabarit (primaire). */
+.nl-subscribe-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.nl-subscribe-actions .nl-subscribe-pair-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.nl-subscribe-pair-ico {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.nl-subscribe-pair-ico .fas {
+  font-size: inherit;
+}
+
+.nl-subscribe-pair-label {
+  text-align: center;
+  white-space: normal;
+}
+
+/* Lien discret : rédaction / envoi (niveau 3+), à la place de l’onglet « Envoi ». */
+/* Bouton « Envoyer un message aux abonnés » (niveau 3+) : pleine largeur, libellé lisible. */
+#newsletterOverlay .newsletter-tab-row.zc-popup-tab-row {
+  justify-content: stretch;
+  padding: 0 2px;
+}
+
+#newsletterOverlay .nl-tab-send-btn.popup-mode-btn.zc-popup-tab {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.55rem;
+  min-height: auto;
+  padding: 0.48rem 0.6rem;
+  white-space: normal;
+  text-align: center;
+}
+
+#newsletterOverlay .nl-tab-send-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+#newsletterOverlay .nl-tab-send-ico {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.nl-send-head {
+  margin-bottom: 0.45rem;
+}
+
+.nl-back-btn {
+  font-size: 0.88rem;
+  padding: 0.35rem 0.65rem;
+}

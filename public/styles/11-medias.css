@@ -1,0 +1,453 @@
+﻿/* public/styles/11-medias.css — Module Médias (Phase C).
+ *
+ * Contient les règles scopées sous #popupHtml #contenuLocal > #medias1App :
+ *   - Conteneur + iframe visionneuse (zc-medias-frame, zc-medias-frame-viewer, zc-medias-frame-nav).
+ *   - Zone favoris (zc-medias-frame-favoris).
+ *   - Description titre/corps (zc-medias-desc-*).
+ *   - Modale interne (modal, modal-content, modal-header, modal-title, modal-close).
+ *   - Barre d'en-tête (zc-medias-head-bar) et popup actions-details-popup.
+ *   - Panneau d'actions (zc-medias-actions-panel, actions-tab-icons, actions-iconbar, bars-style-btn).
+ *   - Bouton favori cœur (zc-medias-fav-heart-btn) + état is-liked.
+ *   - Variantes #zcMediasActionsDetailsPopup (more-panel, more-ico, more-label, more-cmd).
+ *
+ * NB : inclut aussi les règles génériques #popupHtml #contenuLocal > #articlesApp, #temoignagesApp
+ * (même règle de remplissage vertical) puisqu'elles sont co-localisées avec medias.
+ *
+ * S'appuie sur tokens + shell popup.
+ */
+/* Articles / Témoignages / Médias dans #popupHtml : même logique de remplissage vertical */
+#popupHtml #contenuLocal > #articlesApp,
+#popupHtml #contenuLocal > #temoignagesApp,
+#popupHtml #contenuLocal > #medias1App {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#popupHtml #contenuLocal > #medias1App .container-center.light-background {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#popupHtml #contenuLocal > #medias1App #mediaContainer {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  gap: 5px;
+}
+
+#popupHtml #contenuLocal > #medias1App #mediaIframe {
+  flex: 1 1 auto;
+  min-height: 320px;
+  height: auto;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame {
+  background: var(--zc-ui-soft-bg);
+  border: none;
+  border-radius: 10px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+}
+
+/* Médias — zones info/navigation sans cadre pour éviter la confusion avec la saisie */
+#popupHtml #contenuLocal > #medias1App #zcMediasMetaToolbar,
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-favoris,
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-favoris {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-favoris #mediaLien {
+  margin-left: auto !important;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-favoris .menu-button,
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav .bouton,
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav .menu-button {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: 28px !important;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav #indexInputVisible {
+  min-height: 28px !important;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-nav .zc-medias-private-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  font-size: 0.9rem;
+  color: var(--zc-text);
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-viewer {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-viewer #mediaIframe {
+  width: 100%;
+}
+
+/* Adaptation dynamique du lecteur selon le type de média. */
+#popupHtml #contenuLocal > #medias1App.zc-medias-mode-pdf .zc-medias-frame-viewer {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#popupHtml #contenuLocal > #medias1App.zc-medias-mode-pdf #mediaIframe {
+  width: 100% !important;
+  min-height: 78vh;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-frame-desc {
+  color: var(--zc-success-text) !important;
+  text-align: left;
+  line-height: 1.45;
+  margin-top: 0 !important;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-desc-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-desc-body {
+  white-space: pre-wrap;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: auto;
+  background: var(--zc-overlay-bg);
+  align-items: stretch;
+  justify-content: center;
+  isolation: isolate;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal-content {
+  position: relative;
+  margin: 5vh auto;
+  max-width: 720px;
+  width: 92%;
+  background: var(--zc-surface);
+  border-radius: 10px;
+  padding: 16px 16px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Aide Medias: utilise l'espace maximal disponible. */
+#popupHtml #contenuLocal > #medias1App #mediasHelpModal .modal-content {
+  width: calc(100vw - 20px);
+  max-width: none;
+  height: calc(100vh - 20px);
+  max-height: none;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#popupHtml #contenuLocal > #medias1App #mediasHelpModal #mediasHelpBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal-close {
+  border: none;
+  background: var(--zc-ui-soft-bg);
+  color: var(--zc-text);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+#popupHtml #contenuLocal > #medias1App .modal-close:hover {
+  background: var(--zc-hover-bg);
+}
+
+/* Médias : fermer sur la 1re ligne (grille 3 colonnes : [☰] [titre] [hôte]) */
+#popupHtml #contenuLocal > #medias1App .zc-medias-head-bar #zcMediasCloseHost {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+#popupHtml #contenuLocal > #medias1App .zc-medias-head-bar #zcMediasCloseHost #btnClosePopupHtml.zc-popup-html-close {
+  position: relative;
+  top: auto;
+  align-self: center;
+  margin: 0;
+  z-index: 3;
+}
+
+/* Médias — ancre : barre Actions + popup des lignes (hors du panneau .toolbar1 pour overflow/stacking). */
+#popupHtml #contenuLocal > #medias1App .zc-medias-actions-anchor {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 6;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup.zc-medias-actions-details-popup {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 20;
+  max-height: min(70vh, 440px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  background: var(--zc-surface);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup.zc-medias-actions-details-popup[hidden] {
+  display: none !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-medias-actions-details-inner.zc-forum-welcome-more-panel {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}
+
+/* Liste déroulante des commandes (popup « + ») : même principe que les panneaux modules — pas de cadre par ligne. */
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-medias-actions-details-inner.zc-module-actions-list > .menu-button.zc-top-action-btn {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-medias-actions-details-inner.zc-module-actions-list > .menu-button.zc-top-action-btn:hover {
+  background: color-mix(in srgb, var(--zc-text) 8%, transparent) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Médias — panneau Actions : titre + barre icônes + « + » uniquement (lignes = popup). */
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel.zc-medias-actions-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel.zc-medias-actions-panel > .zc-module-head.zc-medias-actions-welcome-head.Modules {
+  justify-content: flex-start !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  padding-inline-end: 10px !important;
+  gap: 8px !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-head-title {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+  text-align: start;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  max-width: 100%;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons #conteneurBtn.zc-medias-actions-iconbar {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+  padding: 2px 4px !important;
+  gap: 6px !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+/* Icônes barre : boutons seuls (sans libellé à côté). */
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel #conteneurBtn.zc-medias-actions-iconbar > .menu-button.zc-top-action-btn,
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel #conteneurBtn.zc-medias-actions-iconbar > button.zc-top-action-btn {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 2px 4px !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel #conteneurBtn.zc-medias-actions-iconbar .zc-top-action-ico {
+  width: 1.4rem;
+  text-align: center;
+  line-height: 1.35;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel #conteneurBtn.zc-medias-actions-iconbar .zc-top-action-ico i {
+  font-size: 0.95rem !important;
+  line-height: 1.35 !important;
+  vertical-align: middle;
+  color: var(--zc-accent);
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons .zc-medias-bars-style-btn {
+  flex-shrink: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel .zc-medias-actions-tab-icons #zcMediasActionsMoreBtn.zc-medias-bars-style-btn {
+  margin-left: auto !important;
+}
+
+/* Cœur favoris Médias : sans cadre externe, style proche du bouton J'aime. */
+#popupHtml #contenuLocal > #medias1App #btnMediasFavoris.zc-medias-fav-heart-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 2px !important;
+  min-width: auto !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #btnMediasFavoris.zc-medias-fav-heart-btn .zc-top-action-ico {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+#popupHtml #contenuLocal > #medias1App #btnMediasFavoris.zc-medias-fav-heart-btn .zc-top-action-ico i {
+  color: var(--zc-text-muted);
+  transition: color .15s ease;
+}
+
+#popupHtml #contenuLocal > #medias1App #btnMediasFavoris.zc-medias-fav-heart-btn.is-liked .zc-top-action-ico i {
+  color: var(--zc-danger) !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsPanel.zc-medias-actions-details-collapsed .zc-module-head.Modules {
+  border-radius: var(--zc-radius-sm, 10px) !important;
+}
+
+/* Popup commandes : une seule ligne de texte = titre du bouton (pas de second paragraphe). */
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup #zcMediasActionsDetails.zc-forum-welcome-more-panel .zc-forum-welcome-more-ico i {
+  color: var(--zc-accent);
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-forum-welcome-more-label {
+  font-weight: 600;
+  color: var(--zc-text);
+}
+
+/* Lignes popup : fond neutre (pas de vert / turquoise type .menu-button.active). */
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-forum-welcome-more-cmd.menu-button.active,
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-forum-welcome-more-cmd.menu-button {
+  background: var(--zc-surface) !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--zc-text) !important;
+}
+
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-forum-welcome-more-cmd.menu-button:hover,
+#popupHtml #contenuLocal > #medias1App #zcMediasActionsDetailsPopup .zc-forum-welcome-more-cmd.menu-button.active:hover {
+  background: var(--zc-ui-soft-bg) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "forumAuthorNotifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "targetMail", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "forumMessages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "sujetKey", "order": "ASCENDING" },
+        { "fieldPath": "mail", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

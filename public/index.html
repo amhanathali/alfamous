@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="fr" class="app-init lang-fr">
+
+<head>
+  <!-- Meta de base -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Permissions-Policy"
+    content="autoplay=(self), encrypted-media=(self), fullscreen=(self), picture-in-picture=(self)">
+  <meta name="google" content="notranslate">
+
+  <title>Zoom-Coran</title>
+
+  <!-- Perf hints -->
+  <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+
+  <!-- Fonts / Icônes (préconnects utiles) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+  <script>
+    (function initThemeEarly() {
+      var key = 'zc-theme';
+      var root = document.documentElement;
+      var saved = '';
+      try { saved = localStorage.getItem(key) || ''; } catch (_) { }
+      if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+      else root.removeAttribute('data-theme');
+      root.style.colorScheme = saved === 'dark' || saved === 'light' ? saved : 'light dark';
+    })();
+  </script>
+
+  <!-- CSS principal en <link> (bloquant) pour éviter FOUC -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- 99-overrides.css : chargé APRÈS styles.css pour garantir le "dernier mot" dans la cascade. -->
+  <link rel="stylesheet" href="styles/99-overrides.css">
+  <!-- UI sans cadres (après 99-overrides) ; champs de saisie rétablis dans ce fichier. -->
+  <link rel="stylesheet" href="styles/21-no-chrome-borders.css">
+
+  <!-- Favicon / Icônes -->
+  <link rel="icon" href="img/ZC2.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- Rideau anti-flash + overlay de chargement (1 seul bloc, pas de doublons) -->
+  <style>
+    /* Empêche le flash et le clic avant init */
+    html.app-init {
+      --zc-init-bg: #ffffff;
+      --zc-init-text: #222222;
+      --zc-init-spinner-track: #dddddd;
+      --zc-init-spinner-head: #4caf50;
+      background: var(--zc-init-bg);
+    }
+
+    html.app-init body {
+      visibility: hidden;
+    }
+
+    html:not(.app-init) body {
+      visibility: visible;
+    }
+
+    /* Overlay d’accueil tant que .app-init est présente */
+    html.app-init::before {
+      content: attr(data-loading);
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      text-align: center;
+      padding-top: 160px;
+      /* espace pour le logo au-dessus du texte */
+      padding-left: 6vw;
+      padding-right: 6vw;
+      font: 600 20px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--zc-init-bg);
+      color: var(--zc-init-text);
+      z-index: 1;
+      pointer-events: none;
+
+      /* Logo au-dessus du texte */
+      background-image: url("img/ZC2.png");
+      background-repeat: no-repeat;
+      background-position: center 55px;
+      background-size: 96px auto;
+    }
+
+    /* Spinner sous le texte */
+    html.app-init::after {
+      content: "";
+      position: fixed;
+      left: 50%;
+      top: calc(50% + 2.2rem);
+      width: 22px;
+      height: 22px;
+      margin-left: 12px;
+      border-radius: 50%;
+      border: 3px solid var(--zc-init-spinner-track);
+      border-top-color: var(--zc-init-spinner-head);
+      animation: spin 1s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html.app-init:not([data-theme="light"]) {
+        --zc-init-bg: #0f172a;
+        --zc-init-text: #e2e8f0;
+        --zc-init-spinner-track: #334155;
+        --zc-init-spinner-head: #2dd4bf;
+      }
+    }
+
+    html.app-init[data-theme="dark"] {
+      --zc-init-bg: #0f172a;
+      --zc-init-text: #e2e8f0;
+      --zc-init-spinner-track: #334155;
+      --zc-init-spinner-head: #2dd4bf;
+    }
+
+    /* RTL auto si arabe */
+    html.app-init[lang^="ar"]::before {
+      direction: rtl;
+    }
+  </style>
+
+  <!-- Message de l’overlay (le plus tôt possible) -->
+  <script>
+    (function () {
+      const html = document.documentElement;
+      const MESSAGES = {
+        FR: "Chargement de Zoom-Coran, veuillez patienter…",
+        EN: "Loading Zoom-Coran, please wait…",
+        AR: "جارٍ تحميل زوم-قرآن، يُرجى الانتظار…",
+        KAB: "Asali n Zoom-Coran, ttxil-k ṛǧu…",
+        ES: "Cargando Zoom-Corán, por favor espere…"
+      };
+      function getLangFallback() {
+        const raw = (localStorage.getItem("uiLang") || "fr").toLowerCase();
+        const map = { fr: "FR", ar: "AR", en: "EN", kab: "KAB", es: "ES" };
+        return map[raw] || "FR";
+      }
+      function resolveLang() {
+        try { if (typeof window.getLang === "function") return window.getLang(); } catch (e) { }
+        return getLangFallback();
+      }
+      function setLoadingMessage() {
+        const code = resolveLang();
+        html.setAttribute("data-loading", MESSAGES[code] || MESSAGES.FR);
+        const bcp47 = { FR: "fr", EN: "en", AR: "ar", KAB: "kab", ES: "es" }[code] || "fr";
+        if (!html.getAttribute("lang")) html.setAttribute("lang", bcp47);
+      }
+      setLoadingMessage();
+      const mo = new MutationObserver(setLoadingMessage);
+      mo.observe(html, { attributes: true, attributeFilter: ["class", "lang"] });
+      window.addEventListener("storage", e => { if (e.key === "uiLang") setLoadingMessage(); });
+      window.refreshLoadingOverlay = setLoadingMessage;
+    })();
+  </script>
+
+  <!-- Pile z-index avant safeInit (évite que le fallback safeInit remplace getNextZIndex) -->
+  <script defer src="jsZC/zc-utils.js"></script>
+  <script defer src="jsZC/zc-search-field.js"></script>
+  <script defer src="jsZC/z-index-stack.js"></script>
+  <script defer src="jsZC/safeInit.js"></script>
+
+  <!-- Firebase (compat) : init dans jsZC/firebase-local-init.js (pas de /__/firebase/init.js → évite 404 hors Hosting) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-functions-compat.js"></script>
+  <script src="jsZC/firebase-local-init.js"></script>
+
+  <!-- Tables : Storage (anti-cache) puis seul repli local jsZC/fTab*.js -->
+  <script>
+    (function () {
+      const PATH_VERSETS = 'MesDonnes/MesJS/fTabVersets1.js';
+      const PATH_LEXIQUE = 'MesDonnes/MesJS/fTabLexique1.js';
+      const LOCAL_VERSETS = 'jsZC/fTabVersets1.js';
+      const LOCAL_LEXIQUE = 'jsZC/fTabLexique1.js';
+
+      const v = (window.textVersion || window.dateVersion || localStorage.getItem('zcVersion') || '');
+      const withV = (url) => {
+        if (!v || !url) return url;
+        return url + (url.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(v);
+      };
+
+      /** Évite le cache HTTP du navigateur sur l’URL Storage (même token → contenu peut avoir changé). */
+      function bustRemote(url) {
+        if (!url) return url;
+        return url + (url.includes('?') ? '&' : '?') + '_cb=' + Date.now();
+      }
+
+      window.__loadedScripts = window.__loadedScripts || Object.create(null);
+
+      function loadScriptOnce(url) {
+        if (!url) return Promise.resolve();
+        if (window.__loadedScripts[url]) return window.__loadedScripts[url];
+
+        const p = new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = url;
+          s.async = false;
+          s.onload = () => resolve(url);
+          s.onerror = () => reject(new Error('Échec chargement: ' + url));
+          document.head.appendChild(s);
+        });
+
+        window.__loadedScripts[url] = p;
+        return p;
+      }
+
+      async function loadFirstAvailable(urls) {
+        let lastErr;
+        for (const u of urls) {
+          if (!u) continue;
+          try { return await loadScriptOnce(u); }
+          catch (e) { lastErr = e; console.warn('[loader]', e?.message || e); }
+        }
+        throw lastErr || new Error('Aucune source valide');
+      }
+
+      function networkLikelyDown() {
+        return (typeof navigator !== 'undefined' && 'onLine' in navigator) ? !navigator.onLine : false;
+      }
+
+      function withTimeout(p, ms, label) {
+        return Promise.race([
+          p,
+          new Promise(function (_, rej) {
+            setTimeout(function () { rej(new Error('timeout ' + label)); }, ms);
+          })
+        ]);
+      }
+
+      function tableCandidates(remoteBase, localPath) {
+        const offline = networkLikelyDown();
+        const r = remoteBase ? bustRemote(withV(remoteBase)) : '';
+        const loc = withV(localPath);
+        // Hors ligne : uniquement jsZC (évite toute requête Storage / connection.ts).
+        if (offline) return [loc];
+        if (r) return [r, loc];
+        return [loc];
+      }
+
+      async function resolveStorageUrls() {
+        let srcVersets1 = '';
+        let srcLexique1 = '';
+        if (networkLikelyDown()) {
+          window.srcVersets1 = '';
+          window.srcLexique1 = '';
+          return;
+        }
+        try {
+          if (typeof firebase !== 'undefined' && firebase.storage) {
+            const st = firebase.storage();
+            const ms = 10000;
+            try {
+              srcVersets1 = await withTimeout(st.ref(PATH_VERSETS).getDownloadURL(), ms, 'versets');
+            } catch (e) {
+              console.warn('[loader] getDownloadURL versets (repli local):', e);
+            }
+            try {
+              srcLexique1 = await withTimeout(st.ref(PATH_LEXIQUE).getDownloadURL(), ms, 'lexique');
+            } catch (e) {
+              console.warn('[loader] getDownloadURL lexique (repli local):', e);
+            }
+          }
+        } catch (e) {
+          console.warn('[loader] Storage indisponible, fallback local.', e);
+        }
+        window.srcVersets1 = srcVersets1;
+        window.srcLexique1 = srcLexique1;
+      }
+
+      function notifyLexiqueReady() {
+        try { window.__zcLexiqueReadyDone = true; } catch (_) {}
+        try { window.dispatchEvent(new CustomEvent('zcLexiqueReady')); } catch (_) {}
+      }
+
+      function runLoader() {
+        const versetsCandidates = tableCandidates(window.srcVersets1, LOCAL_VERSETS);
+        const lexiqueCandidates = tableCandidates(window.srcLexique1, LOCAL_LEXIQUE);
+
+        loadFirstAvailable(versetsCandidates)
+          .then(() => loadFirstAvailable(lexiqueCandidates))
+          .then(() => { notifyLexiqueReady(); })
+          .catch(err => {
+            console.error('[loader] Échec total du chargement des tables.', err);
+            notifyLexiqueReady();
+          });
+      }
+
+      resolveStorageUrls().then(runLoader).catch(err => {
+        console.error('[loader]', err);
+        window.srcVersets1 = '';
+        window.srcLexique1 = '';
+        runLoader();
+      });
+    })();
+  </script>
+
+
+  <!-- === Bloc A. Données / tables / dictionnaires (avant tout code qui les consomme) === -->
+  <script defer src="jsZC/dateVersion.js"></script>
+  <script defer src="jsZC/fTabNomSouraNombreVersets.js"></script>
+  <script defer src="jsZC/com12.js"></script> <!-- initialise Firebase (db, storage, auth le cas échéant) -->
+  <script defer src="jsZC/FR-AR.js"></script>
+  <script defer src="jsZC/synonymes.js"></script>
+  <script defer src="jsZC/paramSAWM.js"></script>
+  <script defer src="jsZC/mots-coran.js"></script>
+  <script defer src="jsZC/comment.js"></script>
+  <script defer src="jsZC/statRacines.js"></script>
+
+  <!-- === Bloc B. Logique UI / pages (utilise les données ci-dessus, pas Firestore) === -->
+  <script defer src="jsZC/html.js"></script>
+  <script defer src="jsZC/Lexique.js"></script>
+  <script defer src="jsZC/ibn_fares_openiti_roots.js"></script>
+  <script defer src="jsZC/ibn-fares-openiti-popup.js"></script>
+  <script defer src="jsZC/histMots.js"></script>
+  <script defer src="jsZC/medias1.js"></script>
+  <script defer src="jsZC/pageWarshJpg.js"></script>
+  <script defer src="jsZC/Ghamidi.js"></script>
+  <script defer src="jsZC/zc-busy-dialog.js"></script>
+  <script defer src="jsZC/Zoom-Coran.js"></script>
+  <script defer src="jsZC/articles-format-html-urls.js"></script>
+  <script defer src="jsZC/articles.js"></script>
+  <script defer src="jsZC/temoignages-charte-fragment.js"></script>
+  <script defer src="jsZC/temoignages-module.js"></script>
+
+  <!-- === Bloc C. Init Firebase locale puis modules qui accèdent à Firestore/Storage/Auth === -->
+  <script defer src="jsZC/sessions.js"></script> <!-- dépend de com12.js -->
+  <script defer src="jsZC/forum.js"></script> <!-- dépend de com12.js -->
+  <script defer src="jsZC/articles-forum-modal.js"></script>
+  <script defer src="jsZC/forum-notify-inbox.js"></script>
+  <script defer src="jsZC/textareaZenExpand.js"></script>
+  <script defer src="jsZC/msgModules.js"></script>
+  <script defer src="jsZC/connexion.js"></script>
+  <script defer src="jsZC/newsletter.js"></script>
+  <script defer src="jsZC/transcription.js"></script>
+  <script defer src="jsZC/mes-notes-tts.js"></script>
+  <script defer src="jsZC/enregistrer.js"></script>
+  <script defer src="jsZC/chokr-notify.js"></script> <!-- avant initAppli : updateChokrNotifyDot prêt au 1er compteur contact -->
+  <script defer src="jsZC/initAppli.js"></script> <!-- dépend de com12.js -->
+
+
+</head>
+
+<body translate="no">
+  <div class="container-center light-background" translate="no">
+    <div class="zc-app-sticky-head" translate="no">
+    <div class="topline">
+      <!-- LOGO -->
+      <button id="newInstance" type="button" class="bouton-logo" aria-label="Ouvre une nouvelle instance du logiciel"
+        onclick="newInstanceDeZoomCoran()"
+        style="padding:0;margin:0;border:none;background:none;height:56px;width:56px;">
+        <img src="img/ZC2.png" alt="" draggable="false" decoding="async"
+          style="height:100%;width:120%;object-fit:contain;display:block;">
+      </button>
+
+      <!-- Bande annonce -->
+      <div id="annonceBar" class="annonce-container">
+        <div class="annonce-bar" id="annonceText"></div>
+      </div>
+      <!-- Langue
+			<label for="uiLangSelect" title="Langue de l’interface">🌐</label> -->
+      <div id="uiLangPicker" class="zc-lang-picker">
+        <select id="uiLangSelect" title="Langue de l’interface">
+          <option value="fr">Français</option>
+          <option value="ar">عربي</option>
+          <option value="en">English</option>
+          <option value="kab">Kabyle</option>
+          <option value="es">Espagnol</option>
+        </select>
+        <button type="button" id="uiLangSelectBtn" class="zc-lang-picker-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="uiLangSelectBtnLabel">FR</span>
+        </button>
+        <div id="uiLangSelectMenu" class="zc-lang-picker-menu" role="listbox" aria-labelledby="uiLangSelectBtn" hidden></div>
+      </div>
+    </div>
+
+    <!-- Le vrai conteneur du forum (invisible en dehors de la popup) — innerHTML cloné dans contenuLocal -->
+    <div id="forum-container" class="popup-container" style="display: none; max-height: none;">
+      <div class="zc-forum-root">
+      <div class="zc-forum-layout">
+        <header class="zc-forum-head">
+          <div class="zc-forum-head-bar">
+            <button type="button" id="forumCtxMenuBtn"
+              class="zc-forum-shell-help-btn zc-comment-popup-iconbtn zc-popup-ctx-tab"
+              data-zc-opens-selection-ctx="1"
+              onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              style="display:inline-flex;align-items:center;justify-content:center;width:2.15rem;height:2.15rem;padding:0;margin:0;box-sizing:border-box;line-height:1;">
+              <span class="zc-forum-head-ctx-ico" aria-hidden="true"
+                style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;font-size:1.05rem;font-weight:700;">☰</span>
+            </button>
+            <div class="zc-forum-head-title zc-forum-head-title--with-welcome">
+              <span class="zc-forum-page-title titre-forum"><i class="fas fa-lightbulb zc-forum-page-title-ico" aria-hidden="true"></i><span class="zc-forum-page-title-text">Forum des idées</span></span>
+              <span class="zc-forum-head-welcome-cluster" aria-live="polite">
+                <span id="forumWelcomeGreet" class="zc-forum-welcome-greet"></span>
+                <span id="forumWelcomeLevel" class="zc-forum-welcome-level-tag" aria-label=""></span>
+              </span>
+            </div>
+            <button type="button" class="zc-forum-head-close" onclick="fermerPopupHtml(); return false;"
+              aria-label="Fermer" title="Fermer"><span aria-hidden="true">×</span></button>
+          </div>
+        </header>
+        <section class="zc-forum-reader-panel" aria-labelledby="forumReaderSearchLabel">
+          <div class="toolbar1 zc-panel-soura zc-module-panel zc-forum-welcome-panel zc-panel-collapsed" data-zc-sync-tabs="manual">
+            <div class="Modules zc-module-head zc-forum-welcome-head">
+              <span id="forumActionsPanelTitle" class="zc-forum-actions-panel-title">Actions</span>
+              <div class="zc-module-tab-icons zc-forum-welcome-tab-icons zc-forum-reader-primary-actions" role="toolbar"
+                aria-label="Nouveau message et notes personnelles">
+                <div id="forumNotifyWrap" class="zc-forum-notify-wrap" hidden>
+                  <button type="button" id="forumNotifyBell" class="zc-forum-notify-bell zc-forum-notify-bell--tab" aria-expanded="false"
+                    aria-haspopup="dialog" title="" aria-label="">
+                    <i class="fas fa-bell" aria-hidden="true"></i>
+                    <span id="forumNotifyBadge" class="zc-forum-notify-badge" hidden>0</span>
+                  </button>
+                  <div id="forumNotifyPanel" class="zc-forum-notify-panel" role="dialog" aria-modal="false"
+                    aria-labelledby="forumNotifyPanelHeading" hidden>
+                    <div class="zc-forum-notify-panel-head">
+                      <h3 id="forumNotifyPanelHeading" class="zc-forum-notify-panel-title">Notifications</h3>
+                    </div>
+                    <div id="forumNotifyList" class="zc-forum-notify-list"></div>
+                  </div>
+                </div>
+                <button type="button" id="forumWelcomeAuthBtn" class="menu-button active zc-top-action-btn zc-module-tab-icon-btn zc-forum-welcome-tab-ico"
+                  title="">
+                  <span class="zc-top-action-ico" id="forumWelcomeAuthIco" aria-hidden="true"><i class="fas fa-sign-in-alt"></i></span>
+                </button>
+                <button type="button" id="envoyerMailForum2"
+                  class="menu-button active zc-top-action-btn zc-module-tab-icon-btn zc-forum-welcome-tab-ico"
+                  onclick="try{if(typeof forumCloseWelcomeMore==='function')forumCloseWelcomeMore();}catch(_){ } afficherPopupCommentaire('msgForum', document.getElementById('mot').value, '');"
+                  title="">
+                  <span class="zc-top-action-ico" aria-hidden="true">✍️</span>
+                  <span class="zc-forum-newpost-label zc-top-action-label zc-title-sync-label" style="display:none" aria-hidden="true">Nouveau message</span>
+                </button>
+                <button type="button" id="forumOpenNotesBtn"
+                  class="menu-button active zc-top-action-btn zc-module-tab-icon-btn zc-forum-welcome-tab-ico js-forum-open-notes"
+                  title="">
+                  <span class="zc-top-action-ico" aria-hidden="true">📝</span>
+                  <span class="zc-forum-notes-label zc-top-action-label" style="display:none" aria-hidden="true">Notes</span>
+                </button>
+                <button type="button" id="forumShellHelpBtn"
+                  class="menu-button active zc-top-action-btn zc-module-tab-icon-btn zc-forum-welcome-tab-ico js-forum-shell-help"
+                  aria-label="Aide" title="Aide">?</button>
+              </div>
+              <button type="button" id="forumWelcomeMoreBtn"
+                class="menu-button active zc-top-action-btn zc-module-tab-icon-btn zc-forum-welcome-more-toggle zc-forum-actions-expand-btn"
+                aria-expanded="false" aria-haspopup="true" title="+"
+                onclick="return (typeof forumOnWelcomeMoreToggleClick === 'function' && forumOnWelcomeMoreToggleClick(event, this));">
+                <span class="zc-forum-welcome-more-glyph" aria-hidden="true">+</span>
+              </button>
+            </div>
+            <div id="forumWelcomeMorePanel"
+              class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-module-actions-list zc-forum-welcome-more-panel"
+              role="menu" aria-labelledby="forumWelcomeMoreBtn">
+              <button type="button" id="forumWelcomeMoreAuth" class="menu-button active zc-top-action-btn zc-forum-welcome-more-cmd">
+                <span class="zc-forum-welcome-more-ico" id="forumWelcomeMoreAuthIco" aria-hidden="true"></span>
+                <span class="zc-forum-welcome-more-label"></span>
+              </button>
+              <button type="button" id="forumWelcomeMoreComment" class="menu-button active zc-top-action-btn zc-forum-welcome-more-cmd"
+                onclick="try{if(typeof forumCloseWelcomeMore==='function')forumCloseWelcomeMore();}catch(_){ } afficherPopupCommentaire('msgForum', document.getElementById('mot').value, '');">
+                <span class="zc-forum-welcome-more-ico" aria-hidden="true">✍️</span>
+                <span class="zc-forum-welcome-more-label"></span>
+              </button>
+              <button type="button" id="forumWelcomeMoreNotes" class="menu-button active zc-top-action-btn zc-forum-welcome-more-cmd js-forum-open-notes">
+                <span class="zc-forum-welcome-more-ico" aria-hidden="true">📝</span>
+                <span class="zc-forum-welcome-more-label"></span>
+              </button>
+              <button type="button" id="forumWelcomeMoreDedupe" class="menu-button active zc-top-action-btn zc-forum-welcome-more-cmd" hidden
+                onclick="try{if(typeof forumCloseWelcomeMore==='function')forumCloseWelcomeMore();}catch(_){ } if(typeof forumDeleteDuplicateTopics==='function')forumDeleteDuplicateTopics();">
+                <span class="zc-forum-welcome-more-ico" aria-hidden="true">🧹</span>
+                <span class="zc-forum-welcome-more-label"></span>
+              </button>
+            </div>
+          </div>
+          <div id="MessagesDuForum" class="zc-forum-status-banner" role="status" aria-live="polite"></div>
+          <label id="forumReaderSearchLabel" class="zc-forum-reader-label zc-forum-reader-search-label"
+            for="forumReaderSearchInput">Parcourir et lire les messages</label>
+          <div class="zc-forum-reader-search-row">
+            <div class="zc-search-wrap zc-search-wrap--textarea zc-forum-reader-search-wrap">
+              <button type="button" id="forumReaderSearchClear"
+                class="zc-forum-reader-clear zc-search-clear is-hidden"
+                title="Effacer la recherche" aria-label="Effacer la recherche">✕</button>
+              <textarea id="forumReaderSearchInput" rows="2"
+                class="zc-forum-reader-search-input zc-ui-search-field zc-ui-search-field--multiline" autocomplete="off"
+                spellcheck="true"></textarea>
+              <button type="button" class="zc-search-go zc-forum-reader-search-loupe" disabled tabindex="-1"
+                aria-hidden="true" title="Parcourir les messages">🔍</button>
+            </div>
+          </div>
+          <div class="zc-forum-reader-count-row">
+            <p id="forumReaderResultCount" class="zc-forum-reader-count" aria-live="polite"></p>
+            <button type="button" class="menu-button active zc-top-action-btn zc-forum-inline-toggle" id="btnForumInlineME" data-zc-pref-toggle="me"
+              title="Recherche Mot Entier" aria-label="Recherche Mot Entier">
+              <span class="zc-module-tab-short-label">ME</span>
+            </button>
+            <button type="button" class="menu-button active zc-top-action-btn zc-forum-inline-toggle" id="btnForumInlineMC" data-zc-pref-toggle="mc"
+              title="Recherche Mots Contigus" aria-label="Recherche Mots Contigus">
+              <span class="zc-module-tab-short-label">MC</span>
+            </button>
+          </div>
+          <ul id="forumReaderList" class="zc-forum-reader-list" role="list"></ul>
+        </section>
+        <!-- Conservé pour compat. scripts ; rendu forum = liste #forumReaderList uniquement -->
+        <div id="messagesContainerForum" class="zc-forum-messages zc-forum-messages--legacy-hidden" style="display: none;"
+          aria-hidden="true"></div>
+      </div>
+      </div>
+    </div>
+
+
+    <!-- Arrière-plan sombre -->
+    <div id="popupOverlay" class="popupOverlay zc-app-window"></div>
+    <!-- Conteneur pour afficher le message -->
+    <div id="messagePopup" class="messagePopup"></div>
+
+    <!-- Modale connexion / inscription -->
+    <div id="zcLoginShell" class="zc-login-shell" style="display: none;" role="dialog" aria-modal="true"
+      aria-labelledby="zcLoginTitle">
+      <div class="zc-login-backdrop" id="zcLoginBackdrop" tabindex="-1" aria-hidden="true"></div>
+      <form id="userForm" class="zc-login-card" style="display: none;" novalidate>
+        <button type="button" class="zc-login-close" id="closeFormBtn" aria-label="Fermer">×</button>
+        <div class="zc-login-head">
+          <h2 id="zcLoginTitle" class="zc-login-title">Connexion</h2>
+          <p class="zc-login-hint">Identifiant Zoom-Coran — le même mot de passe sert à la connexion et à l’inscription</p>
+        </div>
+        <div id="msg" class="zc-login-msg" role="status"></div>
+
+        <div class="zc-login-fields">
+          <div id="zcNameFieldWrap" class="zc-name-field-wrap" style="display: none;">
+            <label class="zc-login-label" for="zcLoginDisplayName">Nom affiché (inscription)</label>
+            <input type="text" id="zcLoginDisplayName" name="zcLoginDisplayName" class="zc-login-input" placeholder="ex. Mehdia"
+              autocomplete="username" autocapitalize="none" spellcheck="false">
+          </div>
+          <label class="zc-login-label" for="zcLoginEmail">Courriel</label>
+          <div class="zc-login-password-wrap">
+            <input type="password" id="zcLoginEmail" name="zcLoginEmail" class="zc-login-input zc-login-input-password"
+              placeholder="courriel ou @niv0 … @niv3 (dev local)"
+              autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+            <button type="button" class="zc-login-toggle-pwd" id="zcToggleEmail" aria-label="Masquer le courriel"
+              aria-pressed="false" title="Afficher / masquer">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div id="zcPasswordBlock">
+            <label class="zc-login-label" for="zcLoginPassword">Mot de passe</label>
+            <div class="zc-login-password-wrap">
+              <input type="password" id="zcLoginPassword" name="zcLoginPassword" class="zc-login-input zc-login-input-password"
+                placeholder="Au moins 6 caractères" autocomplete="current-password">
+              <button type="button" class="zc-login-toggle-pwd" id="zcTogglePassword" aria-label="Afficher le mot de passe"
+                aria-pressed="false" title="Afficher / masquer">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="zc-login-actions">
+          <button type="button" class="zc-login-btn zc-login-btn-primary" id="okBtn" onclick="okBtnConnexion();">
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Connexion
+          </button>
+          <button type="button" class="zc-login-link" id="zcForgotPwdBtn">J’ai oublié mon mot de passe</button>
+        </div>
+
+        <div id="collaborer" class="zc-login-inscription">
+          <div class="zc-login-divider"><span>Nouveau compte</span></div>
+          <label class="zc-login-label" for="niveauSelect">Niveau demandé</label>
+          <select id="niveauSelect" class="zc-login-select">
+            <option value="0">0 — Membre / عضو</option>
+            <option value="1">1 — Auteur / كاتب</option>
+            <option value="2">2 — Modérateur / مشرف</option>
+            <option value="3">3 — Admin / مدير</option>
+          </select>
+          <button type="button" class="zc-login-btn zc-login-btn-secondary" id="collaborerBtn" onclick="Collaborer();">
+            <i class="fas fa-user-plus" aria-hidden="true"></i> Inscription
+          </button>
+        </div>
+      </form>
+    </div>
+
+
+
+    <div id="panelSouraSearch" class="toolbar1 zc-panel-soura zc-module-panel zc-soura-search-panel" data-zc-sync-tabs="manual">
+      <div class="Modules zc-module-head zc-soura-tab-head">
+        <span id="labelInterfaceFR3">Recherche Soura</span>
+        <span id="labelInterfaceEN3">Sura search</span>
+        <span id="labelInterfaceAR3">بحث السورة</span>
+        <span id="labelInterfaceKAB3">Anadi n tsura</span>
+        <span id="labelInterfaceES3">Búsqueda de sura</span>
+        <i class="fas fa-search zc-module-head-action-ico" style="color: var(--zc-accent);"
+          onclick="const v=detecterNombre(document.getElementById('mot').value); if(v) {ChercheMotsMain(2);} return false;"
+          aria-hidden="true"></i>
+      </div>
+      <div class="zc-soura-panel-body">
+        <div class="zc-soura-counter-actions">
+          <label id="nombreSouraTrouvees"></label>
+          <div class="zc-soura-inline-actions">
+            <a href="#" id="tipTabSouraPdf" class="zc-soura-action-link"
+              onclick="ChercheMotsMain(-1); return false;" title="Afficher Codex Coranique version Warsh (PDF)">
+              <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-file-pdf"></i></span>
+              <span class="zc-top-action-label zc-title-sync-label">
+                <span id="labelInterfaceFR15">Warsh</span>
+                <span id="labelInterfaceEN15">Warsh</span>
+                <span id="labelInterfaceAR15">ورش</span>
+                <span id="labelInterfaceKAB15">Warsh</span>
+                <span id="labelInterfaceES15">Warsh</span>
+              </span>
+            </a>
+            <a href="#" id="tipTabSouraAudio" class="zc-soura-action-link"
+              onclick="lireAudio(-1); return false;" title="Voix  Saad El Ghamidi">
+              <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-volume-up"></i></span>
+              <span class="zc-top-action-label zc-title-sync-label">
+                <span id="labelInterfaceFR16">Écoute</span>
+                <span id="labelInterfaceEN16">Listen</span>
+                <span id="labelInterfaceAR16">استمع</span>
+                <span id="labelInterfaceKAB16">Slelli</span>
+                <span id="labelInterfaceES16">Escuchar</span>
+              </span>
+            </a>
+            <a href="#" id="tipTabSouraReadListen" class="zc-soura-action-link" title="Voix IA & Lecture "
+              onclick="lireWarsh(); return false;">
+              <span class="zc-top-action-ico" aria-hidden="true">
+                <i class="fas fa-book-reader" aria-hidden="true"></i>
+              </span>
+              <span class="zc-top-action-label zc-title-sync-label">
+                <span id="labelInterfaceFR17">Lis</span>
+                <span id="labelInterfaceEN17">Read</span>
+                <span id="labelInterfaceAR17">اقرأ</span>
+                <span id="labelInterfaceKAB17">Ɣeṛ</span>
+                <span id="labelInterfaceES17">Leer</span>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="zc-soura-field-wrap">
+        <div id="SelecteurSoura" class="zc-mot-field-wrap zc-soura-search-wrap"
+          style="display:flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:visible;">
+
+          <div class="zc-soura-select-core">
+            <div class="zc-soura-input-slot">
+              <!-- Input recherche soura -->
+              <input id="inputSoura" type="text" class="zc-ui-search-field" autocomplete="off" placeholder="Soura (1-114) سورة"
+                oninput="filtrerSoura();" style="position:relative;">
+              <!-- Liste pour les suggestions -->
+              <ul id="suggestionsSoura" class="suggestions-liste"></ul>
+            </div>
+
+            <div id="zcSouraVerseSpinWrap" class="zc-soura-verse-select-wrap" hidden aria-hidden="true" data-max-verse="1">
+              <div class="zc-soura-verse-input-slot">
+                <input id="inputSouraVers" type="text" class="zc-ui-search-field zc-soura-vers-input" autocomplete="off"
+                  inputmode="numeric" placeholder="Verset" title="Numéro de verset (saisie ou liste)"
+                  aria-label="Numéro de verset">
+                <ul id="suggestionsSouraVers" class="suggestions-liste zc-soura-vers-suggestions"></ul>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="bouton-loupe-croix zc-soura-search-chevron" id="tipTabSouraSearch"
+            title="Ouvrir les suggestions du champ Soura"
+            aria-label="Ouvrir les suggestions du champ Soura">
+            <i class="fas fa-chevron-up" aria-hidden="true"></i>
+          </button>
+
+        </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="panelVersets" class="toolbar1 zc-panel-soura zc-module-panel zc-versets-panel zc-versets-panel--featured">
+
+      <div class="Modules zc-module-head zc-versets-tab-head">
+        <span id="labelInterfaceFR1">Recherche de versets</span>
+        <span id="labelInterfaceEN1">Verse search</span>
+        <span id="labelInterfaceAR1">بحث في الآيات</span>
+        <span id="labelInterfaceKAB1">Anadi n tigezmi deg Leqran</span>
+        <span id="labelInterfaceES1">Búsqueda de aleyas</span>
+        <i class="fas fa-search zc-module-head-action-ico" style="color: var(--zc-accent);" onclick="ChercheMotsMain(2); return false;" aria-hidden="true"></i>
+      </div>
+
+      <!-- Champ de Saisie -->
+      <div class="zc-versets-panel-body">
+      <span class="zc-versets-hint-line">
+        <label id="labelInterfaceFR2">Saisissez des mots, un n° de page ou une aya (ex. 3.14)</label>
+        <label id="labelInterfaceEN2">Enter words, a page no., or an ayah (e.g., 3.14)</label>
+        <label id="labelInterfaceAR2">أدخل كلمات، رقم الصفحة أو آية (مثال: 3.14)</label>
+        <label id="labelInterfaceKAB2">Sekcem awalen, utun n usebter neɣ tigezmi (amedya: 3.14)</label>
+        <label id="labelInterfaceES2">Escriba palabras, un nº de página o una aleya (p. ej., 3.14)</label>
+      </span>
+      <div class="zc-mot-inline-tools">
+        <button type="button" class="zc-mot-inline-btn" id="btnMotTranslitInline"
+          onclick="transliterateInput('mot', true); if(window.zcRefreshMotSuggestionsCount)window.zcRefreshMotSuggestionsCount(document.getElementById('mot')?.value || ''); return false;"
+          title="Translitération arabo-français" aria-label="Translitération">
+          <span class="zc-top-action-ico" aria-hidden="true">🔁</span>
+        </button>
+				<!-- 
+        <button type="button" class="zc-mot-inline-btn" id="btnMotResetInline"
+          onclick="resetHistoriqueMotsDepuisSeed(); return false;" title="Supprimer l'historik personnalisé (Lexique conservé)" aria-label="Réinitialiser">
+          <span class="zc-top-action-ico" aria-hidden="true">↺</span>
+        </button>
+				 -->
+        <span id="zcMotSuggestionsCount" class="zc-mot-suggestions-count">0 / 0</span>
+        <button type="button" class="menu-button active zc-top-action-btn zc-mot-inline-btn" id="btnVersetsInlineME" data-zc-pref-toggle="me"
+          title="Recherche Mot Entier" aria-label="Recherche Mot Entier">
+          <span class="zc-module-tab-short-label">ME</span>
+        </button>
+        <button type="button" class="menu-button active zc-top-action-btn zc-mot-inline-btn" id="btnVersetsInlineMC" data-zc-pref-toggle="mc"
+          title="Recherche Mots Contigus" aria-label="Recherche Mots Contigus">
+          <span class="zc-module-tab-short-label">MC</span>
+        </button>
+      </div>
+      <div class="zc-mot-field-wrap zc-mot-search-wrap">
+        <div class="zc-mot-select-core">
+        <!-- La CROIX -->
+        <button type="button" id="t-supprimer-les-mots-saisis"
+          onclick="(function(){const el=document.getElementById('mot'); if(!el) return false; el.value=''; el.dispatchEvent(new Event('input',{bubbles:true})); el.focus(); return false;})()"
+          title="Supprimer les mots saisis" class="bouton-loupe-croix">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <!-- Recherche dans le Coran -->
+        <button type="button" class="bouton-loupe-croix" id="zoomCoranBtnR0" onclick="ChercheMotsMain(2); return false;"
+          title="Recherche auto et affichage de fenêtre Zoom 0-1-2-3, selon le contexte"
+          aria-label="Recherche auto et affichage de fenêtre Zoom 0-1-2-3, selon le contexte">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <!-- Champ "mot" avec suggestions -->
+        <textarea id="mot" name="mot" dir="rtl" placeholder="بسم الله" 
+					onblur="hauteurParDefaut('mot');"
+          onfocus="setSelectedInput('mot');" class="textArea zc-ui-search-field"
+          style="width:100%;"></textarea>
+
+        <div id="suggestions-container-mot" class="suggestions-liste" style="display: none;">
+        </div>
+
+        </div>
+        <button type="button" class="bouton-loupe-croix zc-mot-search-chevron" id="tipTabMotSearch"
+          title="Ouvrir les suggestions du champ mot"
+          aria-label="Ouvrir les suggestions du champ mot">
+          <i class="fas fa-chevron-up" aria-hidden="true"></i>
+        </button>
+      </div>
+      </div>
+    </div>
+    <!-- 
+    <div class="zc-panels-start-marker" aria-hidden="true">
+      <span class="zc-panels-start-marker-ico"><i class="fas fa-bars"></i></span>
+    </div>
+     -->
+    <!-- ☰ menu contextuel mot : hors du panel Outils (évite tuile dans la barre) -->
+    <div class="zc-versets-tools-ctx-above" role="toolbar" aria-label="Menu contextuel">
+      <button type="button" id="mainCtxMenuBtn" class="menu-button active zc-top-action-btn zc-title-sync-btn zc-popup-ctx-tab"
+        data-zc-opens-selection-ctx="1"
+        onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
+        title="Menu contextuel" aria-label="Menu contextuel">
+        <span class="zc-top-action-ico" aria-hidden="true">☰</span>
+      </button>
+    </div>
+    <!-- Outils de recherche : liste type SAWM ; Historik dans le bloc ; languette = sync auto sur les boutons du toolbar -->
+    <div id="panelVersetsTools" class="toolbar1 zc-panel-soura zc-module-panel zc-versets-tools-panel">
+      <div class="Modules zc-module-head">
+        <span id="labelInterfaceFR18">Outils</span>
+        <span id="labelInterfaceEN18">Tools</span>
+        <span id="labelInterfaceAR18">أدوات</span>
+        <span id="labelInterfaceKAB18">Ifecka</span>
+        <span id="labelInterfaceES18">Herramientas</span>
+        <span class="zc-module-tab-icons"></span>
+      </div>
+      <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-module-actions-list zc-versets-tools-actions zc-toolbar-row-compact" role="group">
+        <button type="button" onclick="transliterateInput('mot', true); return false;" id="TraduireInput"
+          title="Translitération arabo-français" class="menu-button active zc-top-action-btn zc-title-sync-btn" aria-label="Translitération">
+          <span class="zc-top-action-ico" aria-hidden="true">🔁</span>
+          <span class="zc-top-action-label zc-title-sync-label">Translitération</span>
+        </button>
+        <button type="button" onclick="alertMsgBoxPopup(msgHelpTransliteration());" id="t-aide-modules"
+          title="Informations sur la translittération" class="menu-button active zc-top-action-btn zc-title-sync-btn" aria-label="Aide translittération">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-info-circle"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Aide</span>
+        </button>
+        <button type="button" onclick="resetHistoriqueMotsDepuisSeed(); return false;" id="btnResetHistorikTools"
+          title="Supprimer l'historik personnalisé (Lexique conservé)" class="menu-button active zc-top-action-btn zc-title-sync-btn" aria-label="Réinitialiser">
+          <span class="zc-top-action-ico" aria-hidden="true">↺</span>
+          <span class="zc-top-action-label zc-title-sync-label">Réinitialiser</span>
+        </button>
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="btnExportHistorik"
+          onclick="exporterHistoriqueMotsVersFirebase(); return false;"
+          title="Exporter l’historique des mots vers Firebase Storage">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-cloud-upload-alt"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Export Historik</span>
+        </button>
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="btnImportHistorik"
+          onclick="importerHistoriqueMotsDepuisFirebase(); return false;"
+          title="Importer l’historique des mots depuis Firebase Storage">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-cloud-download-alt"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Import Historik</span>
+        </button>
+        <button id="copier-les-versets-selection" type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="return window.copySelectedVersesAsRich()" style="display:inline-flex;align-items:center;gap:.5rem;"
+          title="Copier les versets sélectionnés">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-copy"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Copier sélection</span>
+          <span class="badgeSel" id="badgeSelectMultiVersets1" title="Nombre d’éléments sélectionnés">0</span>
+        </button>
+        <button type="button" id="themeToggleBtn" class="menu-button active zc-top-action-btn zc-title-sync-btn zc-theme-toggle-btn"
+          title="Basculer thème sombre / clair" aria-label="Basculer thème sombre / clair">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-moon"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label" id="themeToggleLabel">Thème auto</span>
+        </button>
+        <!-- 
+        <button type="button" id="ModifBtnFree" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="afficherPopupCommentaire('msgForum', document.getElementById('mot').value, ''); return false;"
+          title="Ouvrir Mes Commentaires (Lexique, Coran, Forum)" aria-label="Ouvrir Mes Commentaires">
+          <span class="zc-top-action-ico" aria-hidden="true">✍️</span>
+          <span class="zc-top-action-label zc-title-sync-label">Commenter</span>
+        </button>
+        <button type="button" id="AjoutModifNotes" class="menu-button active zc-top-action-btn zc-title-sync-btn js-forum-open-notes"
+          title="Ouvrir Mes Notes" aria-label="Ouvrir Mes Notes">
+          <span class="zc-top-action-ico" aria-hidden="true">📝</span>
+          <span class="zc-top-action-label zc-title-sync-label">Notes</span>
+        </button>
+        -->
+      </div> 
+    </div>
+
+    <!-- Popup Historik : champ jumeau de #mot avec suggestions -->
+    <div id="zcHistorikOverlay" class="zc-historik-overlay zc-app-window" style="display:none;" aria-hidden="true" data-overlay="true">
+      <div id="zcHistorikDialog" class="zc-historik-dialog" role="dialog" aria-modal="true" aria-labelledby="zcHistorikPopupHeading">
+        <div class="zc-historik-dialog-head">
+          <button type="button" id="zcHistorikMenuIcon" class="zc-historik-dialog-menuicon zc-comment-popup-iconbtn zc-popup-ctx-tab"
+            data-zc-opens-selection-ctx="1"
+            onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
+            title="Menu contextuel" aria-label="Menu contextuel">
+            <span class="zc-top-action-ico" aria-hidden="true">☰</span>
+          </button>
+          <h3 id="zcHistorikPopupHeading" class="zc-historik-dialog-title">Historique</h3>
+          <button type="button" id="zcHistorikPopupClose" class="zc-historik-dialog-close" aria-label="Fermer">&times;</button>
+        </div>
+        <p id="zcVersetsHistorikListDesc" class="zc-historik-dialog-hint" style="display:none"></p>
+        <div id="zcHistorikPanelHost" class="zc-historik-panel-host"></div>
+      </div>
+    </div>
+
+    <!-- Popup choix du livre de commentaires : #Traduction reste l’id attendu par mots-coran.js -->
+    <div id="zcTraductionOverlay" class="zc-historik-overlay zc-app-window" style="display:none;" aria-hidden="true" data-overlay="true">
+      <div id="zcTraductionDialog" class="zc-historik-dialog" role="dialog" aria-modal="true" aria-labelledby="zcTraductionPopupHeading">
+        <div class="zc-historik-dialog-head">
+          <span class="zc-historik-dialog-menuicon" aria-hidden="true"></span>
+          <h3 id="zcTraductionPopupHeading" class="zc-historik-dialog-title">Choix du livre de commentaires</h3>
+          <button type="button" id="zcTraductionPopupClose" class="zc-historik-dialog-close" aria-label="Fermer">&times;</button>
+        </div>
+        <p id="zcTraductionPopupHint" class="zc-historik-dialog-hint"></p>
+        <select id="Traduction" class="zc-historik-select" size="8" title="Choisir la source des commentaires">
+          <option value="0">No Comment</option>
+          <option value="lx">@everyone - Lexique</option>
+          <option value="fr">@M.Hamidullah (Tradition FR)</option>
+          <option value="fr2">@french_montada (Tradition FR2)</option>
+          <option value="en">@A.Yusuf Ali (Tradition EN)</option>
+          <option value="kab">@R.A.Mansour (Tradition KAB)</option>
+          <option value="es">@Garcia (Tradition ES)</option>
+          <option value="fr3">@CSC (Transcription FR3)</option>
+          <option value="ar">@CSC (جذر - Racines AR)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="panelParams" class="toolbar1 zc-panel-soura zc-module-panel" data-zc-tab-toolbar=".zc-params-tab-toolbar"
+      data-zc-tab-strip-labels="1">
+      <div class="Modules zc-module-head">
+        <span id="labelInterfaceFR4">Parametres</span>
+        <span id="labelInterfaceEN4">Parameters</span>
+        <span id="labelInterfaceAR4">إعدادات</span>
+        <span id="labelInterfaceKAB4">Iɣewwaren</span>
+        <span id="labelInterfaceES4">Parametros</span>
+        <i class="fas fa-cog icon-small zc-module-head-action-ico" title="Paramètres" aria-hidden="true"></i>
+        <span class="zc-module-tab-icons"></span>
+      </div>
+      <div id="zoneA" class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-params-zone-a"
+        style="gap:8px 10px;position:relative;">
+        <!-- Source languettes (icônes + ME / MC ; livre = icône seule) — hors écran, clic relayé vers le corps -->
+        <div class="zc-params-tab-toolbar zc-params-tab-source" aria-hidden="true">
+          <button type="button" id="btnZcParamsTabME" data-zc-no-auto-collapse="1" data-zc-pref-toggle="me"
+            title="Recherche Mot Entier"
+            >
+            <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-font"></i></span>
+            <span class="zc-top-action-label">ME</span>
+          </button>
+          <button type="button" id="btnZcParamsTabMC" data-zc-no-auto-collapse="1" data-zc-pref-toggle="mc"
+            title="Recherche Mots Contigus"
+            >
+            <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-link"></i></span>
+            <span class="zc-top-action-label">MC</span>
+          </button>
+          <button type="button" id="btnZcParamsTabBook" data-zc-no-auto-collapse="1"
+            title="Recherche dans le livre de commentaires actif : {{livre}}"
+            onclick="if(window.zcOpenTraductionFromParamsTab)window.zcOpenTraductionFromParamsTab();return false;">
+            <span class="zc-top-action-ico" aria-hidden="true" style="color:#c00 !important;"><i class="fas fa-book-open" style="color:#c00 !important;" aria-hidden="true"></i></span>
+          </button>
+        </div>
+
+        <div class="toolbar zc-module-actions-list zc-params-detail-list zc-toolbar-row-compact" role="group"
+          style="width:100%;flex-direction:column;align-items:stretch;gap:6px;">
+          <label id="labelRechercheMotEntier" class="menu-button active zc-top-action-btn zc-params-detail-row"
+            title="Recherche Mot Entier">
+            <input type="checkbox" id="paramRechercheMotEntier" class="zc-params-row-chk"
+              onchange="changerEtatParamRechercheMotEntier();">
+            <span class="zc-params-swing-btn" aria-hidden="true">ME</span>
+            <span class="zc-top-action-label zc-params-detail-text"></span>
+          </label>
+          <label id="labelOrdreExactCheckbox" class="menu-button active zc-top-action-btn zc-params-detail-row"
+            title="Recherche Mots Contigus">
+            <input type="checkbox" id="ordreExactCheckbox" class="zc-params-row-chk"
+              onchange="changerEtatOrdreExactCheckbox();">
+            <span class="zc-params-swing-btn" aria-hidden="true">MC</span>
+            <span class="zc-top-action-label zc-params-detail-text"></span>
+          </label>
+          <button type="button" id="btnOpenTraductionPopupParams" data-zc-no-auto-collapse="1"
+            class="menu-button active zc-top-action-btn zc-trad-pick-btn zc-params-tafsir-row"
+            title="Recherche dans le livre de commentaires actif : {{livre}}"
+            onclick="try{delete window.__zcTraductionAfterChangeMode;delete window.__zcTraductionRefreshSourat;}catch(_){}if(window.zcOpenTraductionPopup)window.zcOpenTraductionPopup();return false;">
+            <span class="zc-top-action-ico" aria-hidden="true" style="color:#c00 !important;"><i class="fas fa-book-open" style="color:#c00 !important;" aria-hidden="true"></i></span>
+            <span class="zc-top-action-label zc-trad-pick-label"></span>
+          </button>
+          <button type="button" id="btnHistorikPopup" data-zc-no-auto-collapse="1"
+            class="menu-button active zc-top-action-btn zc-params-tafsir-row"
+            title="Historique des mots saisis"
+            aria-label="Historique des mots saisis"
+            onclick="if(window.zcOpenHistorikPopup)window.zcOpenHistorikPopup(); return false;">
+            <span class="zc-top-action-ico zc-historik-ico" aria-hidden="true">H</span>
+            <span class="zc-top-action-label">Historique des mots saisis</span>
+          </button>
+        </div>
+        <div class="toolbar1 zc-params-i18n-line zc-sr-only">
+          <span id="labelInterfaceFR5">Sélection d’un livre de commentaires</span>
+          <span id="labelInterfaceEN5">Select a commentary (tafsir)</span>
+          <span id="labelInterfaceAR5">اختيار كتاب تفسير</span>
+          <span id="labelInterfaceKAB5">Afran n udlis n tafsir</span>
+          <span id="labelInterfaceES5">Selección de un libro de comentarios (tafsir)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU ZoomCoran & Lexique Modules SAWM, SALAT et CHOKR -->
+    <div class="menu-container">
+      <!-- Barre de progression -->
+      <div id="progressContainer" style="text-align: center; display: none;">
+        <!-- <span id="progressText">0 s</span> -->
+        <progress id="progressBar" class="progress-bar-swing" max="60" value="0"></progress>
+      </div>
+
+
+      <!-- Conteneur11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 -->
+      <div id="panelSawm" class="toolbar1 zc-panel-soura zc-module-panel">
+        <div class="Modules zc-module-head">
+          <span id="labelInterfaceFR10">Cherche</span>
+          <span id="labelInterfaceEN10">Search</span>
+          <span id="labelInterfaceAR10">بحث</span>
+          <span id="labelInterfaceKAB10">Anadi</span>
+          <span id="labelInterfaceES10">Buscar</span>
+          <span class="zc-module-tab-icons"></span>
+        </div>
+        <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-module-actions-list zc-toolbar-row-compact" role="group">
+
+        <!-- Recherche dans le Coran -->
+        <button type="button" id="zoomCoranBtnR1" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="ChercheMotsMain(2); return false;"
+          title="Recherche auto et affichage de fenêtre Zoom 0-1-2-3, selon le contexte"
+          aria-label="Recherche auto et affichage de fenêtre Zoom 0-1-2-3, selon le contexte">
+          <span class="zc-top-action-ico" aria-hidden="true">📖🍃</span>
+          <span class="zc-top-action-label zc-title-sync-label">Coran</span>
+        </button>
+
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="btnChercheZoomCoran"
+          onclick="ChercheMotsMain(1); return false;"
+          title="Recherche auto et affichage de fenêtre Zoom 0-2-3, selon le contexte"
+          aria-label="Recherche auto et affichage de fenêtre Zoom 0-2-3, selon le contexte">
+          <span class="zc-top-action-ico" aria-hidden="true">📖</span>
+          <span class="zc-top-action-label zc-title-sync-label">Zoom-Coran</span>
+        </button>
+
+        <!-- Recherche dans le Lexique -->
+        <button type="button" id="lexiqueBtn" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="ChercheMotsMain(4); return false;"
+          title="Recherche auto et affichage de fenêtre Zoom 0-3, selon le contexte"
+          aria-label="Recherche auto et affichage de fenêtre Zoom 0-3, selon le contexte">
+          <span class="zc-top-action-ico" aria-hidden="true">📒</span>
+          <span class="zc-top-action-label zc-title-sync-label">Lexique</span>
+        </button>
+
+        <button type="button" id="btnIbnFaresLexique" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="if (typeof window.openIbnFaresOpenitiPopup === 'function') window.openIbnFaresOpenitiPopup(); return false;"
+          title="Lexique Ibn Fares selon OpenITI"
+          aria-label="Lexique Ibn Fares selon OpenITI">
+          <span class="zc-top-action-ico" aria-hidden="true"><span class="zc-ibn-fares-ico"><i class="fas fa-book" aria-hidden="true"></i></span></span>
+          <span class="zc-top-action-label zc-title-sync-label">Ibn Fares</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- Conteneur22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -->
+      <div id="panelSalat" class="toolbar1 zc-panel-soura zc-module-panel">
+        <div class="Modules zc-module-head">
+          <span id="labelInterfaceFR11">Racines</span>
+          <span id="labelInterfaceEN11">Roots</span>
+          <span id="labelInterfaceAR11">جذور</span>
+          <span id="labelInterfaceKAB11">Iẓuran</span>
+          <span id="labelInterfaceES11">Raices</span>
+          <span class="zc-module-tab-icons"></span>
+        </div>
+
+        <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-module-actions-list zc-toolbar-row-compact" role="group">
+          <button type="button" id="t-afficher-les-statistiques-de-racines" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="ChercheMotsMain(5); return false;" title="Statistique des racines coraniques" aria-label="Statistique des racines coraniques">
+          <span class="zc-top-action-ico" aria-hidden="true">📊</span>
+          <span class="zc-top-action-label zc-title-sync-label">Statistiques</span>
+        </button>
+
+        <button type="button" id="btnRacinesFromInput" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="if (typeof ouvrirRacinesDepuisInput === 'function') { ouvrirRacinesDepuisInput(); } return false;"
+          title="Racines d'un verset (ex: 3.14)" aria-label="Racines d'un verset (ex: 3.14)">
+          <span class="zc-top-action-ico" aria-hidden="true">🌿</span>
+          <span class="zc-top-action-label zc-title-sync-label">Racines</span>
+        </button>
+
+        <button type="button" id="zoomCoranBtnR2" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="ChercheMotsMain(6); return false;"
+          title="Synonymie: recherche des atomes (sons) et racines combinées dans une expression" aria-label="Synonymie: recherche des atomes (sons) et racines combinées dans une expression">
+          <span class="zc-top-action-ico" aria-hidden="true">⚛️</span>
+          <span class="zc-top-action-label zc-title-sync-label">Atomes / sons</span>
+        </button>
+
+        <button type="button" id="amisRacine" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="ChercheMotsMain(7); return false;"
+          title="Amis de la racine: mots dans le verset (d=1, si contigu)" aria-label="Amis de la racine: mots dans le verset (d=1, si contigu)">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-link"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Cooccurrences</span>
+        </button>
+
+        <button type="button" id="BtnDeclinerRacine" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="ChercheMotsMain(8); return false;" title="Déclinaisons des mots d'une racine" aria-label="Déclinaisons des mots d'une racine">
+          <span class="zc-top-action-ico" aria-hidden="true">🧩</span>
+          <span class="zc-top-action-label zc-title-sync-label">Formes</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- Conteneur3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333 -->
+      <div id="panelChokr" class="toolbar1 zc-panel-soura zc-module-panel">
+        <div class="Modules zc-module-head">
+          <span id="labelInterfaceFR12">Partage</span>
+          <span id="labelInterfaceEN12">Share</span>
+          <span id="labelInterfaceAR12">مشاركة</span>
+          <span id="labelInterfaceKAB12">Bḍu</span>
+          <span id="labelInterfaceES12">Compartir</span>
+          <span id="chokrHeadNotify" class="zc-chokr-notify" hidden title="" aria-live="polite" role="status" aria-hidden="true"></span>
+          <span class="zc-module-tab-icons"></span>
+        </div>
+        <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-module-actions-list zc-toolbar-row-compact" role="group">
+      <button type="button" id="shareNotesBtn" class="menu-button active zc-top-action-btn zc-title-sync-btn js-forum-open-notes"
+        title="Mes Notes privées ou publiques (Forum)" aria-label="Mes Notes privées ou publiques (Forum)">
+        <span class="zc-top-action-ico" aria-hidden="true">📝</span>
+        <span class="zc-top-action-label zc-title-sync-label">Notes</span>
+      </button>
+      <button type="button" id="shareCommentsBtn" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+        onclick="afficherPopupCommentaire('msgForum', document.getElementById('mot').value, ''); return false;"
+        title="Mes commentaires (Lexique / Coran)" aria-label="Mes commentaires (Lexique / Coran)">
+        <span class="zc-top-action-ico" aria-hidden="true">✍️</span>
+        <span class="zc-top-action-label zc-title-sync-label">Commentaires</span>
+      </button>
+      <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="ouvrirForum1" onclick="ouvrirPopupHtml('forum');"
+        title="Forum des idées 💡 : publications privées et publiques" aria-label="Forum des idées : publications privées et publiques">
+        <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-comment-alt"></i></span>
+        <span class="zc-top-action-label zc-title-sync-label">Forum</span>
+        <span id="badgeForumCount" class="zc-forum-msg-badge" aria-live="polite"></span>
+      </button>
+      <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+        id="t-rechercher-articles-de-blog"
+        onclick="ouvrirLienExterne('3');"
+        title="Articles publiés sur Alfamous" aria-label="Articles publiés sur Alfamous">
+        <span class="zc-top-action-ico" aria-hidden="true">📚</span>
+        <span class="zc-top-action-label zc-title-sync-label">Articles</span>
+        <span id="badgeArticlesCount"></span>
+      </button>
+      <button type="button" id="btnChokrBlogDigneDeFoi" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+        onclick="openChokrDigneDeFoiSearch(); return false;"
+        title="Articles publiés sur Blogger" aria-label="Articles publiés sur Blogger">
+        <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-globe" aria-hidden="true"></i></span>
+        <span class="zc-top-action-label zc-title-sync-label">DigneDeFoi</span>
+      </button>
+			<!-- Temoignage -->
+			<button class="menu-button active zc-top-action-btn zc-title-sync-btn"
+							id="t-temoignages"
+							onclick="ouvrirLienExterne('5');"
+							title="Témoignages anonymes" aria-label="Témoignages anonymes">
+        <span class="zc-top-action-ico" aria-hidden="true">🗣</span>
+        <span class="zc-top-action-label zc-title-sync-label">Témoignages</span>
+        <span id="badgeTemoignagesCount" class="zc-forum-msg-badge" aria-live="polite"></span>
+			</button>
+      <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="BiblioNumerique"
+        onclick="ouvrirLienExterne('4');"
+        title="Bibliothèque numérique" aria-label="Bibliothèque numérique">
+        <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-laptop"></i></span>
+        <span class="zc-top-action-label zc-title-sync-label">Biblio</span>
+      </button>
+      </div>
+    </div>
+
+      <!-- Boutons admin (même présentation que les modules SAWM / SALAT / CHOKR) -->
+      <div id="BtnCaches" class="toolbar1 zc-panel-soura zc-module-panel zc-btn-caches-panel" style="display: none;">
+        <div class="Modules zc-module-head">
+          <span id="labelInterfaceFR13">Admin</span>
+          <span id="labelInterfaceEN13">Admin</span>
+          <span id="labelInterfaceAR13">إدارة</span>
+          <span id="labelInterfaceKAB13">Unedbal</span>
+          <span id="labelInterfaceES13">Admin</span>
+          <span class="zc-module-tab-icons zc-module-tab-icons--admin"></span>
+        </div>
+        <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-btn-caches-inner zc-module-actions-list" role="group">
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="reverso" onclick="ouvrirLienExterne('1');" title="Reverso contexte">
+          <span class="zc-top-action-ico" aria-hidden="true"><img src="img/Reverso.jpg" alt="" class="icon-small"></span>
+          <span class="zc-top-action-label zc-title-sync-label">Reverso</span>
+        </button>
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" id="gTranslate" onclick="ouvrirLienExterne('2');" title="Google Translate">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-language"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Traduction</span>
+        </button>
+				<!-- GSCRIPT
+        <button type="button" id="btnMajListe"
+          class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          title="Mise à jour des articles de blog"
+          onclick="window.open('https://script.google.com/macros/s/AKfycbwUTviswlfkG52G_YfEJpdz95QFD02wKUlVGuSZ2E1yhPfySjQPcnX1AFAQfcVhp1OUOQ/exec',
+            'misAjourArt')">
+          <span class="zc-top-action-ico" aria-hidden="true">📰</span>
+          <span class="zc-top-action-label zc-title-sync-label">MàJ articles</span>
+        </button>
+				 -->
+        <button type="button" id="btnToggleAbonnes" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="toggleAbonnes(this)"
+          title="Mise à jour du niveaus des utilisateurs ">
+          <span class="zc-top-action-ico" aria-hidden="true">@</span>
+          <span class="zc-top-action-label zc-title-sync-label">Utilisateurs</span>
+        </button>
+        <button type="button" id="btnSyncAuthUsers" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="zcAdminSyncAuthProfiles(); return false;"
+          title="Synchroniser Auth et demandeCollaborerLexique">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-user-shield"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Sync Auth</span>
+        </button>
+        <button type="button" id="btnOpenArticlesSyncWebApp" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="window.open('https://script.google.com/macros/s/AKfycbzYGsK3gK-MA7OC_pEiPjS1oeVUZRSozDGX5ZOVcdrVMURP6cREFtYbA32rCBVhYSIpmw/exec', '_blank', 'noopener,noreferrer'); return false;"
+          title="Ouvrir le script de synchronisation des articles">
+          <span class="zc-top-action-ico" aria-hidden="true">📰</span>
+          <span class="zc-top-action-label zc-title-sync-label">Sync Articles</span>
+        </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- POPUP MODALE COMMENTAIRE -->
+    <div id="popupCommentaireOverlay" class="popupCommentaireOverlay zc-comment-popup-overlay zc-app-window"
+      style="display: none; position: fixed; top: 0; left: 0;">
+      <div class="popup-box zc-comment-popup-box">
+        <div class="zc-comment-popup-header">
+          <button type="button" id="btn-commentCtxMenu"
+            class="zc-comment-popup-iconbtn zc-popup-ctx-tab"
+            data-zc-opens-selection-ctx="1"
+            onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
+            title="Menu contextuel" aria-label="Menu contextuel">
+            <span class="zc-top-action-ico" aria-hidden="true">☰</span>
+          </button>
+          <h2 id="popupCommentaireTitre" class="zc-comment-popup-title">Commentaire</h2>
+          <button type="button" id="btn-popup-comment-close" class="zc-comment-popup-iconbtn" onclick="fermerPopupCommentaire();">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <div id="zcCommentPopupActionsPanel" class="toolbar1 zc-module-panel zc-comment-popup-actions-panel"
+          data-zc-start-expanded="0" data-zc-no-toolbar-autocollapse="1" data-zc-tab-id-prefix="tipCmt__">
+          <div class="Modules zc-module-head zc-comment-popup-actions-head">
+            <span id="zc-comment-popup-actions-title" class="zc-comment-popup-actions-head-title">Actions</span>
+            <span id="zc-comment-popup-mode-indicator" class="zc-comment-popup-mode-indicator" aria-live="polite">Auto: Ajouter</span>
+            <span class="zc-module-tab-icons"></span>
+          </div>
+          <div class="toolbar zc-panel-soura-inner zc-module-toolbar-inner zc-comment-popup-actions-toolbar zc-module-actions-list" role="group"
+            aria-label="Actions commentaire">
+            <button type="button" role="tab" onclick="setModeCommentaire('ajouter');" id="btn-ajouter"
+              class="menu-button active zc-top-action-btn popup-mode-btn zc-popup-tab zc-comment-popup-action-tile">
+              <span class="zc-top-action-ico zc-popup-tab-ico" aria-hidden="true">➕</span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="cmt-act-label-ajouter">Ajouter</span>
+              <span class="zc-popup-tab-label zc-sr-only" id="tab-label-ajouter">Ajouter</span>
+            </button>
+            <button type="button" role="tab" onclick="setModeCommentaire('supprimer');" id="btn-supprimer"
+              class="menu-button active zc-top-action-btn popup-mode-btn zc-popup-tab zc-comment-popup-action-tile">
+              <span class="zc-top-action-ico zc-popup-tab-ico" aria-hidden="true">🗑️</span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="cmt-act-label-supprimer">Supprimer</span>
+              <span class="zc-popup-tab-label zc-sr-only" id="tab-label-supprimer">Supprimer</span>
+            </button>
+            <button type="button" id="btn-enregistrerPopup"
+              class="menu-button active zc-top-action-btn popup-enregistrer-btn zc-comment-popup-primary zc-comment-popup-primary--icononly zc-popup-tool-btn zc-comment-popup-action-tile"
+              onclick="enregistrerPopupCommentaire();" disabled title="Enregistrer" aria-label="Enregistrer">
+              <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-save"></i></span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="btn-enregistrerPopup-label">Enregistrer</span>
+              <span class="zc-sr-only" id="btn-enregistrerPopup-sr">Enregistrer</span>
+            </button>
+            <button type="button" onclick="openNotesForumFromCommentPopup();" id="btn-notesForum"
+              class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-popup-notes-tool-btn zc-comment-popup-action-tile"
+              title="Notes" aria-label="Notes">
+              <span class="zc-top-action-ico zc-popup-notes-ico" aria-hidden="true">📝</span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="cmt-act-label-notes">Notes</span>
+              <span class="zc-popup-tab-label zc-sr-only" id="tab-label-notesForum">Notes</span>
+            </button>
+            <button type="button" id="btn-popup-comment-forum"
+              class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-comment-popup-action-tile"
+              onclick="if(typeof window.ouvrirPopupHtml==='function'){window.ouvrirPopupHtml('forum');} return false;"
+              title="Ouvrir le forum" aria-label="Ouvrir le forum">
+              <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-comment-alt"></i></span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="cmt-act-label-forum">Forum</span>
+            </button>
+            <button type="button" id="btn-popup-comment-help"
+              class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-comment-popup-action-tile"
+              onclick="showCommentPolicyHelp(); return false;" aria-label="Aide" title="Aide">
+              <span class="zc-top-action-ico" aria-hidden="true">?</span>
+              <span class="zc-top-action-label zc-comment-popup-action-label" id="cmt-act-label-help">Aide</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="zc-comment-popup-body-grow">
+        <div class="zc-popup-field">
+          <div class="zc-popup-label-toolbar-row">
+            <label id="label-popup-subject" class="zc-popup-label zc-popup-label--toolbar" for="popupInputMot">Référence</label>
+            <div class="zc-popup-tools-row zc-popup-tools-row--toolbar zc-popup-tools-row--muted" aria-label="Outils référence">
+              <button type="button" id="btn-popup-translit-subject" class="zc-popup-tool-btn" title="Translitérer" aria-label="Translitérer"
+                onclick="transliterateInput('popupInputMot', true); rafraichirCommentaire(); return false;">
+                <span aria-hidden="true">🔁</span>
+                <span class="zc-sr-only" id="btn-popup-translit-subject-sr">Translitérer</span>
+              </button>
+              <!-- × et copier étaient ici en doublon : ils sont désormais à l'intérieur du champ (zc-search-wrap). -->
+            </div>
+          </div>
+          <div id="boutonsEtReference" class="zc-popup-field-row zc-popup-field-row--ref-compact zc-popup-field-row--stack">
+            <div class="zc-mot-search-wrap zc-popup-mot-search-wrap">
+            <div class="zc-mot-select-core">
+            <!-- Wrapper .zc-search-wrap : bouton ✕ inside (left) + bouton Copier inside (right) -->
+            <div class="zc-search-wrap">
+              <button type="button" id="popupInputMot-clear" class="zc-search-clear is-hidden"
+                title="Effacer la référence" aria-label="Effacer la référence"
+                onclick="const el=document.getElementById('popupInputMot'); if(el){el.value=''; el.dispatchEvent(new Event('input',{bubbles:true})); el.focus();} return false;">✕</button>
+              <textarea id="popupInputMot" name="InputMot"
+                oninput="if(typeof showSuggestions==='function'){showSuggestions(this.value,'popupInputMot');}"
+                onfocus="handleCommentaireInput(); zcTextareaFocusExpand(this);"
+                onblur="zcTextareaBlurCompact(this);"
+                class="textArea zc-popup-textarea zc-popup-textarea--ref zc-ui-search-field" rows="1"></textarea>
+              <button type="button" id="btn-popup-subject-copy-inline" class="zc-search-copy" title="Copier" aria-label="Copier"
+                onclick="copyPopupSubjectToClipboard(); return false;">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+              </button>
+              <div id="suggestions-container-popupInputMot" class="suggestions-liste" style="display: none;"></div>
+            </div>
+            </div>
+            <button type="button" class="bouton-loupe-croix zc-mot-search-chevron" id="tipTabPopupMotSearch"
+              title="Ouvrir les suggestions du champ référence"
+              aria-label="Ouvrir les suggestions du champ référence">
+              <i class="fas fa-chevron-up" aria-hidden="true"></i>
+            </button>
+          </div>
+          </div>
+        </div>
+
+        <div id="modifierCommentaires" class="popupCommentaire zc-popup-field">
+          <div class="zc-popup-label-toolbar-row">
+            <label id="label-popup-comment" class="zc-popup-label zc-popup-label--toolbar" for="commentaires">Texte</label>
+            <!-- × et copier étaient ici en doublon : ils sont désormais à l'intérieur du champ (zc-search-wrap). -->
+          </div>
+          <div id="boutonsEtCommentaires" class="zc-popup-field-row zc-popup-field-row--stack">
+            <!-- Wrapper .zc-search-wrap : bouton ✕ inside (left) + bouton Copier inside (right) -->
+            <div class="zc-search-wrap zc-search-wrap--textarea">
+              <button type="button" id="clearButtonInline" class="zc-search-clear is-hidden"
+                title="Effacer le texte" aria-label="Effacer le texte"
+                onclick="if(typeof confirmClearField==='function'){ confirmClearField('commentaires','Vider le champ Texte ? Le contenu saisi sera perdu.').then(function(ok){if(ok && typeof clearComment==='function') clearComment();}); } else if(typeof clearComment==='function'){clearComment();} return false;">✕</button>
+              <textarea id="commentaires" name="commentaires"
+                onfocus="setSelectedInput('commentaires'); zcTextareaFocusExpand(this);"
+                onblur="zcTextareaBlurCompact(this);"
+                oninput="handleCommentaireInput(); ajusterHauteur('commentaires');"
+                class="textArea zc-popup-textarea zc-popup-textarea--body zc-ui-search-field" rows="4"></textarea>
+              <button type="button" id="btn-popup-comment-copy-inline" class="zc-search-copy"
+                title="Copier le texte" aria-label="Copier le texte"
+                onclick="copyCommentairesToClipboard(); return false;">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div id="confirmationZone" style="display: none; margin-top: 1em; text-align: center;">
+          <div id="confirmationMessage" style="margin-bottom: 0.5em; font-weight: bold; color: var(--zc-danger);"></div>
+          <button id="btnConfirmOui" class="balancement">✅ Oui</button>
+          <button id="btnConfirmNon" class="balancement">❌ Non</button>
+        </div>
+
+        <div id="menu-container" style="text-align: center;">
+          <div id="msgDivCommentaire" style="font-size: 16px; margin: 10px auto; color: var(--zc-success-text);"></div>
+          <div id="user-info" style="font-size: 16px; margin: 10px auto; color: var(--zc-success-text);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup dédiée : réponse à un message du forum -->
+    <div id="forumReplyOverlay" class="popupCommentaireOverlay zc-forum-reply-popup-overlay zc-app-window" style="display: none;"
+      aria-hidden="true">
+      <div class="popup-box zc-comment-popup-box zc-forum-reply-popup-box" role="dialog" aria-modal="true"
+        aria-labelledby="forumReplyPopupTitle" onclick="event.stopPropagation();">
+        <div class="zc-comment-popup-header">
+          <span class="zc-forum-reply-popup-header-spacer" aria-hidden="true"></span>
+          <h2 id="forumReplyPopupTitle" class="zc-comment-popup-title">Répondre</h2>
+          <button type="button" id="forumReplyCloseX" class="zc-comment-popup-iconbtn" title="Fermer"
+            aria-label="Fermer">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <p id="forumReplyContext" class="zc-forum-reply-popup-context" aria-live="polite"></p>
+        <div class="zc-popup-field">
+          <div class="zc-popup-field-row">
+            <textarea id="forumReplyTextarea" name="forumReplyTextarea" rows="5"
+              class="textArea zc-popup-textarea zc-forum-reply-ta zc-forum-reply-popup-ta"
+              onfocus="zcTextareaFocusExpand(this);"
+              onblur="zcTextareaBlurCompact(this);"
+              oninput="ajusterHauteur('forumReplyTextarea');"></textarea>
+          </div>
+        </div>
+        <div class="zc-forum-reply-popup-footer">
+          <button type="button" id="forumReplyCancel" class="zc-forum-reply-popup-btn zc-forum-reply-popup-btn--ghost">
+            Annuler
+          </button>
+          <button type="button" id="forumReplySend" class="zc-forum-reply-popup-btn zc-forum-reply-popup-btn--primary">
+            <i class="fas fa-envelope" aria-hidden="true"></i><span>Envoyer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup lecture confortable d’un message forum -->
+    <div id="forumReadOverlay" class="popupCommentaireOverlay zc-forum-read-overlay zc-app-window" style="display: none;"
+      aria-hidden="true">
+      <div class="popup-box zc-comment-popup-box zc-forum-read-box" role="dialog" aria-modal="true"
+        aria-labelledby="forumReadTitle" onclick="event.stopPropagation();">
+        <div class="zc-comment-popup-header">
+          <span class="zc-forum-reply-popup-header-spacer" aria-hidden="true"></span>
+          <h2 id="forumReadTitle" class="zc-comment-popup-title zc-forum-read-title">Message</h2>
+          <button type="button" id="forumReadCloseX" class="zc-comment-popup-iconbtn" title="Fermer"
+            aria-label="Fermer">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <p id="forumReadMeta" class="zc-forum-read-meta"></p>
+        <div id="forumReadToolbar" class="zc-forum-read-toolbar" dir="ltr">
+          <button type="button" id="forumReadReplyBtn" class="zc-forum-action zc-forum-action--link zc-forum-read-action">
+            <i class="fas fa-reply" aria-hidden="true"></i><span class="zc-forum-read-btn-label">Répondre</span>
+          </button>
+          <button type="button" id="forumReadShareBtn" class="zc-forum-action zc-forum-action--link zc-forum-read-action">
+            <i class="fas fa-share-alt" aria-hidden="true"></i><span class="zc-forum-read-btn-label">Partager</span>
+          </button>
+          <button type="button" id="forumReadEditBtn" class="zc-forum-action zc-forum-action--link zc-forum-read-action"
+            style="display:none;">
+            <span class="zc-forum-read-notes-emoji" aria-hidden="true">📝</span><span class="zc-forum-read-btn-label">Edit</span>
+          </button>
+        </div>
+        <div id="forumReadBody" class="zc-forum-read-body"></div>
+      </div>
+    </div>
+
+    <!-- Édition message forum (auteur ou modérateur) -->
+    <div id="forumEditOverlay" class="popupCommentaireOverlay zc-forum-edit-overlay zc-app-window" style="display: none;"
+      aria-hidden="true">
+      <div class="popup-box zc-comment-popup-box zc-forum-edit-box" role="dialog" aria-modal="true"
+        aria-labelledby="forumEditTitle" onclick="event.stopPropagation();">
+        <div class="zc-comment-popup-header">
+          <span class="zc-forum-reply-popup-header-spacer" aria-hidden="true"></span>
+          <h2 id="forumEditTitle" class="zc-comment-popup-title">Modifier le message</h2>
+          <button type="button" id="forumEditCloseX" class="zc-comment-popup-iconbtn" title="Fermer"
+            aria-label="Fermer">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="zc-forum-edit-fields">
+          <div id="forumEditSubjectRow" class="zc-forum-edit-subject-row">
+            <div class="zc-forum-edit-label-row">
+              <label class="zc-login-label" for="forumEditSubject">Sujet</label>
+              <div class="zc-forum-edit-field-actions zc-forum-edit-label-actions" role="group">
+                <button type="button" id="forumEditSubjectClear" class="zc-forum-edit-field-iconbtn">
+                  <span aria-hidden="true">×</span>
+                </button>
+                <button type="button" id="forumEditSubjectCopy" class="zc-forum-edit-field-iconbtn">
+                  <i class="fas fa-copy" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="zc-forum-edit-subject-line">
+              <div class="zc-forum-edit-subject-field-wrap">
+                <input type="text" id="forumEditSubject" class="zc-login-input" maxlength="500" autocomplete="off" spellcheck="true">
+                <ul id="forumEditSubjectSuggest" class="suggestions-liste" role="listbox" style="display: none;" aria-hidden="true"></ul>
+              </div>
+            </div>
+          </div>
+          <div id="forumEditPrivateRow" class="zc-forum-edit-private-row" style="margin:8px 0 10px;">
+            <label class="zc-login-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="forumEditPrivate" />
+              <span id="forumEditPrivateLabel" class="zc-forum-edit-private-label" aria-live="polite"></span>
+            </label>
+          </div>
+          <div class="zc-forum-edit-body-block">
+            <div class="zc-forum-edit-label-row">
+              <label class="zc-login-label" for="forumEditBody">Texte</label>
+              <div class="zc-forum-edit-field-actions zc-forum-edit-label-actions" role="group">
+                <button type="button" id="forumEditBodyClear" class="zc-forum-edit-field-iconbtn">
+                  <span aria-hidden="true">×</span>
+                </button>
+                <button type="button" id="forumEditBodyCopy" class="zc-forum-edit-field-iconbtn">
+                  <i class="fas fa-copy" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="zc-forum-edit-body-line">
+              <textarea id="forumEditBody" class="textArea zc-popup-textarea zc-forum-edit-body-ta" rows="8" maxlength="20000"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="zc-forum-edit-actions">
+          <button type="button" id="forumEditCancel" class="zc-forum-reply-popup-btn">Annuler</button>
+          <button type="button" id="forumEditSave" class="zc-forum-reply-popup-btn zc-forum-reply-popup-btn--primary">
+            <i class="fas fa-save" aria-hidden="true"></i><span> Enregistrer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup polyvalente : hors .zc-app-sticky-head (sinon z-index piégé à 45 → derrière Lexique / #popupResultats) -->
+    <div id="popupHtml" class="popup-container zc-app-window zc-window-shell" style="display:none;">
+      <div class="popup-content">
+        <button id="btnClosePopupHtml" type="button" class="zc-forum-head-close zc-popup-html-close"
+          aria-label="Fermer" title="Fermer">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <iframe id="iframeHtml" style="width:100%;height:80vh;display:none;" frameborder="0"></iframe>
+        <div id="contenuLocal" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Zoom 0–3 : une popup par palier (même gabarit, ids distincts). -->
+    <div id="popupResultats" class="popup-container zc-popup-zoom-tier zc-app-window zc-window-shell" data-zc-zoom-tier="0" style="display: none;">
+      <div class="popup-content">
+        <div class="popup-header zc-popup-header-unified">
+          <div class="zc-popup-header-actions zc-popup-header-actions--forumlike">
+            <button type="button" class="zc-forum-head-close zc-popup-resultats-ctx-head zc-popup-ctx-tab" id="t-popup-resultats-ctx-menu"
+              data-zc-opens-selection-ctx="1"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              onclick="if (typeof window.zcOpenPopupResultatsHeaderCtx === 'function') { window.zcOpenPopupResultatsHeaderCtx(this); } return false;">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <button type="button" onclick="if (typeof window.fermerPopupFromBtn === 'function') window.fermerPopupFromBtn(this); else if (typeof fermerPopupTier === 'function') fermerPopupTier(0); else fermerPopup();" id="t-minimiser-la-fenêtre" class="zc-forum-head-close" title="Minimiser la fenêtre"
+              aria-label="Fermer la fenêtre des résultats">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div id="infosProgEnCours" class="zc-popup-header-info zc-popup-resultats-infos" style="font-size: 0.9em; text-align:center;"></div>
+        </div>
+
+        <div id="popupResultatsBody" class="popup-body zc-popup-resultats-body"></div>
+      </div>
+    </div>
+    <div id="popupResultatsZ1" class="popup-container zc-popup-zoom-tier zc-app-window zc-window-shell" data-zc-zoom-tier="1" style="display: none;">
+      <div class="popup-content">
+        <div class="popup-header zc-popup-header-unified">
+          <div class="zc-popup-header-actions zc-popup-header-actions--forumlike">
+            <button type="button" class="zc-forum-head-close zc-popup-resultats-ctx-head zc-popup-ctx-tab" id="t-popup-resultats-ctx-menu-z1"
+              data-zc-opens-selection-ctx="1"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              onclick="if (typeof window.zcOpenPopupResultatsHeaderCtx === 'function') { window.zcOpenPopupResultatsHeaderCtx(this); } return false;">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <button type="button" onclick="if (typeof window.fermerPopupFromBtn === 'function') window.fermerPopupFromBtn(this);" id="t-minimiser-resultats-z1" class="zc-forum-head-close" title="Minimiser la fenêtre"
+              aria-label="Fermer la fenêtre des résultats (Zoom 1)">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div id="infosProgEnCoursZ1" class="zc-popup-header-info zc-popup-resultats-infos" style="font-size: 0.9em; text-align:center;"></div>
+        </div>
+        <div id="popupResultatsBodyZ1" class="popup-body zc-popup-resultats-body"></div>
+      </div>
+    </div>
+    <div id="popupResultatsZ2" class="popup-container zc-popup-zoom-tier zc-app-window zc-window-shell" data-zc-zoom-tier="2" style="display: none;">
+      <div class="popup-content">
+        <div class="popup-header zc-popup-header-unified">
+          <div class="zc-popup-header-actions zc-popup-header-actions--forumlike">
+            <button type="button" class="zc-forum-head-close zc-popup-resultats-ctx-head zc-popup-ctx-tab" id="t-popup-resultats-ctx-menu-z2"
+              data-zc-opens-selection-ctx="1"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              onclick="if (typeof window.zcOpenPopupResultatsHeaderCtx === 'function') { window.zcOpenPopupResultatsHeaderCtx(this); } return false;">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <button type="button" onclick="if (typeof window.fermerPopupFromBtn === 'function') window.fermerPopupFromBtn(this);" id="t-minimiser-resultats-z2" class="zc-forum-head-close" title="Minimiser la fenêtre"
+              aria-label="Fermer la fenêtre des résultats (Zoom 2)">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div id="infosProgEnCoursZ2" class="zc-popup-header-info zc-popup-resultats-infos" style="font-size: 0.9em; text-align:center;"></div>
+        </div>
+        <div id="popupResultatsBodyZ2" class="popup-body zc-popup-resultats-body"></div>
+      </div>
+    </div>
+    <div id="popupResultatsZ3" class="popup-container zc-popup-zoom-tier zc-app-window zc-window-shell" data-zc-zoom-tier="3" style="display: none;">
+      <div class="popup-content">
+        <div class="popup-header zc-popup-header-unified">
+          <div class="zc-popup-header-actions zc-popup-header-actions--forumlike">
+            <button type="button" class="zc-forum-head-close zc-popup-resultats-ctx-head zc-popup-ctx-tab" id="t-popup-resultats-ctx-menu-z3"
+              data-zc-opens-selection-ctx="1"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              onclick="if (typeof window.zcOpenPopupResultatsHeaderCtx === 'function') { window.zcOpenPopupResultatsHeaderCtx(this); } return false;">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <button type="button" onclick="if (typeof window.fermerPopupFromBtn === 'function') window.fermerPopupFromBtn(this);" id="t-minimiser-resultats-z3" class="zc-forum-head-close" title="Minimiser la fenêtre"
+              aria-label="Fermer la fenêtre des résultats (Lexique)">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div id="infosProgEnCoursZ3" class="zc-popup-header-info zc-popup-resultats-infos" style="font-size: 0.9em; text-align:center;"></div>
+        </div>
+        <div id="popupResultatsBodyZ3" class="popup-body zc-popup-resultats-body"></div>
+      </div>
+    </div>
+    <!-- === Fenêtre dédiée pour le menu contextuel === -->
+    <div id="popupContextMenu" class="popup-container ctxmenu-popup zc-app-window zc-window-shell" style="display: none;">
+      <div class="popup-content ctxmenu-popup__card">
+        <div class="popup-header ctxmenu-popup__header">
+          <div id="ctxmenuHeaderTitle" class="ctxmenu-popup__title">Menu contextuel</div>
+          <button id="btnCloseCtxMenu" type="button" title="Fermer la fenêtre" class="ctxmenu-popup__close"
+            onclick="closeContextMenu()" aria-label="Fermer"><span aria-hidden="true">×</span></button>
+        </div>
+        <div id="ctxmenuBody" class="popup-body ctxmenu-popup__body"></div>
+      </div>
+    </div>
+
+    <div class="zc-aux-below-results">
+      <button id="btnAfficherPopup" class="menu-button active" onclick="afficherPopup()" style="display:none;">
+        <i class="fa fa-eye" title="Afficher les résultats"></i>
+      </button>
+    </div>
+
+    <!-- Modale de confirmation -->
+    <div id="customModal" class="modal zc-app-window">
+      <div class="modal-content">
+        <p id="modalMessage">Voulez-vous vraiment continuer ?</p>
+        <div class="modal-buttons">
+          <button id="confirmBtn" class="styled-button">OK</button>
+          <button id="cancelBtn" class="styled-button cancel">Annuler</button>
+        </div><!-- ✅ correction : fermeture de .modal-buttons -->
+      </div>
+    </div>
+
+    <!-- Bouton de participation -->
+    <div class="center-container">
+      <!-- Bouton à cocher Warsh 2 -->
+      <div id="options2" class="zc-warsh-panel" style="display: none;">
+        <header class="popup-header zc-popup-header-unified zc-warsh-panel-header" aria-label="Coran Warsh">
+          <div class="zc-popup-header-actions zc-popup-header-actions--forumlike zc-warsh-popup-headbar" id="zcWarshPopupHeadBar">
+            <button type="button" class="zc-forum-head-close zc-popup-resultats-ctx-head zc-popup-ctx-tab zc-warsh-popup-ctx"
+              data-zc-opens-selection-ctx="1"
+              title="Menu contextuel" aria-label="Menu contextuel"
+              onclick="if (typeof window.zcOpenPopupResultatsHeaderCtx === 'function') { window.zcOpenPopupResultatsHeaderCtx(this); } return false;">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <h2 class="zc-popup-top-title zc-warsh-popup-title" id="labelIframePDF">📖 Zoom > Coran Warsh</h2>
+          </div>
+        </header>
+        <div class="zc-warsh-panel-body">
+          <div class="social-buttons" id="LienExterneIMG"></div>
+          <div class="menu zc-warsh-nav-row" role="toolbar" aria-label="Navigation des pages">
+            <div class="zc-warsh-nav-slot" id="pageAvant"></div>
+            <div class="zc-warsh-nav-slot" id="pageApres"></div>
+            <div class="zc-warsh-nav-slot" id="souraAvant"></div>
+            <div class="zc-warsh-nav-slot" id="souraApres"></div>
+          </div>
+          <iframe id="IframePDF" src="" title="Codex Warsh"></iframe>
+        </div>
+      </div>
+    </div>
+    <!-- #zoneAffichageVerset : créé au 1er usage par Ghamidi.js (ensureZoneAffichageVerset), avant le ☰ du bas -->
+    <!-- Doublon ☰ (même action que #mainCtxMenuBtn) : id distinct pour HTML valide ; compacité via .zc-versets-tools-ctx-above--after-verset -->
+    <div class="zc-versets-tools-ctx-above zc-versets-tools-ctx-above--after-verset" role="toolbar" aria-label="Menu contextuel">
+      <button type="button" id="mainCtxMenuBtnFooter" class="menu-button active zc-top-action-btn zc-title-sync-btn zc-popup-ctx-tab"
+        data-zc-opens-selection-ctx="1"
+        onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
+        title="Menu contextuel" aria-label="Menu contextuel">
+        <span class="zc-top-action-ico" aria-hidden="true">☰</span>
+      </button>
+    </div>
+
+    <!-- UsersConnectés & actions pied de page : identité + connexion au-dessus du panneau Visiteurs -->
+    <div class="zc-footer-panel-stack">
+      <div class="zc-footer-account-row" role="group" aria-label="Compte et connexion">
+        <div id="footerUserWelcome" class="zc-footer-user-welcome" role="status" aria-live="polite"></div>
+        <button type="button" id="logInUser" class="menu-button active zc-top-action-btn zc-title-sync-btn" title="Se Connecter">
+          <span id="authUserIcon" class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-sign-in-alt"></i></span>
+          <span id="authUserLabel" class="zc-top-action-label zc-title-sync-label">Connexion</span>
+        </button>
+      </div>
+      <div id="panelFooter" class="toolbar1 zc-panel-soura zc-footer-bar zc-module-panel">
+        <div class="Modules zc-module-head zc-footer-tab-head">
+          <span id="labelInterfaceFR14">Visiteurs</span>
+          <span id="labelInterfaceEN14">Visitors</span>
+          <span id="labelInterfaceAR14">الزوار</span>
+          <span id="labelInterfaceKAB14">Inebgawen</span>
+          <span id="labelInterfaceES14">Visitantes</span>
+          <i class="fas fa-users zc-footer-stats-ico" aria-hidden="true"></i>
+          <span class="zc-module-tab-icons zc-module-tab-icons--footer"></span>
+          <span id="usersOnlineBadge" class="tag" title="Onglets actifs">1</span>
+          <span class="zc-footer-stats-sep" aria-hidden="true"></span>
+          <span id="statToday" class="tag" title="Total visiteurs ce jour">—</span>
+          <span class="zc-footer-stats-sep" aria-hidden="true"></span>
+          <span id="statTotal" class="tag" title="Total visiteurs depuis 07-10-2025">—</span>
+        </div>
+        <div class="zc-footer-toolbar zc-module-toolbar-inner zc-module-actions-list zc-toolbar-row-compact" role="group">
+        <button type="button" id="footerToolbarLikeBtn" class="like-btn menu-button active zc-top-action-btn zc-title-sync-btn" data-target="article-123" aria-pressed="false" title="J’aime">
+          <span class="zc-top-action-ico" aria-hidden="true"><span class="like-heart icone-petite">💙</span></span>
+          <span class="zc-top-action-label zc-title-sync-label">J’aime</span>
+          <span class="like-count icone-petite">0</span>
+        </button>
+        <button type="button" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="partagerLien();" id="t-copier-le-lien-zoom-coran-avec-le-mot-recherché"
+          title="Copier le lien Zoom-Coran avec le mot recherché">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-share-alt icone-petite"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Partager</span>
+        </button>
+        <button id="BtnMsg" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="ouvrirPopupHtml('contact.html');" title="Contact">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Contact</span>
+          <span id="badgeMsgCount" aria-live="polite"></span>
+        </button>
+        <button type="button" id="btnNewsletter" class="menu-button active zc-top-action-btn zc-title-sync-btn"
+          onclick="openNewsletterPopup();" title="Newsletter">
+          <span class="zc-top-action-ico" aria-hidden="true"><i id="newsletterBtnIcon" class="fas fa-newspaper"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">Newsletter</span>
+        </button>
+        <button type="button" id="Apropos" class="menu-button active zc-top-action-btn zc-title-sync-btn" onclick="alertMsgBoxPopup(msgHelpAPropos());" title="À Propos">
+          <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-question icone-petite"></i></span>
+          <span class="zc-top-action-label zc-title-sync-label">À propos</span>
+        </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const drop = () => document.documentElement.classList.remove('app-init');
+      if (document.fonts?.ready) { document.fonts.ready.then(drop).catch(drop); }
+      else { drop(); }
+    });
+  </script>
+
+  <script>
+    (function () {
+      function syncTopActionLabels() {
+        document.querySelectorAll('.zc-title-sync-btn').forEach(function (btn) {
+          var label = btn.querySelector('.zc-title-sync-label');
+          if (!label) return;
+          // Ne pas écraser les libellés i18n (activerLabels : labelInterfaceFR… dans le span)
+          if (label.querySelector('[id^="labelInterfaceFR"]')) return;
+          var t = (btn.getAttribute('title') || '').trim();
+          if (t) label.textContent = t;
+        });
+      }
+
+      function setup() {
+        syncTopActionLabels();
+
+        // Si la langue change via sélecteur.
+        var langSel = document.getElementById('uiLangSelect');
+        if (langSel) langSel.addEventListener('change', function () { setTimeout(syncTopActionLabels, 0); });
+
+        // Si les titles sont modifiés dynamiquement par le moteur i18n.
+        var mo = new MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            var m = mutations[i];
+            if (m.type === 'attributes' && m.attributeName === 'title') {
+              syncTopActionLabels();
+              break;
+            }
+          }
+        });
+        document.querySelectorAll('.zc-title-sync-btn').forEach(function (btn) {
+          mo.observe(btn, { attributes: true, attributeFilter: ['title'] });
+        });
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup, { once: true });
+      else setup();
+    })();
+  </script>
+  <script defer src="jsZC/theme-toggle.js"></script>
+
+
+
+</body>
+
+</html>

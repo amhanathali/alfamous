@@ -1,0 +1,374 @@
+/* public/styles/20-search-field.css — Champs de recherche unifiés (Phase D).
+ *
+ * Gabarit visuel commun pour tous les champs de recherche `.zc-ui-search-field`
+ * (le champ principal #mot et ses jumeaux). L'objectif est d'obtenir un aspect
+ * homogène avec :
+ *   - Un bouton × (effacer) à l'INTÉRIEUR du champ, à gauche, visible seulement si valeur.
+ *   - Un bouton 🔍 (recherche) à l'INTÉRIEUR du champ, à droite, inactif par défaut.
+ *   - Une croissance de 1 à 3 lignes maximum pour les textareas multi-lignes.
+ *
+ * Forum reader, Articles, Témoignages et Médias utilisent le même wrapper `.zc-search-wrap`
+ * (× intérieur gauche, 🔍 décoratif / copier à droite). #mot conserve ses ids historiques
+ * (`.bouton-loupe-croix`) ; leurs positions sont harmonisées plus bas dans ce fichier.
+ */
+
+/* Les listes de suggestions reçoivent un z-index dynamique en JS à l'ouverture. */
+
+/* Dans le wrapper du champ principal #mot, la liste doit être au-dessus des panneaux voisins. */
+.zc-mot-field-wrap #suggestions-container-mot.suggestions-liste {
+  max-height: calc(100dvh - 180px);
+  overflow-y: auto;
+}
+
+/* --- Auto-resize des textareas multi-lignes : 1 à 3 lignes, pas de handle vertical --- */
+textarea.zc-ui-search-field.zc-ui-search-field--multiline,
+textarea.zc-ui-search-field--autogrow {
+  min-height: var(--zc-ui-search-min-h);
+  /* ≈ 3 lignes × 1.5em ; +padding vertical */
+  max-height: calc(3 * 1.5em + 20px);
+  height: auto;
+  resize: none;
+  overflow-y: auto;
+  /* Propriété moderne (Chrome 123+, Safari 17.4+) : ajuste la hauteur au contenu. */
+  field-sizing: content;
+}
+
+/* Champ principal #mot : jusqu'à 10 lignes quand le contenu déborde. */
+textarea#mot.zc-ui-search-field {
+  min-height: var(--zc-ui-search-min-h);
+  max-height: calc(10 * 1.5em + 20px);
+  height: auto;
+  resize: none;
+  overflow-y: auto;
+  field-sizing: content;
+}
+
+/* Mes Notes — champ Texte #afModalBody : prend TOUTE la hauteur disponible de la popup.
+ * La chaîne flex doit être fluide : .af-modal-fields (flex:1, column) > wrapper (flex:1, column) > textarea (flex:1). */
+#afModalOverlay .zc-search-wrap--textarea {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#afModalOverlay #afModalBody.zc-ui-search-field {
+  flex: 1 1 auto !important;
+  min-height: max(110px, var(--zc-ui-search-min-h)) !important;
+  height: auto !important;
+  max-height: none !important;
+  resize: none;
+  overflow-y: auto;
+}
+
+/* Champ Référence Mes Commentaires : même pattern que #mot (auto-resize, max 10 lignes).
+ * Force la règle héritée de la toolbar popup (min-height: 2.05rem, max-height: 2.05rem)
+ * qui le figeait sur une ligne. */
+.zc-comment-popup-box textarea#popupInputMot.zc-ui-search-field,
+.zc-popup-field-row--ref-compact:focus-within:not(.zc-ta-zen-expanded) textarea#popupInputMot.zc-ui-search-field {
+  min-height: var(--zc-ui-search-min-h) !important;
+  max-height: calc(10 * 1.5em + 20px) !important;
+  height: auto !important;
+  resize: none;
+  overflow-y: auto;
+  white-space: normal;
+  field-sizing: content;
+}
+
+/* --- Wrapper unifié pour un champ de recherche + ses 2 boutons internes --- */
+.zc-search-wrap {
+  position: relative;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+.zc-search-wrap > .zc-ui-search-field {
+  /* Laisse largement la place pour les deux boutons + un vrai espace avec le texte. */
+  padding-left: max(2.4rem, var(--zc-ui-search-pad-x-icon)) !important;
+  padding-right: max(2.4rem, var(--zc-ui-search-pad-x-icon)) !important;
+  /* Le champ suit le × en DOM : sans z-index il recouvre les boutons absolus. */
+  position: relative;
+  z-index: 0;
+}
+
+.zc-search-wrap > .zc-search-clear,
+.zc-search-wrap > .zc-search-go,
+.zc-search-wrap > .zc-search-copy {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.6rem;
+  height: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--zc-text-muted);
+  font-size: var(--zc-fs-md);
+  cursor: pointer;
+  border-radius: var(--zc-radius-xs);
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bouton × : collé tout à gauche pour maximiser l'espace texte. */
+.zc-search-wrap > .zc-search-clear {
+  left: var(--zc-space-2);
+}
+
+/* Boutons 🔍 / copier : collés tout à droite pour la même raison. */
+.zc-search-wrap > .zc-search-go,
+.zc-search-wrap > .zc-search-copy {
+  right: var(--zc-space-2);
+}
+
+/* Variante textarea multi-lignes : boutons alignés en HAUT (pas centrés)
+ * pour rester visibles même quand le contenu déborde. À déclarer APRÈS la règle
+ * générique pour écraser top:50% / transform:translateY(-50%). */
+.zc-search-wrap--textarea {
+  /* Permet au wrapper de grandir verticalement dans un parent flex column
+   * (Mes Commentaires — champ Texte, #commentaires doit prendre toute la hauteur dispo). */
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.zc-search-wrap--textarea > .zc-ui-search-field {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.zc-search-wrap--textarea > .zc-search-clear,
+.zc-search-wrap--textarea > .zc-search-copy,
+.zc-search-wrap--textarea > .zc-search-go {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.zc-search-wrap--textarea > .zc-search-clear {
+  left: 0.15rem;
+}
+
+.zc-search-wrap--textarea > .zc-search-copy,
+.zc-search-wrap--textarea > .zc-search-go {
+  right: 0.15rem;
+}
+
+/* Textarea: la croix/copie restent "nues" (sans cadre de fond), y compris au survol. */
+.zc-search-wrap--textarea > .zc-search-clear,
+.zc-search-wrap--textarea > .zc-search-copy,
+.zc-search-wrap--textarea > .zc-search-go,
+.zc-search-wrap--textarea > .zc-search-clear:hover,
+.zc-search-wrap--textarea > .zc-search-copy:hover,
+.zc-search-wrap--textarea > .zc-search-go:hover {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.zc-search-wrap > .zc-search-clear:hover,
+.zc-search-wrap > .zc-search-go:hover,
+.zc-search-wrap > .zc-search-copy:hover {
+  background: var(--zc-hover-bg);
+  color: var(--zc-text);
+}
+
+/* Bouton copier : toujours actif, icône FA (taille adaptée). */
+.zc-search-wrap > .zc-search-copy {
+  color: var(--zc-text-muted);
+}
+
+.zc-search-wrap > .zc-search-copy .fas {
+  font-size: var(--zc-fs-md);
+}
+
+/* Mes Notes (#afModalOverlay) : × / copier un peu plus grands pour lisibilité. */
+#afModalOverlay .zc-search-wrap > .zc-search-clear,
+#afModalOverlay .zc-search-wrap > .zc-search-copy {
+  width: 2.05rem;
+  height: 2.05rem;
+  font-size: 1.05rem;
+}
+
+#afModalOverlay .zc-search-wrap > .zc-search-copy .fas {
+  font-size: 1.12rem;
+}
+
+/* Mes Commentaires (#popupCommentaireOverlay) :
+ * × et Copier au même gabarit que #mot (.zc-mot-field-wrap > .bouton-loupe-croix 1.8rem). */
+#popupCommentaireOverlay .zc-search-wrap > .zc-search-clear,
+#popupCommentaireOverlay .zc-search-wrap > .zc-search-copy {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: var(--zc-fs-md);
+}
+
+/* Bouton 🔍 inactif par défaut (icône décorative). */
+.zc-search-wrap > .zc-search-go[disabled],
+.zc-search-wrap > .zc-search-go[aria-disabled="true"] {
+  cursor: default;
+  pointer-events: none;
+  color: var(--zc-text-muted);
+  opacity: 0.6;
+}
+
+/* Variante active (ex. #mot) : bleu, cliquable. */
+.zc-search-wrap > .zc-search-go.is-active {
+  color: var(--zc-popup-link);
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.zc-search-wrap > .zc-search-go.is-active:hover {
+  color: var(--zc-popup-link-hover);
+  background: var(--zc-popup-link-soft);
+}
+
+/* --- Repositionnement des boutons internes existants de #mot --- */
+/* .bouton-loupe-croix était à l'extérieur (transform: translate(-50%, ..)).
+ * On corrige pour placer × à gauche inside, 🔍 à droite inside — même aspect que .zc-search-wrap. */
+.zc-mot-field-wrap,
+.zc-mot-search-wrap {
+  position: relative;
+}
+
+.zc-mot-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: visible;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.zc-mot-search-wrap > .zc-mot-select-core {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+  overflow: visible;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #mot.zc-ui-search-field,
+.zc-mot-field-wrap > #mot.zc-ui-search-field {
+  padding-left: 2.4rem !important;
+  /* RTL : le texte commence à droite ; marge généreuse pour la loupe + chevron voisin. */
+  padding-right: 3.15rem !important;
+  padding-inline-start: 3.15rem !important;
+  position: relative;
+  z-index: 0;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #historiqueMotsInput.zc-ui-search-field,
+.zc-mot-field-wrap > #historiqueMotsInput.zc-ui-search-field {
+  padding-left: 2.4rem !important;
+  padding-right: 2.4rem !important;
+  position: relative;
+  z-index: 0;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > .bouton-loupe-croix:not(.zc-mot-search-chevron),
+.zc-mot-field-wrap > .bouton-loupe-croix:not(.zc-mot-search-chevron) {
+  position: absolute !important;
+  z-index: 2;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--zc-text-muted) !important;
+  font-size: var(--zc-fs-md);
+  line-height: 1;
+  border-radius: var(--zc-radius-xs);
+  cursor: pointer;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #t-supprimer-les-mots-saisis.bouton-loupe-croix,
+.zc-mot-field-wrap > #t-supprimer-les-mots-saisis.bouton-loupe-croix {
+  left: 0.4rem !important;
+  right: auto !important;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #zoomCoranBtnR0.bouton-loupe-croix,
+.zc-mot-field-wrap > #zoomCoranBtnR0.bouton-loupe-croix {
+  right: -0.55rem !important;
+  left: auto !important;
+  /* Bouton 🔍 actif sur #mot : bleu, lance la recherche */
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #zoomCoranBtnR0Historik.bouton-loupe-croix,
+.zc-mot-field-wrap > #zoomCoranBtnR0Historik.bouton-loupe-croix {
+  right: 0.4rem !important;
+  left: auto !important;
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > .bouton-loupe-croix:not(.zc-mot-search-chevron):hover,
+.zc-mot-field-wrap > .bouton-loupe-croix:not(.zc-mot-search-chevron):hover {
+  background: var(--zc-hover-bg) !important;
+}
+
+.zc-mot-field-wrap .zc-mot-select-core > #zoomCoranBtnR0.bouton-loupe-croix:hover,
+.zc-mot-field-wrap > #zoomCoranBtnR0.bouton-loupe-croix:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* Chevron listes mot / référence popup : en flux à droite du champ (comme Soura). */
+.zc-mot-search-wrap > .bouton-loupe-croix.zc-mot-search-chevron,
+#popupCommentaireOverlay .zc-mot-search-wrap > .bouton-loupe-croix.zc-mot-search-chevron {
+  position: relative !important;
+  top: auto !important;
+  transform: none !important;
+  flex: 0 0 auto;
+  align-self: center;
+  right: auto !important;
+  left: auto !important;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-mot-search-wrap > .bouton-loupe-croix.zc-mot-search-chevron:hover,
+#popupCommentaireOverlay .zc-mot-search-wrap > .bouton-loupe-croix.zc-mot-search-chevron:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+#popupCommentaireOverlay .zc-popup-mot-search-wrap {
+  width: 100%;
+}
+
+/* Masquer × / Copier / 🔍 s'ils ont reçu la classe .is-hidden (ajoutée/retirée par le JS
+ * auto-toggle de zc-utils.js selon la présence de contenu dans le champ). */
+.zc-mot-field-wrap .zc-mot-select-core > .bouton-loupe-croix.is-hidden,
+.zc-mot-field-wrap > .bouton-loupe-croix.is-hidden,
+.zc-search-wrap > .zc-search-clear.is-hidden,
+.zc-search-wrap > .zc-search-copy.is-hidden,
+.zc-search-wrap > .zc-search-go.is-hidden,
+.zc-popup-tool-btn.is-hidden {
+  display: none !important;
+}
+
+/* #panelVersets contient le champ #mot et sa liste de suggestions absolue.
+ * La règle générique `.toolbar1.zc-module-panel { overflow: hidden }` clipe la liste
+ * quand elle dépasse le panneau → on la neutralise ici, le panel body laisse passer. */
+#panelVersets.toolbar1.zc-module-panel,
+#panelVersets .zc-versets-panel-body,
+.zc-mot-field-wrap,
+.zc-mot-search-wrap {
+  overflow: visible;
+}
+
+#popupCommentaireOverlay .zc-mot-search-wrap,
+#popupCommentaireOverlay .zc-mot-select-core {
+  overflow: visible;
+}

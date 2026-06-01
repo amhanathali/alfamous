@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>À propos — Alfamous</title>
+
+  <!-- Font Awesome (6.5.2) avec SRI correct -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Tokens CSS globaux --zc-* (inclut dark mode automatique) -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles/99-overrides.css">
+  <link rel="stylesheet" href="styles/21-no-chrome-borders.css">
+
+  <style>
+    /* Aliases locaux pointant vers les tokens globaux --zc-* */
+    :root {
+      --fg:   var(--zc-text,   #0f172a);
+      --bg:   var(--zc-bg,     #ecfeff);
+      --muted: var(--zc-text-muted, #64748b);
+      --card: var(--zc-ui-soft-bg, #f8fafc);
+      --line: var(--zc-border, #e2e8f0);
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0.75rem 1rem 1.25rem;
+    }
+
+    /* En-tête compact : logo réduit + titre + langue */
+    .apropos-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0 0 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .apropos-logo {
+      flex: 0 0 auto;
+      display: block;
+      line-height: 0;
+    }
+
+    .apropos-logo img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .apropos-header-main {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .apropos-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    #btnLang {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 999px;
+      padding: 0.28rem 0.55rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-size: clamp(0.95rem, 2.8vw, 1.2rem);
+      font-weight: 700;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    h2 {
+      margin: 1rem 0 0.45rem;
+      font-size: 1.08rem;
+    }
+
+    .manifest h2 {
+      margin: 1.15rem 0 0.5rem;
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .manifest h2:first-of-type {
+      margin-top: 0.85rem;
+    }
+
+    /* Citation finale (encadré) */
+    .manifest-quote-card {
+      text-align: center;
+    }
+
+    .manifest-quote {
+      margin: 0;
+      padding: 1rem 1.15rem;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      font-style: italic;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    [dir="rtl"] blockquote.manifest-quote {
+      border: 2px solid var(--line);
+      border-left: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+    }
+
+    h3 {
+      margin: 0.85rem 0 0.3rem;
+      font-size: 0.98rem;
+    }
+
+    .apropos-lead {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin: 0 0 0.75rem;
+      color: var(--fg);
+    }
+
+    .apropos-ui-shot {
+      margin: 0.5rem 0 0.75rem;
+      text-align: center;
+    }
+
+    .apropos-ui-shot img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    .apropos-ui-shot figcaption {
+      margin-top: 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    /* Cartes de section */
+    section.card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+    }
+
+    section+section {
+      margin-top: .85rem;
+    }
+
+    /* Listes avec icônes */
+    .feat-list {
+      list-style: none;
+      padding: 0;
+      margin: .25rem 0 0 0;
+    }
+
+    .feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      margin: .35rem 0;
+    }
+
+    .feat-iconBox {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .feat-emoji {
+      font-size: 20px;
+      display: block;
+      line-height: 1;
+    }
+
+    .icon-fa {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .icon-img {
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
+      border-radius: 4px;
+      display: block;
+    }
+
+    /* Liens */
+    a {
+      color: var(--zc-link, #0b67d0);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Séparateur */
+    hr.sep {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 1rem 0;
+    }
+
+    /* Bloc auteur discret */
+    .author {
+      font-size: .94rem;
+      color: var(--muted);
+    }
+
+    /* RTL */
+    [dir="rtl"] .apropos-header {
+      flex-direction: row-reverse;
+    }
+
+    [dir="rtl"] .apropos-header-top {
+      justify-content: flex-start;
+    }
+
+    [dir="rtl"] h1 {
+      text-align: right;
+    }
+
+    [dir="rtl"] .feat-item {
+      flex-direction: row-reverse;
+    }
+
+    [dir="rtl"] .feat-list {
+      padding-right: 0;
+    }
+
+    [dir="rtl"] ul {
+      padding-left: 0;
+      padding-right: 1.25rem;
+    }
+
+    [dir="rtl"] blockquote {
+      border-left: none;
+      border-right: .28rem solid var(--line);
+    }
+
+    .collab-closing {
+      margin: 0.85rem 0 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .overview-pillar h3 {
+      margin: 1rem 0 .35rem;
+      font-size: 1.08rem;
+    }
+
+    .overview-pillar h3:first-of-type {
+      margin-top: .75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="apropos-header">
+      <a class="apropos-logo" href="index.html" title="Alfamous"
+        onclick="try{if(typeof newInstanceDeZoomCoran==='function'){newInstanceDeZoomCoran();return false;}if(window.parent&amp;&amp;typeof window.parent.newInstanceDeZoomCoran==='function'){window.parent.newInstanceDeZoomCoran();return false;}}catch(e){}return true;">
+        <img src="img/ZC2.png" width="56" height="56" alt="Alfamous" />
+      </a>
+      <div class="apropos-header-main">
+        <div class="apropos-header-top">
+          <button type="button" id="btnLang" title="Changer la langue">🌐 FR</button>
+    </div>
+      <h1 id="pageTitle"></h1>
+      </div>
+    </header>
+
+    <main id="content" aria-live="polite"></main>
+  </div>
+
+  <script>
+    // ---------- Langues ----------
+    const ORDER = ["fr", "ar", "en", "es", "kab"];
+    function getUILang() { return (localStorage.getItem("uiLang") || "fr").toLowerCase(); }
+    function setUILang(lang) {
+      const l = (lang || "fr").toLowerCase();
+      localStorage.setItem("uiLang", l);
+      document.documentElement.lang = l;
+      document.documentElement.dir = (l === "ar") ? "rtl" : "ltr";
+      const btn = document.getElementById("btnLang"); if (btn) btn.textContent = "🌐 " + l.toUpperCase();
+      render();
+    }
+    function cycleLang() { const cur = getUILang(); const next = ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length]; setUILang(next); }
+    function L(obj) { const l = getUILang(); return (obj && (obj[l] ?? obj.fr)) || ""; }
+    function renderList(arr) { return `<ul>${(arr || []).map(li => `<li>${li}</li>`).join("")}</ul>`; }
+    function renderFeatSummaryRows(items) {
+      const rows = Array.isArray(items) ? items : [];
+      return rows.map(([ico, txt]) => `
+            <li class="feat-item">
+              <span class="feat-iconBox"><span class="feat-emoji">${ico}</span></span>
+              <span>${txt}</span>
+            </li>`).join("");
+    }
+
+    // ---------- Textes ----------
+    const TEXTS = {
+      // Titre principal
+      title: {
+        fr: "À propos d’Alfamous",
+        en: "About Alfamous",
+        ar: "حول Alfamous",
+        es: "Acerca de Alfamous",
+        kab: "Ɣef Alfamous"
+      },
+
+      // Manifeste (corps de page)
+      mf1_elites: {
+        fr: "Le Coran n’est pas réservé à des élites religieuses.",
+        en: "The Qur’an is not reserved for religious elites.",
+        ar: "القرآن ليس حكرًا على نخب دينية.",
+        es: "El Corán no está reservado a élites religiosas.",
+        kab: "Leqran ur yettwadeccel ara i yigrawen n lɣes."
+      },
+      mf2_all: {
+        fr: "Il s’adresse à tous. Alfamous en tire une règle simple : personne n’est exclu de la lecture ni de la contribution.",
+        en: "It speaks to everyone. Alfamous draws one simple rule from that: no one is excluded from reading or from contributing.",
+        ar: "يخاطب الجميع. Alfamous يستخلص من ذلك قاعدة بسيطة: لا أحد يُستبعد عن القراءة ولا عن المساهمة.",
+        es: "Se dirige a todas las personas. Alfamous extrae de ello una regla simple: nadie queda excluido de la lectura ni de la contribución.",
+        kab: "Yettsellem i yal yiwen. Alfamous yettf-d alugen afessas: ulac win yettwakkes seg tɣuri neɣ seg utekki."
+      },
+      mf3_degreeLead: {
+        fr: "Tu n’as pas besoin d’un diplôme pour :",
+        en: "You do not need a degree to:",
+        ar: "لا يلزمك دبلوم. يمكنك أن:",
+        es: "No necesitas un título para:",
+        kab: "Ur tesḥiḍ ara ɣer uceṛṛa akken ad:"
+      },
+      mf3_actions: {
+        fr: ["lire", "chercher", "commenter", "proposer un sens", "ouvrir un fil", "publier une note", "déposer un média", "partager un lien"],
+        en: ["read", "search", "comment", "propose a reading", "open a thread", "publish a note", "upload media", "share a link"],
+        ar: ["تقرأ", "تبحث", "تعلّق", "تقترح معنى", "تفتح نقاشًا", "تنشر ملاحظة", "ترفع وسيطًا", "تشارك رابطًا"],
+        es: ["leer", "buscar", "comentar", "proponer un sentido", "abrir un hilo", "publicar una nota", "subir un medio", "compartir un enlace"],
+        kab: ["ɣer", "nadi", "err", "sner tamɣiw", "ldey akala", "sseɣ amedya", "seddu amidyat", "bḍu aseɣwen"]
+      },
+      mf4_counts: {
+        fr: "Ce qui compte&nbsp;? Le texte. Pas le titre. Pas l’autorité. Pas l’appartenance.",
+        en: "What counts? The text. Not the title. Not authority. Not belonging.",
+        ar: "ما الذي يهم؟ النصّ. لا المنصب. لا السلطة. لا الانتماء.",
+        es: "¿Qué importa? El texto. No el título. No la autoridad. No la pertenencia.",
+        kab: "D acu i ixes? Aḍris. Mačči azwel. Mačči tameṭṭut. Mačči lḥeqq n ubaḍ."
+      },
+      mf5_ambTitle: {
+        fr: "Une ambition&nbsp;: travailler le Livre, pas seulement le consulter",
+        en: "One ambition: work the Book—not only skim it",
+        ar: "طموح واحد: العمل على الكتاب لا الاكتفاء باستعراضه",
+        es: "Una ambición: trabajar el Libro, no limitarse a consultarlo",
+        kab: "Yiwen n uɣawas: ad txedmeḍ ɣef wedlis, mačči kan ad tɣer-t"
+      },
+      mf5_notAnother: {
+        fr: "Alfamous n’est pas un énième logiciel pour «&nbsp;retrouver un verset&nbsp;».",
+        en: "Alfamous is not yet another app whose only trick is to “find a verse.”",
+        ar: "Alfamous ليس أداة إضافية لا غرض منها سوى «إيجاد آية».",
+        es: "Alfamous no es un software más para «encontrar un versículo».",
+        kab: "Alfamous mačči d yiwen usnas-nniḍen i «ad d-af azal» kan."
+      },
+      mf5_fromStart: {
+        fr: "Dès le début de sa conception, nous avons voulu autre chose&nbsp;: travailler le Livre en profondeur — racines, formes, emplois dans le corpus — avec des hypothèses visibles et une frontière nette entre&nbsp;: <strong>ce que dit le texte</strong>, <strong>ce que l’on mesure</strong> et <strong>ce que l’on propose</strong>.",
+        en: "From the very first design choices, we wanted something else: to work the Book in depth—roots, forms, occurrences in the corpus—with visible hypotheses and a clear line between <strong>what the text says</strong>, <strong>what we measure</strong>, and <strong>what we propose</strong>.",
+        ar: "منذ بداية التصميم، أردنا شيئًا آخر: العمل على الكتاب بعمق—الجذور، الصيغ، التواتر في المتن—بفرضيات مكشوفة وبحدّ واضح بين <strong>ما يقوله النص</strong>، و<strong>ما نقيسه</strong>، و<strong>ما نقترحه</strong>.",
+        es: "Desde el inicio del diseño quisimos otra cosa: trabajar el Libro en profundidad—raíces, formas, empleos en el corpus—con hipótesis visibles y una frontera clara entre <strong>lo que dice el texto</strong>, <strong>lo que medimos</strong> y <strong>lo que proponemos</strong>.",
+        kab: "Seg tazwara n useɣwen, nebɣa wayeḍ: ad txedmeḍ ɣef wedlis s tɣmert—iɣran, tifrat, useqdec deg tseddast—s tagninin yettwabenkan d yibeddilen ufrin gar <strong>ayen i d-yenni aḍris</strong>, <strong>ayen i d-nekcam</strong> d <strong>ayen i d-nesnerni</strong>."
+      },
+      mf6_ruleTitle: {
+        fr: "Une règle non négociable",
+        en: "A non-negotiable rule",
+        ar: "قاعدة لا تقبل المساومة",
+        es: "Una regla innegociable",
+        kab: "Alugen ur nettwaslay ara"
+      },
+      mf6_readText: {
+        fr: "Nous lisons à partir du texte coranique exclusivement.",
+        en: "We read from the Qur’anic text—and from it alone.",
+        ar: "نقرأ انطلاقًا من النصّ القرآني وحدَه.",
+        es: "Leemos a partir del texto coránico, y solo de él.",
+        kab: "Nettɣuri kan seg wedlis n Leqran."
+      },
+      mf6_hadithLead: {
+        fr: "Les hadiths n’entrent pas dans le dispositif&nbsp;:",
+        en: "Hadiths are not part of the apparatus:",
+        ar: "الحديث لا يدخل في المنظومة:",
+        es: "Los hadices no entran en el dispositivo:",
+        kab: "Lhedis ur yekcem ara deg uslig:"
+      },
+      mf6_hadithBullets: {
+        fr: ["ni comme preuve", "ni comme autorité", "ni comme grille imposée pour arrimer le sens du Coran"],
+        en: ["not as evidence", "not as authority", "not as an imposed grid to moor the Qur’an’s meaning"],
+        ar: ["لا كدليل", "لا كسلطة", "لا كإطار مفروض لترسيخ معنى القرآن"],
+        es: ["ni como prueba", "ni como autoridad", "ni como parrilla impuesta para fijar el sentido del Corán"],
+        kab: ["mačči d chedda", "mačči d tameṭṭut", "mačči d tarrayt yettwasṭaqnen i usɣwen n yifuyla n Leqran"]
+      },
+      mf6_tail: {
+        fr: "<strong>Décrochage méthodologique total.</strong> Ce n’est pas une préférence d’interface&nbsp;: c’est le cadre. C’est aussi ce qui nous distingue de la plupart des outils «&nbsp;du même rayon&nbsp;».",
+        en: "<strong>Full methodological disengagement.</strong> This is not an interface preference: it is the frame. It is also what sets us apart from most tools “in the same aisle.”",
+        ar: "<strong>انفصال منهجي تام.</strong> هذا ليس تفضيلًا للواجهة: إنه الإطار. وهذا أيضًا ما يميّزنا عن أغلب الأدوات «من النوع نفسه».",
+        es: "<strong>Desacople metodológico total.</strong> No es una preferencia de interfaz: es el marco. Es también lo que nos distingue de la mayoría de herramientas «del mismo estante».",
+        kab: "<strong>Asufɣel amsnulfu ummid.</strong> Mačči d tafrant n ugrudem: d akatar. D waya i d-yeffer-iten ɣef deqs n yifecka «n wannay amecwar»."
+      },
+      mf7_liveTitle: {
+        fr: "Inédit&nbsp;: une base qui vit",
+        en: "Unprecedented: a living knowledge base",
+        ar: "غير مسبوق: قاعدة معرفة حيّة",
+        es: "Inédito: una base viva",
+        kab: "Amaynut: taffirt n tmusni id-tetteddu"
+      },
+      mf7_lead: {
+        fr: "Tu peux enrichir le corpus&nbsp;:",
+        en: "You can enrich the corpus:",
+        ar: "يمكنك إغناء المتن:",
+        es: "Puedes enriquecer el corpus:",
+        kab: "Tzemreḍ ad tesmuddeḍ tseddast:"
+      },
+      mf7_liveBullets: {
+        fr: ["commentaires sur les versets", "thèmes et sujets dans le lexique"],
+        en: ["comments on verses", "themes and topics in the lexicon"],
+        ar: ["تعليقات على الآيات", "مواضيع وثيمات في المعجم"],
+        es: ["comentarios sobre los versículos", "temas y asuntos en el léxico"],
+        kab: ["iwalihen ɣef yizlan", "ikalan d isental deg umawal"]
+      },
+      mf7_liveClose: {
+        fr: "Ce n’est pas une encyclopédie figée. C’est un atelier collectif.",
+        en: "This is not a frozen encyclopedia. It is a collective workshop.",
+        ar: "ليس موسوعة متجمّدة. إنه ورشة جماعية.",
+        es: "No es una enciclopedia congelada. Es un taller colectivo.",
+        kab: "Mačči d tasmilt yettwḥebsen. D amussnaw n temɣart."
+      },
+      mf8_searchTitle: {
+        fr: "Inédit&nbsp;: une recherche qui relie",
+        en: "Unprecedented: search that connects",
+        ar: "غير مسبوق: بحث يربط",
+        es: "Inédito: una búsqueda que conecta",
+        kab: "Amaynut: anadi yettqen"
+      },
+      mf8_lead: {
+        fr: "Un mot suffit. Il traverse d’un seul mouvement&nbsp;:",
+        en: "One word is enough. In one pass it runs through:",
+        ar: "كلمة واحدة تكفي. تعبر دفعة واحدة عبر:",
+        es: "Una palabra basta. Cruza de un solo golpe:",
+        kab: "Yiwen n wawal yettwali. Yettraḥal s yiwen usemmid:"
+      },
+      mf8_searchBullets: {
+        fr: ["le Coran", "le lexique", "le forum", "les témoignages", "les articles", "les médias"],
+        en: ["the Qur’an", "the lexicon", "the forum", "testimonials", "articles", "media"],
+        ar: ["القرآن", "المعجم", "المنتدى", "الشهادات", "المقالات", "الوسائط"],
+        es: ["el Corán", "el léxico", "el foro", "los testimonios", "los artículos", "los medios"],
+        kab: ["Leqran", "amawal", "ammager", "cheddad", "imagraden", "imidyaten"]
+      },
+      mf8_close: {
+        fr: "Fini les allers-retours entre dix onglets. Une entrée, tout le chantier.",
+        en: "No more hopping across ten tabs. One entry, the whole worksite.",
+        ar: "لا مزيد من التنقّل بين عشر تبويبات. مدخل واحد، الموقع بأسره.",
+        es: "Se acabó saltar entre diez pestañas. Una entrada, todo el taller.",
+        kab: "Imi ar tɣellizeḍ gar snat n yisebtar. Yiwen n usekcem, lḥeṭṭa yerra."
+      },
+      mf9_voiceTitle: {
+        fr: "Ta voix compte — par les canaux qui t’arrangent",
+        en: "Your voice matters—through the channels that suit you",
+        ar: "صوتك مهمّ—عبر القنوات التي تناسبك",
+        es: "Tu voz importa—por los canales que te convengan",
+        kab: "Taɣect-ik tḥemm: s yiberdan i k-yelhan"
+      },
+      mf9_voiceBullets: {
+        fr: [
+          "une interprétation liée à un verset",
+          "un sujet sur un mot ou un thème",
+          "un échange sur le forum",
+          "un texte sur le blog",
+          "des médias utiles&nbsp;: PDF, image, vidéo, lien vers une ressource"
+        ],
+        en: [
+          "an interpretation tied to a verse",
+          "a topic on a word or theme",
+          "a conversation on the forum",
+          "a post on the blog",
+          "useful media: PDF, image, video, link to a resource"
+        ],
+        ar: [
+          "تفسير مرتبط بآية",
+          "موضوع عن كلمة أو ثيمة",
+          "حوار في المنتدى",
+          "نص في المدوّنة",
+          "وسائط مفيدة: PDF، صورة، فيديو، رابط لمورد"
+        ],
+        es: [
+          "una interpretación ligada a un versículo",
+          "un tema sobre una palabra o un tópico",
+          "un intercambio en el foro",
+          "un texto en el blog",
+          "medios útiles: PDF, imagen, vídeo, enlace a un recurso"
+        ],
+        kab: [
+          "tawtilt icudden ɣer wazal",
+          "asentel ɣef wawal neɣ asentel",
+          "adway deg umɣer",
+          "aḍris deg ublug",
+          "imidyaten ixesfan: PDF, tugna, avidyu, aseɣwen ɣer uɣbalu"
+        ]
+      },
+      mf9_notes: {
+        fr: "<strong>Mes Notes</strong>&nbsp;: privé ou public. Et ce que tu rends public peut apparaître sur le forum, pour que la réflexion circule.",
+        en: "<strong>My Notes</strong>: private or public. What you make public can appear on the forum—so ideas keep moving.",
+        ar: "<strong>ملاحظاتي</strong>: خاص أو عام. وما تجعله عامًا يمكن أن يظهر في المنتدى، لتبقى المساهمة في حركة.",
+        es: "<strong>Mis notas</strong>: privado o público. Lo que haces público puede mostrarse en el foro, para que la reflexión circule.",
+        kab: "<strong>Iznan-inu</strong>: uslig neɣ azayez. Ayen tetteddu d azayez yezmer ad d-yales deg umɣer, i wakken ad teddu tamuɣli."
+      },
+      mf10_listenTitle: {
+        fr: "Écouter, pas seulement lire",
+        en: "Listen—not only read",
+        ar: "الاستماع لا القراءة فقط",
+        es: "Escuchar, no solo leer",
+        kab: "Simeslaw, mačči kan taɣuri"
+      },
+      mf10_listenBody: {
+        fr: "Verset ou sourate&nbsp;: écoute intégrée. Le texte n’est pas qu’à l’œil.",
+        en: "Verse or surah: built-in listening. The text is not for the eye alone.",
+        ar: "آية أو سورة: استماع مدمج. النص ليس للعين وحدها.",
+        es: "Versículo o sura: escucha integrada. El texto no es solo para la vista.",
+        kab: "Azal neɣ sura: ameslaw yettwassemman. Aḍris mačči i wallen kan."
+      },
+      mf11_sumTitle: {
+        fr: "Alfamous, en résumé",
+        en: "Alfamous in brief",
+        ar: "Alfamous في وجيز",
+        es: "Alfamous, en resumen",
+        kab: "Alfamous s tagnawt"
+      },
+      mf11_sumBullets: {
+        fr: ["Le texte d’abord", "Les hadiths hors cadre", "La recherche unifiée", "La contribution ouverte à tous"],
+        en: ["The text first", "Hadiths out of frame", "Unified search", "Contribution open to all"],
+        ar: ["النصّ أولًا", "الحديث خارج الإطار", "بحث موحّد", "مساهمة مفتوحة للجميع"],
+        es: ["El texto primero", "Los hadices fuera del marco", "Búsqueda unificada", "Contribución abierta a todas las personas"],
+        kab: ["Aḍris zik", "Lhedis beṛṛa n ukatar", "Anadi yedduklen", "Utikki yeldin i yal yiwen"]
+      },
+      mf11_close: {
+        fr: "Pas une chapelle. Un chantier.",
+        en: "Not a chapel. A worksite.",
+        ar: "ليس مصلًى صغيرًا. بل ورشة.",
+        es: "No es una capilla. Es un taller.",
+        kab: "Mačči d lmasjid meẓẓiyen. D lḥeṭṭa."
+      },
+      uiAlt: {
+        fr: "Capture d’écran de l’interface Alfamous",
+        en: "Screenshot of the Alfamous interface",
+        ar: "لقطة شاشة لواجهة Alfamous",
+        es: "Captura de la interfaz de Alfamous",
+        kab: "Tuṭṭfa n ugrudem n Alfamous"
+      },
+      uiCaption: {
+        fr: "Exemple de l’interface Alfamous.",
+        en: "Alfamous interface (screenshot).",
+        ar: "مثال لواجهة Alfamous.",
+        es: "Ejemplo de la interfaz de Alfamous.",
+        kab: "Amedya n ugrudem n Alfamous."
+      },
+      featuresSummaryTitle: {
+        fr: "Fonctions principales",
+        en: "Main features",
+        ar: "الوظائف الرئيسية",
+        es: "Funciones principales",
+        kab: "Timahilin agejdan"
+      },
+      featuresSummaryItems: {
+        fr: [
+          ["📝", "Recherche <strong>versets</strong> : mots (arabe / latin), page Warsh, réf. sourate.verset (ex. 3.14), historique et translittération."],
+          ["📚", "Panneau <strong>Sourate</strong> : choix 1–114, PDF, audio, lecture du texte."],
+          ["⚙️", "<strong>Paramètres</strong> : mot entier, ordre des mots, livre de tafsir."],
+          ["🔎", "Module <strong>SAWM</strong> : Coran &amp; commentaires, <strong>lexique</strong>, <strong>articles</strong> du blog, lien vers le <strong>blog</strong> public."],
+          ["🌿", "Module <strong>SALAT</strong> : statistiques de racines, synonymes &amp; atomes, cooccurrences, formes déclinées (travaux du Dr Sameer Islambulli)."],
+          ["💬", "Module <strong>CHOKR</strong> : commentaires sur les versets, contact, forum, témoignages, biblio, copie de versets, partage de lien."],
+          ["🌐", "Interface multilingue (FR, EN, AR, es, kab) ; menu contextuel sur la sélection."],
+          ["📊", "Pied de page : statistiques, connexion ; projet <strong>Zoom-Coran &amp; Lexique</strong> complété par <strong>blog.alfamous.ca</strong>."]
+        ],
+        en: [
+          ["📝", "<strong>Verse search</strong>: Arabic/Latin input, Warsh page, surah.verse (e.g. 3.14), history and transliteration."],
+          ["📚", "<strong>Surah</strong> panel: 1–114, PDF, audio, reading."],
+          ["⚙️", "<strong>Settings</strong>: whole word, word order, tafsir book."],
+          ["🔎", "<strong>SAWM</strong>: Qur’an &amp; commentary, <strong>lexicon</strong>, blog <strong>articles</strong>, public <strong>blog</strong> link."],
+          ["🌿", "<strong>SALAT</strong>: root stats, synonyms &amp; atoms, co-occurrences, inflected forms (inspired by Dr Sameer Islambulli)."],
+          ["💬", "<strong>CHOKR</strong>: verse comments, contact, forum, testimonials, library, copy verses, share link."],
+          ["🌐", "Multilingual UI (FR, EN, AR, es, kab); context menu on selection."],
+          ["📊", "Footer: visit stats, login; <strong>Zoom-Coran &amp; Lexique</strong> plus <strong>blog.alfamous.ca</strong>."]
+        ],
+        ar: [
+          ["📝", "<strong>بحث الآيات</strong>: عربي/لاتيني، صفحة ورش، سورة.آية (مثلاً 3.14)، السجلّ والنقل الصوتي."],
+          ["📚", "لوحة <strong>السورة</strong>: 1–114، PDF، صوت، قراءة."],
+          ["⚙️", "<strong>الإعدادات</strong>: كلمة كاملة، ترتيب الكلمات، كتاب التفسير."],
+          ["🔎", "<strong>SAWM</strong>: القرآن والتفسير، <strong>المعجم</strong>، <strong>مقالات</strong> المدوّنة، رابط <strong>المدوّنة</strong>."],
+          ["🌿", "<strong>SALAT</strong>: إحصاءات الجذور، مرادفات وذرّات، ترافق، صيغ (أعمال الدكتور سمير إسلامبلي)."],
+          ["💬", "<strong>CHOKR</strong>: تعليقات، اتصال، منتدى، شهادات، مكتبة، نسخ آيات، مشاركة الرابط."],
+          ["🌐", "واجهة بعدة لغات؛ قائمة سياق للتحديد."],
+          ["📊", "التذييل: إحصاءات، دخول؛ مشروع <strong>Zoom-Coran &amp; Lexique</strong> مع <strong>blog.alfamous.ca</strong>."]
+        ],
+        es: [
+          ["📝", "<strong>Búsqueda de versículos</strong>: árabe/latín, página Warsh, sura.versículo (ej. 3.14), historial y transliteración."],
+          ["📚", "Panel <strong>Sura</strong>: 1–114, PDF, audio, lectura."],
+          ["⚙️", "<strong>Ajustes</strong>: palabra entera, orden, libro de tafsir."],
+          ["🔎", "<strong>SAWM</strong>: Corán y comentarios, <strong>léxico</strong>, <strong>artículos</strong>, enlace al <strong>blog</strong>."],
+          ["🌿", "<strong>SALAT</strong>: estadísticas de raíces, sinónimos y átomos, coocurrencias, formas (Dr. Sameer Islambulli)."],
+          ["💬", "<strong>CHOKR</strong>: comentarios, contacto, foro, testimonios, biblioteca, copiar versículos, compartir enlace."],
+          ["🌐", "Interfaz multilingüe; menú contextual en la selección."],
+          ["📊", "Pie: estadísticas, acceso; <strong>Zoom-Coran &amp; Lexique</strong> y <strong>blog.alfamous.ca</strong>."]
+        ],
+        kab: [
+          ["📝", "<strong>Anadi n tzmilin</strong>: Taɛrabt/Latin, asebter Warsh, sura.azal (amedya 3.14), amazray d tasefsit."],
+          ["📚", "Agelzim <strong>Sura</strong>: 1–114, PDF, ameslaw, taɣuri."],
+          ["⚙️", "<strong>Iɣewwaren</strong>: awal ummid, amizzwer, adlis n tafsir."],
+          ["🔎", "<strong>SAWM</strong>: Leqran d uwelli, <strong>amawal</strong>, <strong>imagraden</strong>, aseɣwen ɣer <strong>ublug</strong>."],
+          ["🌿", "<strong>SALAT</strong>: tiddadanin n iɣran, isemmaden d yiatumen, temmagayt, tifrat (Dr Sameer Islambulli)."],
+          ["💬", "<strong>CHOKR</strong>: iwellihen, anermis, ammager, cheddad, tadbart, nɣel, bḍu n useɣwen."],
+          ["🌐", "Agrudem s ddeqs n tutlayin; umuɣ n usenfaṛ ɣef ufran."],
+          ["📊", "Adar: tiddadanin, tuqqna; asenfaṛ <strong>Zoom-Coran &amp; Lexique</strong> akked <strong>blog.alfamous.ca</strong>."]
+        ]
+      },
+      pillarsShort: {
+        fr: "Le projet s’appuie sur <strong>blog.alfamous.ca</strong> (publication) et <strong>Alfamous.ca</strong> (analyse dans le texte).",
+        en: "The project pairs <strong>blog.alfamous.ca</strong> (publishing) with <strong>Alfamous.ca</strong> (in-text analysis).",
+        ar: "يعتمد المشروع على <strong>blog.alfamous.ca</strong> (النشر) و<strong>Alfamous.ca</strong> (التحليل في النص).",
+        es: "El proyecto combina <strong>blog.alfamous.ca</strong> (publicación) y <strong>Alfamous.ca</strong> (análisis en el texto).",
+        kab: "Asenfaṛ yettemɣer ɣef <strong>blog.alfamous.ca</strong> (asuffeɣ) d <strong>Alfamous.ca</strong> (tasleṭ deg uḍris)."
+      },
+      blogShort: {
+        fr: "Le blog contextualise les résultats d’Alfamous : analyses et études de cas, lecture centrée sur <strong>racines</strong>, <strong>formes</strong> et <strong>usage</strong> dans le corpus.",
+        en: "The blog contextualizes Alfamous outputs—analyses and case studies—with focus on <strong>roots</strong>, <strong>forms</strong>, and <strong>usage</strong> in the corpus.",
+        ar: "المدوّنة توضع نتائج Alfamous في سياقها—تحليلات ودراسات—مع تركيز على <strong>الجذور</strong> و<strong>الصيغ</strong> و<strong>الاستعمال</strong>.",
+        es: "El blog sitúa los resultados de Alfamous: análisis y casos, con foco en <strong>raíces</strong>, <strong>formas</strong> y <strong>uso</strong> en el corpus.",
+        kab: "Ablug yesleṭ igmaḍ n Alfamous: tasleṭin d tedyant, ɣef <strong>iɣran</strong>, <strong>tifrat</strong> d <strong>useqdec</strong> deg tseddast."
+      },
+
+      // Vue d’ensemble (appel à collaboration + deux piliers)
+      overviewTitle: { fr: "Écosystème du projet", en: "Project ecosystem", ar: "منظومة المشروع", es: "Ecosistema del proyecto", kab: "Anagraw n usenfaṛ" },
+      overviewP1: {
+        fr: `Le projet de recherche <strong>Alfamous</strong> propose une immersion directe dans le texte coranique. Notre objectif&nbsp;? Explorer la cohérence des termes et leur logique propre en s’affranchissant des interprétations traditionnelles (hadiths).`,
+        en: `The <strong>Alfamous</strong> research project offers direct immersion in the Qur’anic text. Our goal? To explore how terms cohere and follow their own logic, stepping back from traditional interpretive frameworks (hadith-based readings).`,
+        ar: `يطرح مشروع البحث <strong>Alfamous</strong> غمرًا مباشرًا في النصّ القرآني. هدفنا؟ استكشاف تناسق المفردات ومنطقها الخاصّ مع التخلّص من التفسيرات التقليدية (المعتمدة على الحديث).`,
+        es: `El proyecto de investigación <strong>Alfamous</strong> propone una inmersión directa en el texto coránico. ¿Nuestro objetivo? Explorar la coherencia de los términos y su lógica propia, al margen de las interpretaciones tradicionales (hadices).`,
+        kab: `Asenfaṛ n tnubni <strong>Alfamous</strong> yettusmad-d ɣer tseddast n Leqran srid. Iswi-nwen? Ad nesfer amuk n wawalen d tɣawsa-nsen, mačči d tɣuri timezwarut (hedis).`
+      },
+      overviewPillarsIntro: {
+        fr: "Ce projet repose sur <strong>deux piliers complémentaires</strong>&nbsp;:",
+        en: "The project rests on <strong>two complementary pillars</strong>:",
+        ar: "يرتكز المشروع على <strong>دعامتين متكاملتين</strong>:",
+        es: "El proyecto se apoya en <strong>dos pilares complementarios</strong>:",
+        kab: "Asenfaṛ-a yettemɣer ɣef <strong>snat n tigejda i d-yemmidnen</strong>:"
+      },
+      pillarDdfTitle: {
+        fr: "L’espace de réflexion (<a href=\"https://lexique-coran.blogspot.com\" target=\"_blank\" rel=\"noopener\">blog.alfamous.ca</a>)",
+        en: "The reflection space (<a href=\"https://lexique-coran.blogspot.com\" target=\"_blank\" rel=\"noopener\">blog.alfamous.ca</a>)",
+        ar: "فضاء التأمّل (<a href=\"https://lexique-coran.blogspot.com\" target=\"_blank\" rel=\"noopener\">blog.alfamous.ca</a>)",
+        es: "El espacio de reflexión (<a href=\"https://lexique-coran.blogspot.com\" target=\"_blank\" rel=\"noopener\">blog.alfamous.ca</a>)",
+        kab: "Tallunt n uɣawas (<a href=\"https://lexique-coran.blogspot.com\" target=\"_blank\" rel=\"noopener\">blog.alfamous.ca</a>)"
+      },
+      pillarDdfBody: {
+        fr: "Une plateforme de publication dédiée aux articles et analyses sémantiques. Nous y accueillons toute plume souhaitant contribuer à cette nouvelle lecture.",
+        en: "A publishing platform for articles and semantic analyses. We welcome every writer who wants to contribute to this renewed reading.",
+        ar: "منصّة نشر مخصّصة للمقالات والتحليلات الدلالية. نرحّب بكلّ قلم يرغب في المساهمة في هذه القراءة الجديدة.",
+        es: "Una plataforma de publicación dedicada a artículos y análisis semánticos. Acogemos a quien quiera contribuir a esta lectura renovada.",
+        kab: "Amnaḍ n usuffeɣ i imagraden d tasleṭt tasemantit. Nessermer yal acennay ibɣan ad ikemmlel tɣuri-a tamaynut."
+      },
+      pillarAlfamousTitle: {
+        fr: "L’outil d’analyse (<a href=\"https://www.alfamous.ca\" target=\"_blank\" rel=\"noopener\">Alfamous.ca</a>)",
+        en: "The analysis tool (<a href=\"https://www.alfamous.ca\" target=\"_blank\" rel=\"noopener\">Alfamous.ca</a>)",
+        ar: "أداة التحليل (<a href=\"https://www.alfamous.ca\" target=\"_blank\" rel=\"noopener\">Alfamous.ca</a>)",
+        es: "La herramienta de análisis (<a href=\"https://www.alfamous.ca\" target=\"_blank\" rel=\"noopener\">Alfamous.ca</a>)",
+        kab: "Afecku n tsleṭ (<a href=\"https://www.alfamous.ca\" target=\"_blank\" rel=\"noopener\">Alfamous.ca</a>)"
+      },
+      pillarAlfamousLead: {
+        fr: "Un écosystème technique pour approfondir l’étude&nbsp;:",
+        en: "A technical ecosystem to deepen study:",
+        ar: "منظومة تقنية لتعميق الدراسة:",
+        es: "Un ecosistema técnico para profundizar el estudio:",
+        kab: "Anagraw n tɣawsa i usinɣi n tɣuri:"
+      },
+      pillarAlfamousFeatures: {
+        fr: [
+          "<strong>Lexique &amp; racines</strong> : étudiez les mots dans leur contexte original.",
+          "<strong>Interprétation citoyenne</strong> : ajoutez votre propre lecture d’un verset ou d’un mot pour nourrir la base de données.",
+          "<strong>Espaces d’échange</strong> : un forum dédié au lexique et un espace de témoignages anonymes pour partager votre expérience spirituelle.",
+          "<strong>Médiathèque</strong> : un accès libre à des contenus multimédias pour soutenir la réflexion."
+        ],
+        en: [
+          "<strong>Lexicon &amp; roots</strong>: study words in their original context.",
+          "<strong>Citizen interpretation</strong>: add your own reading of a verse or word to enrich the database.",
+          "<strong>Exchange spaces</strong>: a lexicon-focused forum and an anonymous testimonial space to share your spiritual experience.",
+          "<strong>Media library</strong>: free access to multimedia content to support reflection."
+        ],
+        ar: [
+          "<strong>المعجم والجذور</strong>: ادرسوا المفردات في سياقها الأصلي.",
+          "<strong>تفسير مواطن</strong>: أضيفوا قراءتكم لآية أو لكلمة لإغناء قاعدة البيانات.",
+          "<strong>فضاءات تبادل</strong>: منتدى للمعجم ومساحة شهادات مجهولة لمشاركة التجربة الروحية.",
+          "<strong>مكتبة وسائط</strong>: وصول حرّ إلى محتوى متعدّد الوسائط لدعم التأمّل."
+        ],
+        es: [
+          "<strong>Léxico y raíces</strong>: estudie las palabras en su contexto original.",
+          "<strong>Interpretación ciudadana</strong>: añada su propia lectura de un versículo o término para enriquecer la base de datos.",
+          "<strong>Espacios de intercambio</strong>: foro dedicado al léxico y espacio de testimonios anónimos para compartir su experiencia espiritual.",
+          "<strong>Mediateca</strong>: acceso libre a contenidos multimedia que apoyan la reflexión."
+        ],
+        kab: [
+          "<strong>Amawal d yiɣran</strong>: wali awalen deg usenfaṛ amezwaru.",
+          "<strong>Tawtilt n temɣart</strong>: rnu tɣuri-nwen ɣef yiwen n wazal neɣ awal i wakken ad tesmuddem taffirt n isefka.",
+          "<strong>Tallunin n beṭṭu</strong>: ammager i umawal d tallunt n cheddad udrigen i beṭṭu n temuɣli tubeddict.",
+          "<strong>Tasuffɣit n imidyaten</strong>: anekcum ilelli ɣer ugbur imidyaten i uɛiwen n uɣawas."
+        ]
+      },
+      collaborationClosing: {
+        fr: "La recherche est l’affaire de tous — pas d’un cercle fermé. Technique, rédactionnelle ou spirituelle&nbsp;: chaque contribution compte sur le chantier.",
+        en: "Research belongs to everyone—not a closed circle. Technical, editorial, or spiritual: every contribution counts on the worksite.",
+        ar: "البحث شأن الجميع لا حلقة مغلقة. تقني أو تحريري أو روحي: كل مساهمة تُحسب في الورشة.",
+        es: "La investigación es de todas las personas, no de un círculo cerrado. Técnica, redaccional o espiritual: cada aportación cuenta en el taller.",
+        kab: "Tasnubni d taɣawsa n yal yiwen—mačči d tɣremt yettwmedlen. S tɣawsa, s tira neɣ s tubeddict: yal utekki yesɛa azal deg lḥeṭṭa."
+      },
+
+      // Alfamous — modules
+      alfamousTitle: { fr: "Alfamous.ca — l’outil", en: "Alfamous.ca — the tool", ar: "Alfamous.ca — الأداة", es: "Alfamous.ca — la herramienta", kab: "Alfamous.ca — afecku" },
+      alfamousLead: {
+        fr: "Alfamous regroupe plusieurs <strong>modules</strong> destinés aux chercheur·e·s, étudiant·e·s et curieux·ses.",
+        en: "Alfamous groups several <strong>modules</strong> for researchers, students, and curious readers.",
+        ar: "يجمع Alfamous عدة <strong>وحدات</strong> موجهة للباحثين والطلبة والمهتمين.",
+        es: "Alfamous reúne varios <strong>módulos</strong> para investigadores, estudiantes y público interesado.",
+        kab: "Alfamous yessemlal ddeqs n <strong>izegrar</strong> i yimsnufen, i yelmeddimen d wid iɛerban."
+      },
+
+      // SAWM
+      sawmTitle: { fr: "SAWM — Recherche libre", en: "SAWM — Free search", ar: "SAWM — بحث حرّ", es: "SAWM — Búsqueda libre", kab: "SAWM — Anadi ilelli" },
+      sawmList: {
+        fr: [
+          "Recherche dans le <strong>Coran</strong> ou dans un <strong>livre de commentaire (tafsir)</strong>.",
+          "Interrogation du <strong>Lexique</strong> et du recueil <strong>Alfamous@EveryOne</strong> lié aux versets commentés."
+        ],
+        en: [
+          "Search the <strong>Qur’an</strong> or a <strong>commentary (tafsir) book</strong>.",
+          "Query the <strong>Lexicon</strong> and the <strong>Alfamous@EveryOne</strong> collection linked to commented verses."
+        ],
+        ar: [
+          "البحث في <strong>القرآن</strong> أو في <strong>كتاب تفسير</strong>.",
+          "استعلام <strong>المعجم</strong> ومجموعة <strong>Alfamous@EveryOne</strong> المرتبطة بالآيات المعلّق عليها."
+        ],
+        es: [
+          "Búsqueda en el <strong>Corán</strong> o en un <strong>libro de comentarios (tafsir)</strong>.",
+          "Consulta del <strong>Léxico</strong> y del recopilatorio <strong>Alfamous@EveryOne</strong> asociado a los versículos comentados."
+        ],
+        kab: [
+          "Anadi deg <strong>Leqran</strong> neɣ deg <strong>udlis n tafsir</strong>.",
+          "Asenqed n <strong>Amawal</strong> akked <strong>Alfamous@EveryOne</strong> icudden ɣer yizlan ittuwennanen."
+        ]
+      },
+
+      // SALAT
+      salatTitle: { fr: "SALAT — Recherche par racines", en: "SALAT — Search by roots", ar: "SALAT — بحث حسب الجذور", es: "SALAT — Búsqueda por raíces", kab: "SALAT — Anadi s iɣran" },
+      salatList: {
+        fr: [
+          "Recherche dans le Coran en utilisant <strong>uniquement les racines</strong> (bascule automatique vers SAWM si aucun résultat).",
+          "<strong>Statistiques des racines</strong> : fréquences sur l’ensemble du corpus.",
+          "<strong>Analyse d’expression</strong> : repère les racines présentes (directement ou via le <em>palindrome</em>), inspirée des travaux du <strong>Dr Sameer Islambulli</strong>.",
+          "<strong>Amis de la racine</strong> : mots <em>co-occurrents</em> par verset, calcul du <strong>nombre</strong>, de la <strong>proximité moyenne</strong> et d’un <strong>indice de force du lien</strong>.",
+          "<strong>Dérivations</strong> : liste des <strong>formes déclinées</strong> des mots contenant la racine."
+        ],
+        en: [
+          "Search the Qur’an using <strong>roots only</strong> (auto-fallback to SAWM if no result).",
+          "<strong>Root statistics</strong>: frequencies across the corpus.",
+          "<strong>Expression analysis</strong>: detects roots directly or via the <em>palindrome</em>, inspired by <strong>Dr. Sameer Islambulli</strong>.",
+          "<strong>Root friends</strong>: co-occurring words per verse; computes <strong>count</strong>, <strong>average proximity</strong>, and a <strong>link-strength index</strong>.",
+          "<strong>Derivations</strong>: lists <strong>inflected forms</strong> of words containing the root."
+        ],
+        ar: [
+          "بحث في القرآن باستخدام <strong>الجذور فقط</strong> (تحويل تلقائي إلى SAWM عند عدم وجود نتائج).",
+          "<strong>إحصاءات الجذور</strong>: ترددات على مستوى المصحف.",
+          "<strong>تحليل العبارة</strong>: يحدّد الجذور مباشرة أو عبر <em>قلب</em> العبارة، مستوحى من أعمال <strong>الدكتور سمير إسلامبلي</strong>.",
+          "<strong>أصدقاء الجذر</strong>: كلمات <em>مترافقة</em> في الآية؛ يحسب <strong>العدد</strong> و<strong>متوسط القرب</strong> و<strong>مؤشر قوة الارتباط</strong>.",
+          "<strong>الاشتقاقات</strong>: يسرد <strong>الصيغ المتصرّفة</strong> للكلمات التي تحتوي الجذر."
+        ],
+        es: [
+          "Búsqueda en el Corán utilizando <strong>solo las raíces</strong> (cambio automático a SAWM si no hay resultados).",
+          "<strong>Estadísticas de raíces</strong>: frecuencias en todo el corpus.",
+          "<strong>Análisis de expresiones</strong>: detecta raíces directamente o mediante el <em>palíndromo</em>, inspirado en el <strong>Dr. Sameer Islambulli</strong>.",
+          "<strong>Amigos de la raíz</strong>: palabras <em>co-ocurrentes</em> por versículo; calcula <strong>número</strong>, <strong>proximidad media</strong> e <strong>índice de fuerza del vínculo</strong>.",
+          "<strong>Derivaciones</strong>: lista <strong>formas flexionadas</strong> de palabras que contienen la raíz."
+        ],
+        kab: [
+          "Anadi deg Leqran s <strong>iɣran kan</strong> (ad yettuɣal s wudem awurman ɣer SAWM ma ulac igmaḍ).",
+          "<strong>Tiddadanin n iɣran</strong>: tagnitt n tγawsa deg lqamus merra.",
+          "<strong>Tasleṭ n tefra</strong>: yefk-d iɣran srid neɣ s <em>taduli</em>, yebnan ɣef umahil n <strong>Dr Sameer Islambulli</strong>.",
+          "<strong>Imeddukal n yiɣer</strong>: awalen id-ttaggrun deg yiwet n tazmilt; yessel <strong>amḍan</strong>, <strong>taddart tasmaynt</strong> d <strong>uzday n useɣwen</strong>.",
+          "<strong>Tisuddamin</strong>: tabdart n <strong>tifrat yettwaselkent</strong> n wawalen yesɛan yiɣer."
+        ]
+      },
+
+      // CHOKR
+      chokrTitle: { fr: "CHOKR — Partager vos connaissances", en: "CHOKR — Share your knowledge", ar: "CHOKR — انشر معارفك", es: "CHOKR — Comparta sus conocimientos", kab: "CHOKR — Bḍu tamusni-nwen" },
+      chokrList: {
+        fr: [
+          "<strong>Messagerie</strong>.",
+          "<strong>Partage de médias</strong> (fichiers, textes, liens).",
+          "<strong>Accès aux articles</strong> de <em>blog.alfamous.ca</em> avec <strong>champ de recherche</strong>.",
+          "<strong>Forum d’idées</strong> pour débattre ou questionner la communauté.",
+          "<strong>Contribution</strong> à la <strong>base de connaissances</strong> : ajouter des <strong>commentaires</strong> sur un verset ou une expression, dans la <strong>langue</strong> de son choix."
+        ],
+        en: [
+          "<strong>Messaging</strong>.",
+          "<strong>Media sharing</strong> (files, texts, links).",
+          "<strong>Access to articles</strong> on <em>blog.alfamous.ca</em> with a <strong>search field</strong>.",
+          "<strong>Ideas forum</strong> to debate or ask the community.",
+          "<strong>Knowledge-base contribution</strong>: add <strong>comments</strong> on a verse or expression, in the <strong>language</strong> of your choice."
+        ],
+        ar: [
+          "<strong>الرسائل</strong>.",
+          "<strong>مشاركة الوسائط</strong> (ملفات، نصوص، روابط).",
+          "<strong>الوصول إلى المقالات</strong> في <em>blog.alfamous.ca</em> مع <strong>حقل بحث</strong>.",
+          "<strong>منتدى للأفكار</strong> للمناقشة أو طرح الأسئلة على المجتمع.",
+          "<strong>المساهمة في قاعدة المعرفة</strong>: إضافة <strong>تعليقات</strong> على آية أو تعبير، <strong>باللغة</strong> التي تختارها."
+        ],
+        es: [
+          "<strong>Mensajería</strong>.",
+          "<strong>Compartir medios</strong> (archivos, textos, enlaces).",
+          "<strong>Acceso a los artículos</strong> de <em>blog.alfamous.ca</em> con <strong>campo de búsqueda</strong>.",
+          "<strong>Foro de ideas</strong> para debatir o preguntar a la comunidad.",
+          "<strong>Contribución a la base de conocimiento</strong>: añadir <strong>comentarios</strong> sobre un versículo o una expresión, en el <strong>idioma</strong> que prefiera."
+        ],
+        kab: [
+          "<strong>Izen</strong>.",
+          "<strong>Bḍu n imidyaten</strong> (ifuyla, aḍris, iseɣwan).",
+          "<strong>Anekcum ɣer imagraden</strong> n <em>blog.alfamous.ca</em> s <strong>urtil n unadi</strong>.",
+          "<strong>Ammager n yixef-iḍewwen</strong> i beṭṭu neɣ i steqsay n temɣart.",
+          "<strong>Timerna ɣer taffirt n tmezri</strong>: rnu <strong>iwellihen</strong> ɣef tazmilt neɣ tafra, s <strong>tutlayt</strong> i tebɣiḍ."
+        ]
+      },
+
+      // Blog
+      blogTitle: { fr: "blog.alfamous.ca — le blog", en: "blog.alfamous.ca — the blog", ar: "blog.alfamous.ca — المدوّنة", es: "blog.alfamous.ca — el blog", kab: "blog.alfamous.ca — ublug" },
+      blogP1: {
+        fr: "Espace de <strong>publication</strong> et de <strong>mise en perspective</strong> des résultats issus d’Alfamous. Analyses, notes philologiques et études de cas pour rendre méthodes et résultats <strong>réutilisables</strong> et <strong>discutables</strong>.",
+        en: "A space for <strong>publication</strong> and <strong>contextualization</strong> of results produced with Alfamous. Analyses, philological notes, and case studies make methods and results <strong>reusable</strong> and <strong>debatable</strong>.",
+        ar: "فضاء <strong>للنشر</strong> و<strong>لوضع النتائج في سياقها</strong> المستخلصة بواسطة Alfamous. تحليلات ومذكرات فقه لغوي ودراسات حالة لجعل المناهج والنتائج <strong>قابلة لإعادة الاستخدام</strong> و<strong>للنقاش</strong>.",
+        es: "Espacio de <strong>publicación</strong> y <strong>contextualización</strong> de resultados producidos con Alfamous. Análisis, notas filológicas y estudios de caso hacen métodos y resultados <strong>reutilizables</strong> y <strong>discutibles</strong>.",
+        kab: "Tallunt n <strong>usuffeɣ</strong> d <strong>usleṭ</strong> n igburen d-yekkeren s Alfamous. Tasleṭin, tazmilt n tseddast d tadyant n tedrimt i wakken tifenqa d yigmaḍ ad ilin <strong>ittusaramen</strong> d <strong>ittusemdanen</strong>."
+      },
+      blogP2: {
+        fr: "La lecture proposée se veut <strong>rationnelle</strong>, <strong>contextuelle</strong> et <strong>enracinée</strong> : centrée sur les <strong>racines</strong>, les <strong>formes</strong> et l’<strong>usage</strong> dans le corpus.",
+        en: "The proposed reading is <strong>rational</strong>, <strong>contextual</strong>, and <strong>root-based</strong>: focused on <strong>roots</strong>, <strong>forms</strong>, and <strong>usage</strong> within the corpus.",
+        ar: "القراءة المقترحة <strong>عقلانية</strong> و<strong>سياقية</strong> و<strong>متجذّرة</strong>، تركّز على <strong>الجذور</strong> و<strong>الصيغ</strong> و<strong>الاستعمال</strong> داخل المتن.",
+        es: "La lectura propuesta es <strong>racional</strong>, <strong>contextual</strong> y <strong>arraigada</strong>: centrada en <strong>raíces</strong>, <strong>formas</strong> y <strong>uso</strong> en el corpus.",
+        kab: "Tɣuri tettusra d <strong>tameẓlayt</strong>, <strong>tasenzaɣt</strong> d <strong>tamezruyint</strong>: tettusekcem ɣer <strong>iɣran</strong>, <strong>tifrat</strong> d <strong>useqdec</strong> deg tseddast."
+      },
+
+      // Méthodologie
+      methodTitle: { fr: "Principes méthodologiques", en: "Methodological principles", ar: "مبادئ منهجية", es: "Principios metodológicos", kab: "Ilugan n usnulfu" },
+      methodList: {
+        fr: [
+          "<strong>Racines linguistiques</strong> : chaque entrée est rattachée à sa racine et à ses dérivés.",
+          "<strong>Structure sonore & forme</strong> : prise en compte de la phonotactique et des patrons morphologiques.",
+          "<strong>Usage contextualisé</strong> : étude des occurrences et <em>co-occurrences</em> par verset.",
+          "<strong>Reproductibilité</strong> : paramètres explicites, journalisation des opérations et corpus référencé."
+        ],
+        en: [
+          "<strong>Linguistic roots</strong>: each entry is tied to its root and derivatives.",
+          "<strong>Phonetics & form</strong>: considers phonotactics and morphological patterns.",
+          "<strong>Contextualized usage</strong>: occurrences and <em>co-occurrences</em> per verse.",
+          "<strong>Reproducibility</strong>: explicit parameters, operation logs, and referenced corpus."
+        ],
+        ar: [
+          "<strong>الجذور اللغوية</strong>: تُنسب كلّ مدخلة إلى جذرها وتصاريفها.",
+          "<strong>البنية الصوتية والصيغة</strong>: مراعاة الفونوتاكتيك والأنماط الصرفية.",
+          "<strong>الاستعمال السياقي</strong>: دراسة التواتر و<em>الترافق</em> حسب الآية.",
+          "<strong>القابلية للتكرار</strong>: معايير صريحة وسجلّ للعمليات ومتن موثّق."
+        ],
+        es: [
+          "<strong>Raíces lingüísticas</strong>: cada entrada se vincula a su raíz y derivados.",
+          "<strong>Estructura sonora y forma</strong>: tiene en cuenta fonotáctica y patrones morfológicos.",
+          "<strong>Uso contextualizado</strong>: estudio de ocurrencias y <em>co-ocurrencias</em> por versículo.",
+          "<strong>Reproducibilidad</strong>: parámetros explícitos, registro de operaciones y corpus referenciado."
+        ],
+        kab: [
+          "<strong>Iɣran n tutlayt</strong>: yal amagrad yettwasdukel ɣer uɣar-is d isuddamen.",
+          "<strong>Taɣec d tifrat</strong>: ttwaɛebben tneɣbalt n yimesli d tinarit n tmussni.",
+          "<strong>Useqdec s usenfaṛ</strong>: tiddin n tedrimt d <em>temmagayt</em> s tazmilt.",
+          "<strong>Tasemsayt</strong>: imzimen d-igenna, aglis n tiggura d tseddast ittusnen."
+        ]
+      },
+      methodNote: {
+        fr: `🔤 <strong>À noter</strong> — la translittération n’est qu’une <em>facilité de saisie</em> pour non-arabophones (latin ↔ arabe) afin d’accélérer la recherche ; elle ne remplace ni l’analyse des racines ni le texte arabe.`,
+        en: `🔤 <strong>Note</strong> — transliteration is merely a <em>typing aid</em> for non-Arabic speakers (Latin ↔ Arabic) to speed up search; it does not replace root analysis or the Arabic text.`,
+        ar: `🔤 <strong>ملاحظة</strong> — النقلُ الصوتي مجردُ <em>تيسير للكتابة</em> لغير الناطقين بالعربية (لاتيني ↔ عربي) لتسريع البحث؛ ولا يعلو على تحليل الجذور أو على النصّ الأصلي.`,
+        es: `🔤 <strong>Nota</strong> — la transliteración es solo una <em>ayuda de escritura</em> para no arabófonos (latín ↔ árabe) que agiliza la búsqueda; no sustituye el análisis de raíces ni el texto árabe.`,
+        kab: `🔤 <strong>Tamawt</strong> — tasefsit d <em>tawsa n tira</em> i wid ur nessinen ara tɣarabit (Latin ↔ Taɛrabt) i tesnirem n unadi; ur temsal ara tasleṭ n yiɣran neɣ aḍris n Taɛrabt.`
+      },
+
+      // Audience
+      audienceTitle: { fr: "À qui s’adresse-t-il ?", en: "Who is it for?", ar: "لمن يوجّه؟", es: "¿Para quién es?", kab: "I wem yettwaceyye?" },
+      audienceList: {
+        fr: [
+          "<strong>Toute personne</strong> qui veut lire le Coran et contribuer — sans prérequis d’expertise institutionnelle.",
+          "<strong>Curieux·ses, étudiant·e·s, chercheur·e·s</strong> : les mêmes outils servent la même exigence de méthode (texte, données, analyses).",
+          "<strong>Contributeurs / contributrices</strong> via commentaires, lexique, forum, blog, médias et notes — pour faire vivre le chantier."
+        ],
+        en: [
+          "<strong>Anyone</strong> who wants to read the Qur’an and contribute—no institutional expertise required.",
+          "<strong>Curious readers, students, researchers</strong>: the same tools uphold the same methodological rigor (text, data, analyses).",
+          "<strong>Contributors</strong> through comments, lexicon, forum, blog, media, and notes—to keep the worksite alive."
+        ],
+        ar: [
+          "<strong>كل من</strong> يريد قراءة القرآن والمساهمة—دون اشتراط خبرة مؤسسية.",
+          "<strong>مهتمون وطلاب وباحثون</strong>: نفس الأدوات لنفس الانضباط المنهجي (النصّ، المعطيات، التحليلات).",
+          "<strong>مساهمون</strong> عبر التعليقات والمعجم والمنتدى والمدوّنة والوسائط والملاحظات—لإبقاء الورشة حيّة."
+        ],
+        es: [
+          "<strong>Cualquier persona</strong> que quiera leer el Corán y aportar—sin requisitos de expertise institucional.",
+          "<strong>Lectoras curiosas, estudiantes, investigadoras</strong>: las mismas herramientas sostienen la misma exigencia metodológica (texto, datos, análisis).",
+          "<strong>Colaboradoras</strong> mediante comentarios, léxico, foro, blog, medios y notas—para mantener vivo el taller."
+        ],
+        kab: [
+          "<strong>Yal yiwen</strong> ibɣan ad iɣer Leqran d ad yekki—war asenṭeḍ n tmusni n uɣbar.",
+          "<strong>Wid iɛerban, yelmeddimen, imsnufen</strong>: yiwen wudem n yifecka i wayen i d-yettwasra deg usnulfu (aḍris, isefka, tasleṭ).",
+          "<strong>Intekkiyen</strong> s iwalihen, umawal, ammager, ublug, imidyaten d iznan—ad ḥeṭṭen lḥeṭṭa."
+        ]
+      },
+
+      // Posture éditoriale
+      postureTitle: { fr: "Posture éditoriale", en: "Editorial stance", ar: "المنهج التحريري", es: "Postura editorial", kab: "Iɣewwaṛ n usuffeɣ" },
+      postureP: {
+        fr: "Démarche <strong>scientifique</strong> : explicitation des hypothèses, <strong>traçabilité</strong> des opérations, distinction claire entre <strong>données</strong>, <strong>analyses</strong> et <strong>interprétations</strong>.",
+        en: "A <strong>scientific</strong> approach: explicit hypotheses, <strong>traceability</strong> of operations, and clear distinction between <strong>data</strong>, <strong>analyses</strong>, and <strong>interpretations</strong>.",
+        ar: "منهج <strong>علمي</strong>: توضيح الفرضيات، و<strong>تتبّع</strong> العمليات، وتمييز واضح بين <strong>المعطيات</strong> و<strong>التحليلات</strong> و<strong>التفسيرات</strong>.",
+        es: "Enfoque <strong>científico</strong>: explicitación de hipótesis, <strong>trazabilidad</strong> de operaciones y clara distinción entre <strong>datos</strong>, <strong>análisis</strong> e <strong>interpretaciones</strong>.",
+        kab: "Tamawt <strong>tasnawt</strong>: abeqqeḍ n tegninin, <strong>asefru</strong> n tiggura, d bezzaf n wugar deg <strong>isefka</strong>, <strong>tasleṭin</strong> d <strong>tawtilin</strong>."
+      },
+      quoteCardAria: {
+        fr: "Citation",
+        en: "Quotation",
+        ar: "اقتباس",
+        es: "Cita",
+        kab: "Tanebdurt"
+      },
+      quote: {
+        fr: "« Ceux qui ont la foi (آمنوا), ce sont ceux qui sécurisent (أمِن) la vérité. »",
+        en: "“Those who have faith (آمنوا) are those who secure (أمِن) the truth.”",
+        ar: "« إن الذين آمنوا هم الذين يُؤْمِنُون الحقيقة. »",
+        es: "« Quienes tienen fe (آمنوا) son quienes aseguran (أمِن) la verdad. »",
+        kab: "« Wid iɣan liman (آمنوا) d wid i yettammen (أمِن) tideggalt. »"
+      },
+
+      // Auteur (discret)
+      authorTitle: { fr: "À propos de l’auteur (notice)", en: "About the author (brief)", ar: "نبذة عن المؤلف", es: "Acerca del autor (breve)", kab: "Ɣef umeskar (ugaz)" },
+      authorP1: {
+        fr: "Amha Nathali est <strong>ingénieur civil</strong> (1982) et <strong>Maître ès sciences</strong> en <strong>gestion de projet</strong> (2020). <strong>Autodidacte en informatique</strong> depuis 1993, il a développé des applications en <strong>C</strong> puis en <strong>VBA</strong> (Excel, AutoCAD) pour des projets d’<strong>infrastructures routières et ferroviaires</strong>.",
+        en: "Amha Nathali is a <strong>civil engineer</strong> (1982) and holds a <strong>Master of Science</strong> in <strong>project management</strong> (2020). A <strong>self-taught programmer</strong> since 1993, he developed applications in <strong>C</strong> and <strong>VBA</strong> (Excel, AutoCAD) for <strong>road and rail infrastructure</strong> projects.",
+        ar: "أمحى ناتالي <strong>مهندس مدني</strong> (1982) ويحمل <strong>ماجستيرًا في العلوم</strong> في <strong>إدارة المشاريع</strong> (2020). وهو <strong>مبرمج عصامي</strong> منذ 1993؛ طوّر تطبيقات بـ<strong>C</strong> ثم <strong>VBA</strong> (Excel وAutoCAD) لمشاريع <strong>البنى التحتية الطرقية والحديدية</strong>.",
+        es: "Amha Nathali es <strong>ingeniero civil</strong> (1982) y posee un <strong>Máster en Ciencias</strong> en <strong>gestión de proyectos</strong> (2020). <strong>Autodidacta</strong> desde 1993, desarrolló aplicaciones en <strong>C</strong> y <strong>VBA</strong> (Excel, AutoCAD) para proyectos de <strong>infraestructura vial y ferroviaria</strong>.",
+        kab: "Amha Nathali d <strong>inginyur n tɣawalit</strong> (1982) d bab n <strong>Maîtrise n tesnawt</strong> di <strong>usedda n isenfaṛen</strong> (2020). D <strong>ameskar n uselkam</strong> seg 1993; yesnulfa-d isnasen s <strong>C</strong> d <strong>VBA</strong> (Excel, AutoCAD) i yisenfaṛen n <strong>iberdan d uzellum</strong>."
+      },
+      authorP2: {
+        fr: "Initiée en 2009, sa recherche outillée du texte coranique a pris la forme d’<strong>Alfamous</strong> (application) et de <strong>blog.alfamous.ca</strong> (blog). Sa démarche privilégie une lecture <strong>rationnelle</strong>, <strong>contextuelle</strong> et <strong>enracinée</strong>, <strong>sans cadre hadithique</strong>.",
+        en: "Initiated in 2009, his tool-assisted Qur’anic research took the form of <strong>Alfamous</strong> (application) and <strong>blog.alfamous.ca</strong> (blog). His approach favors a <strong>rational</strong>, <strong>contextual</strong>, <strong>root-based</strong> reading <strong>without a hadith-based frame</strong>.",
+        ar: "منذ 2009 اتخذ بحثه الأداتي في النص القرآني شكل <strong>Alfamous</strong> (تطبيق) و<strong>blog.alfamous.ca</strong> (مدوّنة). منهجه يفضّل قراءة <strong>عقلانية</strong> و<strong>سياقية</strong> و<strong>متجذّرة</strong> <strong>دون إطار حديثي</strong>.",
+        es: "Iniciado en 2009, su investigación del texto coránico asistida por herramientas tomó forma en <strong>Alfamous</strong> (aplicación) y <strong>blog.alfamous.ca</strong> (blog). Su enfoque favorece una lectura <strong>racional</strong>, <strong>contextual</strong> y <strong>arraigada</strong>, <strong>sin marco hadítico</strong>.",
+        kab: "Seg 2009, tasleṭt-is ɣef tseddast n Leqran tbedlen d <strong>Alfamous</strong> (asnas) d <strong>blog.alfamous.ca</strong> (ublug). Tamawt-is tettḥemmel tɣuri <strong>tameẓlayt</strong>, <strong>tasenzaɣt</strong> d <strong>tamezruyint</strong>, <strong>war akatar n lhedis</strong>."
+      }
+    };
+
+    // ---------- Rendu ----------
+    function renderManifest() {
+      return `
+        <div class="manifest">
+          <p class="apropos-lead">${L(TEXTS.mf1_elites)}</p>
+          <p>${L(TEXTS.mf2_all)}</p>
+          <p><strong>${L(TEXTS.mf3_degreeLead)}</strong></p>
+          ${renderList(L(TEXTS.mf3_actions))}
+          <p class="apropos-lead">${L(TEXTS.mf4_counts)}</p>
+          <h2>${L(TEXTS.mf5_ambTitle)}</h2>
+          <p>${L(TEXTS.mf5_notAnother)}</p>
+          <p>${L(TEXTS.mf5_fromStart)}</p>
+          <h2>${L(TEXTS.mf6_ruleTitle)}</h2>
+          <p>${L(TEXTS.mf6_readText)}</p>
+          <p>${L(TEXTS.mf6_hadithLead)}</p>
+          ${renderList(L(TEXTS.mf6_hadithBullets))}
+          <p>${L(TEXTS.mf6_tail)}</p>
+          <h2>${L(TEXTS.mf7_liveTitle)}</h2>
+          <p>${L(TEXTS.mf7_lead)}</p>
+          ${renderList(L(TEXTS.mf7_liveBullets))}
+          <p>${L(TEXTS.mf7_liveClose)}</p>
+          <h2>${L(TEXTS.mf8_searchTitle)}</h2>
+          <p>${L(TEXTS.mf8_lead)}</p>
+          ${renderList(L(TEXTS.mf8_searchBullets))}
+          <p>${L(TEXTS.mf8_close)}</p>
+          <h2>${L(TEXTS.mf9_voiceTitle)}</h2>
+          ${renderList(L(TEXTS.mf9_voiceBullets))}
+          <p>${L(TEXTS.mf9_notes)}</p>
+          <h2>${L(TEXTS.mf10_listenTitle)}</h2>
+          <p>${L(TEXTS.mf10_listenBody)}</p>
+          <h2>${L(TEXTS.mf11_sumTitle)}</h2>
+          ${renderList(L(TEXTS.mf11_sumBullets))}
+          <p class="apropos-lead">${L(TEXTS.mf11_close)}</p>
+        </div>`;
+    }
+
+    function render() {
+      document.getElementById("pageTitle").innerHTML = L(TEXTS.title);
+
+      const html = `
+        <section class="card" id="hero">
+          ${renderManifest()}
+        </section>
+        <section class="card manifest-quote-card" id="closing-quote" aria-label="${L(TEXTS.quoteCardAria).replace(/"/g, "&quot;")}">
+          <blockquote class="manifest-quote">${L(TEXTS.quote)}</blockquote>
+        </section>
+      `;
+      document.getElementById("content").innerHTML = html;
+    }
+
+    // ---------- Init ----------
+    document.getElementById("btnLang").addEventListener("click", cycleLang);
+    setUILang(getUILang());
+  </script>
+</body>
+
+</html>

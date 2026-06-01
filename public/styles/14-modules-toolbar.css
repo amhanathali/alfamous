@@ -1,0 +1,1856 @@
+/* public/styles/14-modules-toolbar.css — Système de panneaux modules + toolbar (Phase C).
+ *
+ * Gros module extrait : c'est le squelette visuel des panneaux SAWM / SALAT / CHOKR /
+ * Recherche Soura / Versets / Footer, leurs en-têtes, icônes d'action, état replié,
+ * listes d'actions (zc-module-actions-list), ainsi que les boutons « top-action » du
+ * bloc d'actions principal.
+ *
+ * Contient :
+ *   - .toolbar1 : conteneur d'alignement générique.
+ *   - .toolbar1.zc-module-panel* : panneau principal (head.Modules, tab-icons, admin, badges).
+ *   - .zc-panel-collapse-btn + .zc-panel-collapsed : collapse/expand.
+ *       NB : la règle de fermeture globale est dans 99-overrides.css.
+ *   - .zc-module-toolbar-inner / zc-module-actions-list : rangée d'actions (boutons + labels + badges).
+ *   - .toolbar1.zc-soura-search-panel* et .toolbar1.zc-versets-panel* : variantes spécifiques
+ *     (recherche soura, recherche versets + featured).
+ *   - .zc-module-tab-short-label : version courte du label.
+ *   - .toolbar1.zc-footer-bar* : barre du footer (tab-head, like-count, footer-tab-like).
+ *   - .zc-top-actions / .zc-top-action-btn / -ico / -label : blocs d'actions du haut.
+ *
+ * Tokens : --zc-font, --zc-text, --zc-border, --zc-radius-sm, --zc-shadow,
+ *          --zc-module-toolbar-gap, --zc-module-head-gap.
+ */
+/* Conteneur : aligne verticalement tout le monde */
+.toolbar {
+  /* style="border:1px solid #999; border-radius:8px; padding:1px; font-size: 12px;" */
+  background-color: var(--zc-ui-soft-bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--zc-radius-sm);
+  padding: 4px 6px;
+  margin: 2px 1px;
+  font-size: 13px;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: none;
+}
+/* Modules */
+.Modules {
+  background: linear-gradient(135deg, var(--zc-surface-muted) 0%, var(--zc-bg) 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  border: none;
+  border-radius: var(--zc-radius-sm);
+  padding: 6px 8px;
+  margin: 4px 1px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--zc-text);
+  box-shadow: none;
+}
+
+/* Conteneur : aligne verticalement tout le monde */
+.toolbar1 {
+  background-color: var(--zc-ui-soft-bg);
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--zc-radius-sm);
+  padding: 8px 10px;
+  margin: 4px 0;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+/* Surcharge du .menu-button global (styles.css) : rangées d’actions sans cadre. */
+.toolbar1.zc-module-panel .zc-module-toolbar-inner .menu-button,
+.toolbar1.zc-module-panel .zc-module-toolbar-inner .bouton,
+.toolbar1.zc-module-panel .zc-footer-toolbar .menu-button,
+.toolbar1.zc-module-panel .zc-footer-toolbar .bouton {
+  border: none;
+  box-shadow: none;
+}
+
+.toolbar1.zc-module-panel .zc-module-toolbar-inner .menu-button:hover,
+.toolbar1.zc-module-panel .zc-module-toolbar-inner .menu-button.active,
+.toolbar1.zc-module-panel .zc-footer-toolbar .menu-button:hover,
+.toolbar1.zc-module-panel .zc-footer-toolbar .menu-button.active {
+  border: none;
+  box-shadow: none;
+}
+
+.zc-block2-actions .toolbar .menu-button,
+.zc-block2-actions .toolbar .bouton {
+  border: none;
+  box-shadow: none;
+}
+
+.zc-block2-actions .toolbar .menu-button:hover,
+.zc-block2-actions .toolbar .menu-button.active {
+  border: none;
+  box-shadow: none;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button,
+.toolbar1.zc-module-panel .zc-module-head .bouton {
+  border: none;
+  box-shadow: none;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button:hover,
+.toolbar1.zc-module-panel .zc-module-head .menu-button.active {
+  border: none;
+  box-shadow: none;
+}
+
+/* .zc-record-languette* (gabarit de carte) et .zc-term-hit : désormais dans
+ * styles/08-record-languette.css (Phase C). */
+
+/* Panneaux recherche Soura / versets : léger accent turquoise (remplace #AFEEEE inline) */
+.zc-panel-soura,
+.zc-panel-soura-inner {
+  background: linear-gradient(180deg, var(--zc-surface-muted) 0%, var(--zc-bg) 100%);
+  border-color: rgba(13, 148, 136, 0.22);
+}
+
+/* Fond blanc uniforme pour les boutons d’action (tous panneaux turquoise + pied de page) */
+.zc-panel-soura .menu-button.active.zc-top-action-btn,
+.zc-panel-soura .bouton.zc-top-action-btn,
+.zc-panel-soura .like-btn.zc-top-action-btn {
+  background: var(--zc-panel-action-bg) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-panel-soura .menu-button.active.zc-top-action-btn:hover,
+.zc-panel-soura .bouton.zc-top-action-btn:hover,
+.zc-panel-soura .like-btn.zc-top-action-btn:hover {
+  background: var(--zc-panel-action-bg-hover) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Listes déroulées : sans cadre (plus spécifique que le bloc .zc-panel-soura ci-dessus). */
+.zc-panel-soura .zc-module-actions-list > .menu-button.zc-top-action-btn,
+.zc-panel-soura .zc-module-actions-list > label.menu-button.zc-top-action-btn,
+.zc-panel-soura .zc-module-actions-list > .like-btn.zc-top-action-btn,
+.zc-panel-soura .zc-module-actions-list > .bouton.zc-top-action-btn {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-panel-soura .zc-module-actions-list > .menu-button.zc-top-action-btn:hover,
+.zc-panel-soura .zc-module-actions-list > label.menu-button.zc-top-action-btn:hover,
+.zc-panel-soura .zc-module-actions-list > .like-btn.zc-top-action-btn:hover,
+.zc-panel-soura .zc-module-actions-list > .bouton.zc-top-action-btn:hover {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Conteneur menu modules : pleine largeur (remplace inline-block) */
+.menu-container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Modules SAWM / SALAT / CHOKR : un seul cadre turquoise (titre + boutons), comme les blocs du haut */
+.toolbar1.zc-module-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 4px 0 6px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Languette grise : le titre ressort sur le fond turquoise du panneau */
+.toolbar1.zc-module-panel .zc-module-head.Modules {
+  background: var(--zc-module-tab-bg) !important;
+  border: none !important;
+  box-shadow: var(--zc-module-tab-shadow) !important;
+  margin: 0 !important;
+  padding: 7px 10px 8px !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--zc-radius-sm) var(--zc-radius-sm) 0 0 !important;
+  position: relative;
+  padding-inline-end: 42px !important;
+}
+
+/* Recherche versets : pas de bouton ± — pas d’emplacement réservé à droite */
+.toolbar1.zc-module-panel .zc-module-head.Modules.zc-versets-tab-head {
+  padding-inline-end: 14px !important;
+}
+
+/* Icônes languette = mêmes boutons que la barre (zc-top-action-btn), version compacte */
+.toolbar1.zc-module-panel .zc-module-head .zc-module-tab-icons {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--zc-module-tab-icons-gap);
+  margin-inline-start: 0.2rem;
+}
+
+/* Pastille CHOKR : nouveaux messages (forum / témoignages / contact admin) — visible surtout quand le panneau est replié */
+.toolbar1.zc-module-panel .zc-module-head .zc-chokr-notify {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-inline: 2px 4px;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  background: var(--zc-text-muted);
+  opacity: 0.35;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-chokr-notify.zc-chokr-notify--on {
+  background: var(--zc-danger);
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.35);
+  animation: zc-chokr-notify-pulse 1.35s ease-in-out infinite;
+}
+
+@keyframes zc-chokr-notify-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Icône seule dans l’en-tête (recherche versets, paramètres) : après les libellés */
+.toolbar1.zc-module-panel .zc-module-head .zc-module-head-action-ico {
+  margin-inline-start: 0.35rem;
+  cursor: pointer;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn {
+  min-width: auto !important;
+  width: auto;
+  min-height: 20px;
+  height: auto;
+  padding: 1px 4px;
+  margin: 0;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn .zc-top-action-ico {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn .zc-top-action-ico i {
+  font-size: 0.95em;
+  line-height: 1;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn .zc-top-action-ico--dual {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .menu-button.zc-module-tab-icon-btn .zc-top-action-ico--dual i {
+  font-size: 0.8em;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-module-tab-icons--admin {
+  gap: var(--zc-module-tab-icons-gap);
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-module-tab-icons--admin .zc-top-action-ico img.icon-small {
+  max-height: 14px;
+  width: auto;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-module-tab-icons--admin .zc-top-action-ico img.icon-medium {
+  max-height: 15px;
+  width: auto;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-panel-collapse-btn {
+  position: absolute;
+  inset-inline-end: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 999px;
+  background: var(--zc-surface);
+  color: var(--zc-text);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar1.zc-module-panel .zc-module-head .zc-panel-collapse-btn:hover {
+  background: var(--zc-bg);
+}
+
+.toolbar1.zc-module-panel.zc-panel-collapsed .zc-module-head.Modules {
+  border-radius: var(--zc-radius-sm) !important;
+  padding-top: 6px !important;
+  padding-bottom: 7px !important;
+  min-height: 32px;
+}
+
+/* Quand un panel est replié, on masque tout sauf la languette de titre. */
+.toolbar1.zc-module-panel.zc-panel-collapsed > :not(.zc-module-head) {
+  display: none !important;
+}
+
+.toolbar1.zc-module-panel .zc-module-toolbar-inner.toolbar,
+.toolbar1.zc-module-panel .toolbar.zc-module-toolbar-inner,
+.toolbar1.zc-module-panel .zc-footer-toolbar.zc-module-toolbar-inner {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--zc-module-toolbar-gap);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 10px 12px 12px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-top: none !important;
+  border-radius: 0;
+}
+
+/* Listes déroulées : même élément « .toolbar » + .zc-module-actions-list sans .zc-module-toolbar-inner
+ * (ex. #panelParams .zc-params-detail-list) — sinon le gabarit .toolbar redessine un cadre autour des commandes. */
+.toolbar1.zc-module-panel .toolbar.zc-module-actions-list {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Liste / listbox visuelle : SAWM, SALAT, CHOKR, admin, pied — pas Soura / versets / paramètres */
+.toolbar1.zc-module-panel .zc-module-actions-list {
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  padding: 6px 8px 10px !important;
+  max-height: min(58vh, 480px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0 0 var(--zc-radius-sm, 10px) var(--zc-radius-sm, 10px);
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn,
+.toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn,
+.toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  min-height: 40px;
+  box-sizing: border-box;
+  justify-content: flex-start !important;
+  text-align: start;
+  padding: 8px 10px !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  box-shadow: none !important;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list > * + * {
+  margin-top: 4px !important;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico {
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico img {
+  max-height: 22px;
+  width: auto;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-label {
+  flex: 1 1 auto !important;
+  text-align: start !important;
+  white-space: normal !important;
+  line-height: 1.3;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list .zc-forum-msg-badge,
+.toolbar1.zc-module-panel .zc-module-actions-list .badgeSel,
+.toolbar1.zc-module-panel .zc-module-actions-list .like-count {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.toolbar1.zc-module-panel .zc-module-actions-list #badgeArticlesCount:not(:empty) {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+/*
+ * Mode clair (effectif) — déroulés des panneaux : sans fond « mat » sur chaque ligne,
+ * libellés et icônes en noir pur (#000). Même logique que les tokens : [data-theme="light"]
+ * OU (prefers-color-scheme: light sans [data-theme="dark"]).
+ */
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > label.menu-button.zc-top-action-btn,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn:hover,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > label.menu-button.zc-top-action-btn:hover,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn:hover,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-label,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-title-sync-label,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-params-detail-text,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-forum-welcome-more-label {
+  color: #000000 !important;
+}
+
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico,
+:root[data-theme="light"] .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico i {
+  color: #000000 !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > label.menu-button.zc-top-action-btn,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .menu-button.zc-top-action-btn:hover,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > label.menu-button.zc-top-action-btn:hover,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .like-btn.zc-top-action-btn:hover,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list > .bouton.zc-top-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-label,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-title-sync-label,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-params-detail-text,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-forum-welcome-more-label {
+    color: #000000 !important;
+  }
+
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico,
+  :root:not([data-theme="dark"]) .toolbar1.zc-module-panel .zc-module-actions-list .zc-top-action-ico i {
+    color: #000000 !important;
+  }
+}
+
+/* Soura : titre en languette, champ dans la zone sous languette */
+.toolbar1.zc-soura-search-panel .zc-soura-tab-head.Modules {
+  flex-wrap: wrap;
+  gap: var(--zc-module-head-gap);
+}
+
+.toolbar1.zc-soura-search-panel .zc-soura-panel-body {
+  padding: 8px 12px 6px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.zc-soura-search-panel .zc-soura-field-wrap {
+  position: relative;
+  margin: 5px 5px 0 5px;
+}
+
+.zc-soura-search-panel .zc-soura-counter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-bottom: 6px;
+}
+
+.zc-soura-search-panel #nombreSouraTrouvees {
+  display: inline-block;
+  text-align: center;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.zc-soura-search-panel .zc-soura-inline-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.zc-soura-search-panel .zc-soura-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-decoration: underline;
+  color: var(--zc-popup-link, var(--zc-accent, #2563eb));
+  font-weight: 600;
+}
+
+.zc-soura-search-panel .zc-soura-action-link:hover {
+  color: var(--zc-popup-link-hover);
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Sourate + versets regroupés ; le chevron sourate est un frère direct, hors de ce bloc. */
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-select-core {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-input-slot {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-input-slot #inputSoura.zc-ui-search-field {
+  width: 100%;
+  min-height: 42px;
+  max-height: 42px;
+  height: 42px;
+  padding-left: 0.9rem !important;
+  padding-right: 2.4rem !important;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  text-align: center;
+}
+
+/* Largeur serrée pour le placeholder « 1–286 » (Al-Baqara) ; marges horizontales minimales. */
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-verse-select-wrap {
+  flex: 0 0 auto;
+  width: calc(5.5ch + 0.3rem);
+  min-width: 0;
+  max-width: none;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-verse-select-wrap[hidden] {
+  display: none !important;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-verse-input-slot {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap .zc-soura-vers-input.zc-ui-search-field {
+  width: 100%;
+  min-height: 42px;
+  max-height: 42px;
+  height: 42px;
+  padding-left: 0.15rem !important;
+  padding-right: 0.15rem !important;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Liste suggestions versets (même principe que suggestions Soura) */
+#suggestionsSouraVers.zc-soura-vers-suggestions {
+  position: absolute;
+  z-index: 7;
+  max-height: calc(100dvh - 180px);
+  overflow-y: auto;
+  border: none;
+  border-radius: 8px;
+  background: var(--zc-surface);
+  box-shadow: var(--zc-shadow-md);
+}
+
+#suggestionsSouraVers.zc-soura-vers-suggestions li {
+  padding: 8px 10px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* Chevron listes sourate : en flux à droite du bloc sourate+verset (pas en absolute sur tout le rail). */
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap > #tipTabSouraSearch.bouton-loupe-croix.zc-soura-search-chevron,
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap > #tipTabSouraSearch.bouton-loupe-croix {
+  position: relative !important;
+  top: auto !important;
+  transform: none !important;
+  flex: 0 0 auto;
+  align-self: center;
+  right: auto !important;
+  left: auto !important;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--zc-popup-link) !important;
+}
+
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap > #tipTabSouraSearch.bouton-loupe-croix.zc-soura-search-chevron:hover,
+.zc-soura-search-panel #SelecteurSoura.zc-soura-search-wrap > #tipTabSouraSearch.bouton-loupe-croix:hover {
+  background: var(--zc-popup-link-soft) !important;
+  color: var(--zc-popup-link-hover) !important;
+}
+
+/* La liste soura est en position absolue: ne pas la couper dans ce panneau. */
+.toolbar1.zc-module-panel.zc-soura-search-panel {
+  position: relative;
+  overflow: visible;
+}
+
+.toolbar1.zc-module-panel.zc-versets-panel {
+  position: relative;
+}
+
+.toolbar1.zc-module-panel.zc-versets-tools-panel {
+  position: relative;
+}
+
+/* Liste suggestions Soura: hauteur confortable comme mot/Historik. */
+#suggestionsSoura {
+  position: absolute;
+  z-index: 6;
+  max-height: calc(100dvh - 180px);
+  overflow-y: auto;
+  border: none;
+  border-radius: 8px;
+  background: var(--zc-surface);
+  box-shadow: var(--zc-shadow-md);
+}
+
+#suggestionsSoura li {
+  padding: 9px 10px;
+  line-height: 1.35;
+  border-bottom: none;
+}
+
+#suggestionsSoura li:last-child {
+  border-bottom: none;
+}
+
+/* Ligne d’actions Soura : même principe que versets */
+.zc-soura-search-panel .zc-soura-actions-row {
+  display: flex !important;
+  margin-top: 6px !important;
+  background: var(--zc-popup-chip-bg);
+  border: none;
+  border-radius: 8px;
+  padding: 3px 5px !important;
+  box-shadow: none;
+  gap: var(--zc-module-toolbar-gap);
+}
+
+.zc-soura-search-panel .zc-soura-actions-row .zc-top-action-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 34px;
+  padding: 4px 6px;
+  border-radius: 10px;
+}
+
+.zc-soura-search-panel .zc-soura-actions-row .zc-top-action-label {
+  font-size: 12px;
+}
+
+/* La règle globale .zc-top-action-ico (16px fixe) écrase livre + volume ; ici largeur au contenu */
+.zc-soura-search-panel .zc-soura-actions-row .zc-top-action-ico {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.zc-soura-search-panel .zc-soura-actions-row .zc-top-action-ico--dual {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.zc-soura-search-panel .zc-soura-actions-row .zc-top-action-ico--dual i {
+  flex: 0 0 auto;
+  width: 1em;
+  text-align: center;
+}
+
+/* Recherche de versets : titre dans la languette ; consigne = label du champ */
+.toolbar1.zc-versets-panel .zc-versets-tab-head.Modules {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--zc-module-head-gap);
+}
+
+.zc-versets-hint-line {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--zc-text);
+  margin-bottom: 6px;
+}
+
+/* Même intervalle label → champ et champ → actions : 6px + 5px */
+.zc-versets-panel .zc-mot-field-wrap {
+  position: relative;
+  margin: 5px 5px 0 5px;
+}
+
+.toolbar1.zc-versets-panel .zc-versets-panel-body {
+  padding: 8px 12px 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Popup Historik (listbox #historiqueMots) */
+.zc-historik-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  background: rgba(15, 23, 42, 0.45);
+  box-sizing: border-box;
+}
+
+.zc-historik-dialog {
+  width: 100vw;
+  height: 100dvh;
+  max-height: none;
+  background: var(--zc-surface);
+  border-radius: 0;
+  padding: 14px 16px 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.zc-historik-dialog-head {
+  display: grid;
+  grid-template-columns: var(--zc-popup-head-icon-box) 1fr var(--zc-popup-head-icon-box);
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.zc-historik-dialog-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--zc-text);
+  text-align: center;
+}
+
+.zc-historik-dialog-menuicon {
+  justify-self: start;
+}
+
+.zc-historik-dialog-menuicon:hover,
+.zc-historik-dialog-menuicon:focus-visible {
+  outline: none;
+}
+
+.zc-historik-dialog-close {
+  flex-shrink: 0;
+  width: var(--zc-popup-head-icon-box);
+  height: var(--zc-popup-head-icon-box);
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--zc-text);
+  font-size: var(--zc-popup-head-icon-fs);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.zc-historik-dialog-close:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--zc-text);
+}
+
+.zc-historik-dialog-hint {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--zc-text-muted);
+  text-align: center;
+}
+
+.zc-historik-panel-host {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.zc-historik-panel-host > #panelVersets {
+  margin: 0 !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* En mode popup Historik plein écran, laisser la liste de suggestions
+ * occuper la majeure partie de la hauteur disponible. */
+#zcHistorikOverlay #suggestions-container-mot.suggestions-liste {
+  max-height: calc(100dvh - 220px);
+}
+
+#zcHistorikPopupClose.zc-historik-dialog-close { justify-self: end; }
+
+.zc-historik-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Boutons de barre module / outils : plus étroits pour tenir sur une ligne */
+.zc-toolbar-row-compact .menu-button.zc-top-action-btn {
+  padding: 3px 7px;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  min-height: 1.85rem;
+}
+
+.zc-toolbar-row-compact .zc-top-action-ico {
+  font-size: 0.95em;
+}
+
+/* Historique (Outils) : « H » dans la barre et sur la languette sync */
+.zc-historik-ico.zc-top-action-ico {
+  font-weight: 800;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: var(--zc-fs-md);
+  line-height: 1;
+  min-width: 1.1em;
+  text-align: center;
+}
+
+.zc-params-chip-ico {
+  color: var(--zc-text-muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.zc-params-livre-open-btn.menu-button.zc-top-action-btn {
+  padding: 3px 8px;
+  min-height: 1.85rem;
+  font-size: 0.8125rem;
+}
+
+.zc-popup-header-tools-row .bouton {
+  flex: 0 0 auto;
+}
+
+.zc-popup-zoom-tier .zc-popup-header-actions {
+  position: relative;
+}
+
+.zc-popup-zoom-tier .zc-popup-header-actions--forumlike {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Zoom 0–3 + Lexique : un seul fond sur toute la zone en-tête (rangée titre + #infosProgEnCours).
+ * Sans ceci, .popup-header reste #f0f0f0 alors que #infosProgEnCours est bleu — surtout visible si le Lexique n’appelle pas afficherPageMulti (pas de style inline sur le header). */
+.zc-popup-zoom-tier .popup-content > .popup-header.zc-popup-header-unified {
+  background-color: var(--zc-popup-bg);
+  border-bottom: none;
+}
+
+.zc-popup-zoom-tier .zc-popup-top-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  translate: 0 -50%;
+  max-width: calc(100% - 9rem);
+  text-align: center;
+  font-size: var(--zc-fs-sm);
+  line-height: var(--zc-lh-tight);
+  font-weight: 700;
+  color: var(--zc-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+#t-popup-resultats-ctx-menu,
+#t-popup-resultats-ctx-menu-z1,
+#t-popup-resultats-ctx-menu-z2,
+#t-popup-resultats-ctx-menu-z3,
+#t-minimiser-la-fenêtre,
+#t-minimiser-resultats-z1,
+#t-minimiser-resultats-z2,
+#t-minimiser-resultats-z3 {
+  width: var(--zc-popup-head-icon-box);
+  height: var(--zc-popup-head-icon-box);
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Bouton menu contextuel ☰ / fa-bars (a.zc-popup-ctx-tab, button.zc-popup-ctx-tab et variantes
+ * comment / af-modal / medias / hamburger) : désormais dans styles/07-ctx-tab.css (Phase C). */
+
+#t-popup-resultats-ctx-menu,
+#t-popup-resultats-ctx-menu-z1,
+#t-popup-resultats-ctx-menu-z2,
+#t-popup-resultats-ctx-menu-z3 {
+  grid-column: 1;
+  justify-self: start;
+}
+
+#t-minimiser-la-fenêtre,
+#t-minimiser-resultats-z1,
+#t-minimiser-resultats-z2,
+#t-minimiser-resultats-z3 {
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* Warsh dans #popupHtml : même chrome d’en-tête que Zoom 0–3 (#popupResultats). */
+#popupHtml .zc-warsh-panel .zc-warsh-panel-header.popup-header.zc-popup-header-unified {
+  background-color: var(--zc-popup-bg);
+  border-bottom: none;
+}
+
+#popupHtml #contenuLocal > .zc-warsh-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+#popupHtml .zc-warsh-popup-headbar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+#popupHtml .zc-warsh-popup-headbar .zc-warsh-popup-ctx,
+#popupHtml .zc-warsh-popup-headbar .zc-popup-html-close {
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  font-size: 0.85rem;
+}
+
+#popupHtml .zc-warsh-popup-headbar .zc-warsh-popup-ctx {
+  grid-column: 1;
+  justify-self: start;
+}
+
+#popupHtml .zc-warsh-popup-title {
+  grid-column: 2;
+  justify-self: center;
+  margin: 0;
+  max-width: 100%;
+  text-align: center;
+  font-size: var(--zc-fs-sm);
+  line-height: var(--zc-lh-tight);
+  font-weight: 700;
+  color: var(--zc-popup-title-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+#popupHtml .zc-warsh-popup-headbar .zc-popup-html-close {
+  grid-column: 3;
+  justify-self: end;
+}
+
+#popupHtml .zc-warsh-panel-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#popupHtml .zc-warsh-panel-body .social-buttons {
+  margin: 6px 0;
+}
+
+#popupHtml .zc-warsh-panel-body .menu {
+  margin-bottom: 10px;
+}
+
+/* Warsh : navigation + actions = icônes bleues sans cadre (hors style .menu-button). */
+.zc-warsh-panel .zc-warsh-nav-row.menu,
+.zc-warsh-panel .menu.zc-warsh-nav-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 3px;
+  margin: 0 0 4px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-warsh-panel .zc-warsh-nav-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-warsh-panel .zc-warsh-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 2px 5px;
+  min-height: auto;
+  font-size: 1.05rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--zc-popup-link);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.zc-warsh-panel .zc-warsh-icon-btn:hover:not(:disabled) {
+  color: var(--zc-popup-link-hover);
+  background: var(--zc-popup-link-soft) !important;
+}
+
+.zc-warsh-panel .zc-warsh-icon-btn:focus-visible {
+  outline: 2px solid var(--zc-focus-ring);
+  outline-offset: 1px;
+}
+
+.zc-warsh-panel .zc-warsh-icon-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.zc-warsh-panel .zc-warsh-icon-btn i {
+  color: inherit;
+  font-size: 1em;
+}
+
+.zc-warsh-panel .zc-warsh-panel-body #LienExterneIMG.social-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px 6px;
+  margin: 2px 0 6px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-warsh-panel #LienExterneIMG_Link {
+  margin: 0;
+  padding: 2px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--zc-popup-link);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+}
+
+.zc-warsh-panel #LienExterneIMG_Link:hover {
+  color: var(--zc-popup-link-hover);
+  text-decoration: underline;
+}
+
+/* En-tête Warsh : ☰ et ✕ sans cadre type .menu-button, même ton bleu. */
+#popupHtml .zc-warsh-popup-headbar .zc-warsh-popup-ctx,
+#popupHtml .zc-warsh-popup-headbar .zc-popup-html-close {
+  color: var(--zc-popup-link) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#popupHtml .zc-warsh-popup-headbar .zc-warsh-popup-ctx:hover,
+#popupHtml .zc-warsh-popup-headbar .zc-popup-html-close:hover {
+  color: var(--zc-popup-link-hover) !important;
+  background: var(--zc-popup-link-soft) !important;
+}
+
+#btnTradFromPopup {
+  min-height: 1.45rem;
+}
+
+#btnHistorikFromPopup {
+  min-height: 1.45rem;
+}
+
+/* Panneau Paramètres : languettes ME / MC / livre + liste détaillée */
+.zc-params-tab-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.zc-module-tab-short-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 3px;
+  color: var(--zc-text);
+  align-self: center;
+}
+
+.zc-param-toggle-on .zc-module-tab-short-label,
+.zc-param-toggle-off .zc-module-tab-short-label {
+  color: var(--zc-text) !important;
+}
+
+#tipTab__btnZcParamsTabME .zc-top-action-ico,
+#tipTab__btnZcParamsTabMC .zc-top-action-ico,
+#btnZcParamsTabME .zc-top-action-ico,
+#btnZcParamsTabMC .zc-top-action-ico {
+  display: none !important;
+}
+
+#tipTab__btnZcParamsTabME .zc-module-tab-short-label,
+#tipTab__btnZcParamsTabMC .zc-module-tab-short-label {
+  margin-left: 0;
+  font-weight: 800;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-on,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-on {
+  background: var(--zc-accent) !important;
+  border-color: var(--zc-accent) !important;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-on .zc-module-tab-short-label,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-on .zc-module-tab-short-label {
+  color: #ffffff !important;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-off,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-off {
+  background: var(--zc-surface) !important;
+  border-color: var(--zc-accent) !important;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-off .zc-module-tab-short-label,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-off .zc-module-tab-short-label {
+  color: var(--zc-text) !important;
+}
+
+.zc-params-detail-list.zc-module-actions-list {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.zc-params-detail-row.menu-button.zc-top-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  text-align: left;
+  cursor: pointer;
+  min-height: 2rem;
+}
+
+.zc-params-row-chk {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+.zc-params-swing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.2rem;
+  padding: 0 0.22rem;
+  border-radius: 6px;
+  border: none;
+  background: var(--zc-surface);
+  color: var(--zc-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.zc-params-row-chk:checked + .zc-params-swing-btn {
+  background: var(--zc-accent);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+/* Panel Paramètres : pas de cadre sur les pastilles ME / MC de la liste ni sur les languettes ME/MC du titre */
+#panelParams .zc-params-swing-btn {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#panelParams .zc-params-row-chk:checked + .zc-params-swing-btn {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#panelParams .zc-module-head .zc-module-tab-icons > .menu-button.zc-module-tab-icon-btn,
+#tipTab__btnZcParamsTabME,
+#tipTab__btnZcParamsTabMC,
+#tipTab__btnZcParamsTabBook {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-on,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-on {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#tipTab__btnZcParamsTabME.zc-param-toggle-off,
+#tipTab__btnZcParamsTabMC.zc-param-toggle-off {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.zc-popup-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 1.45rem;
+  padding: 0 0.38rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--zc-surface);
+  color: var(--zc-text);
+  font-size: var(--zc-fs-xs);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.zc-popup-toggle-btn.is-on {
+  background: var(--zc-accent);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+/* .zc-popup-header-tools-row, .zc-popup-selection-row, .zc-popup-zoom-params-frame :
+ * désormais dans styles/05-bandeau.css (Phase C). */
+
+/* Paramètres, bandeau #infosProgEnCours, barres « Copier tout / sélection / effacer »,
+ * compteurs : désormais dans styles/05-bandeau.css (Phase C).
+ * Cartes d'enregistrements (.zc-result-card-head, .zc-record-languette*, puces) :
+ * désormais dans styles/06-cards.css (Phase C).
+ */
+
+.zc-popup-selection-row--slim {
+  gap: 4px;
+}
+
+.zc-popup-selection-row--slim .bouton {
+  min-height: 1.4rem;
+  padding: 1px 7px;
+  font-size: 0.74rem;
+  line-height: 1.05;
+}
+
+.zc-popup-header-tools-row .zc-trad-pick-btn {
+  min-height: 1.45rem;
+  padding: 2px 4px !important;
+}
+
+.zc-popup-header-tools-row .zc-trad-pick-btn .zc-trad-pick-label {
+  max-width: 7.5rem;
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zc-params-detail-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.zc-params-tafsir-row.menu-button.zc-top-action-btn,
+.zc-trad-pick-btn.menu-button.zc-top-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 2rem;
+}
+
+.zc-trad-pick-btn .zc-trad-pick-label,
+.zc-params-tafsir-row .zc-trad-pick-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+
+.bouton.zc-trad-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.bouton.zc-trad-pick-btn .zc-trad-pick-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+
+/* Choix du livre de commentaires : icône livre en rouge (popup Zoom / Lexique + Paramètres) */
+.zc-trad-pick-btn .zc-top-action-ico .fas.fa-book,
+#btnOpenTraductionPopupParams .zc-top-action-ico .fas.fa-book-open,
+#btnZcParamsTabBook .zc-top-action-ico .fas.fa-book-open {
+  color: #c00 !important;
+}
+
+.zc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+.zc-versets-tools-panel.zc-module-panel {
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 6px;
+}
+
+/* ——— Recherche de versets : bloc mis en avant (figé avec le haut via .zc-app-sticky-head) ——— */
+.toolbar1.zc-versets-panel.zc-versets-panel--featured {
+  border: none;
+  border-inline-start: none;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(180deg, var(--zc-surface-muted) 0%, var(--zc-ui-soft-bg) 38%, var(--zc-surface) 100%);
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-versets-tab-head.Modules {
+  background: var(--zc-module-tab-bg) !important;
+  box-shadow: var(--zc-module-tab-shadow) !important;
+  border-radius: 13px 13px 0 0 !important;
+}
+
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-versets-tab-head.Modules span[id^="labelInterface"] {
+  font-weight: 800;
+  color: var(--zc-text);
+  letter-spacing: -0.02em;
+}
+
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-versets-panel-body {
+  background: transparent;
+  border-radius: 0 0 12px 12px;
+}
+
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-versets-hint-line {
+  color: var(--zc-accent-hover);
+}
+
+.zc-mot-inline-tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 4px 0 6px;
+}
+
+.zc-mot-inline-tools .zc-mot-inline-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 !important;
+  color: var(--zc-popup-link) !important;
+  text-decoration: none !important;
+  min-width: 1.9rem;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.zc-mot-inline-tools .zc-mot-inline-btn:hover {
+  color: var(--zc-popup-link-hover) !important;
+  background: transparent !important;
+}
+
+/* Clones ME / MC dans panelVersets : style texte sans cadre + couleur selon état */
+#btnVersetsInlineME,
+#btnVersetsInlineMC {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 2px 2px !important;
+  min-width: auto !important;
+}
+
+#btnVersetsInlineME .zc-module-tab-short-label,
+#btnVersetsInlineMC .zc-module-tab-short-label {
+  margin-left: 0;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+#btnVersetsInlineME.zc-param-toggle-on .zc-module-tab-short-label,
+#btnVersetsInlineMC.zc-param-toggle-on .zc-module-tab-short-label {
+  color: var(--zc-accent) !important;
+}
+
+#btnVersetsInlineME.zc-param-toggle-off .zc-module-tab-short-label,
+#btnVersetsInlineMC.zc-param-toggle-off .zc-module-tab-short-label {
+  color: var(--zc-text-muted) !important;
+}
+
+.zc-mot-suggestions-count {
+  font-size: 12px;
+  color: var(--zc-text-muted);
+}
+
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-mot-field-wrap textarea#mot,
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-mot-field-wrap textarea.textArea,
+.toolbar1.zc-versets-panel.zc-versets-panel--featured .zc-mot-field-wrap textarea.zc-ui-search-field {
+  border-color: rgba(13, 148, 136, 0.42);
+  box-shadow: 0 1px 3px rgba(13, 148, 136, 0.08);
+}
+
+/* Paramètres : ligne de cases à cocher, centrée ; retour à la ligne si besoin */
+#panelParams .zc-params-options-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px 14px !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 6px 4px;
+}
+
+#panelParams .zc-params-options-row > .toolbar {
+  flex: 0 0 auto;
+}
+
+/* Ligne identité + connexion au-dessus du panneau Visiteurs (#panelFooter) */
+.zc-footer-panel-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.zc-footer-panel-stack > .toolbar1.zc-footer-bar.zc-module-panel {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.zc-footer-account-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem 0.45rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px 4px;
+  text-align: center;
+}
+
+.zc-footer-account-row .zc-footer-user-welcome {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  text-align: inherit;
+  margin: 0;
+}
+
+/* Connexion / déconnexion : texte bleu type lien, collé au message d’accueil */
+.zc-footer-account-row #logInUser.menu-button.zc-top-action-btn,
+.zc-footer-account-row #logInUser.menu-button.active.zc-top-action-btn {
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--zc-popup-link);
+  font-size: var(--zc-fs-md);
+  font-weight: 600;
+  line-height: 1.35;
+  align-self: center;
+}
+
+.zc-footer-account-row #logInUser.menu-button.zc-top-action-btn:hover,
+.zc-footer-account-row #logInUser.menu-button.zc-top-action-btn.active:hover {
+  color: var(--zc-popup-link);
+  text-decoration: underline;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.zc-footer-account-row #logInUser .zc-top-action-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.2rem;
+  font-size: 0.92em;
+  color: inherit;
+}
+
+.zc-footer-account-row #logInUser .zc-top-action-label,
+.zc-footer-account-row #logInUser .zc-title-sync-label {
+  color: inherit;
+}
+
+.zc-footer-account-row #logInUser:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--zc-popup-link) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* Pied de page : même harmonisation (titre stats + boutons libellés) */
+.zc-footer-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 10px 12px;
+  gap: 10px;
+  text-align: center;
+}
+
+/* Pied de page avec languette (structure zc-module-panel) */
+.toolbar1.zc-footer-bar.zc-module-panel {
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.toolbar1.zc-footer-bar.zc-module-panel .zc-footer-tab-head.Modules {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--zc-text);
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 8px;
+  padding-top: 6px !important;
+  padding-bottom: 7px !important;
+}
+
+.zc-footer-tab-head .zc-module-tab-icons--footer {
+  margin-inline-start: 0;
+  order: 10;
+  flex: 0 0 100%;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.toolbar1.zc-footer-bar.zc-module-panel .zc-module-head .zc-footer-tab-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.toolbar1.zc-footer-bar.zc-module-panel .zc-module-head .zc-footer-tab-like .like-count {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--zc-text);
+}
+
+.zc-footer-stats-ico {
+  color: var(--zc-accent);
+  margin-inline-start: 0.25rem;
+}
+
+.zc-footer-stats-sep {
+  opacity: 0.45;
+  user-select: none;
+}
+
+.zc-footer-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--zc-module-toolbar-gap);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.zc-footer-user-welcome {
+  width: 100%;
+  text-align: center;
+  font-size: var(--zc-fs-md);
+  font-weight: 600;
+  color: var(--zc-text);
+  margin: 0 0 0.15rem;
+}
+
+.zc-footer-bar .zc-top-action-btn {
+  min-width: 120px;
+  min-height: 34px;
+  padding: 4px 8px;
+  gap: 6px;
+  border-radius: 10px;
+  color: var(--zc-text);
+  margin: 0;
+}
+
+.zc-footer-bar .like-btn.zc-top-action-btn {
+  color: var(--zc-text);
+  background: transparent !important;
+  border: none !important;
+}
+
+.zc-footer-bar .like-btn.zc-top-action-btn.is-liked {
+  background: transparent !important;
+  color: var(--zc-text) !important;
+  border: none !important;
+}
+
+/* Badge nouveaux messages forum (sans écraser le libellé) */
+.zc-forum-msg-badge:empty {
+  display: none;
+}
+
+.zc-forum-msg-badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  border-radius: 999px;
+  background: rgba(13, 148, 136, 0.22);
+  color: var(--zc-accent-hover);
+  vertical-align: middle;
+}
+
+/* Boutons admin : icônes images + même style compact que le bloc 2 / pied de page */
+.zc-btn-caches-panel .zc-btn-caches-inner .zc-top-action-btn {
+  min-width: 120px;
+  min-height: 34px;
+  padding: 4px 7px;
+  gap: 6px;
+  border-radius: 10px;
+  color: var(--zc-text);
+}
+
+.zc-btn-caches-panel .zc-btn-caches-inner .zc-top-action-ico {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 18px;
+  max-width: 44px;
+}
+
+.zc-btn-caches-panel .zc-btn-caches-inner .zc-top-action-ico img {
+  max-height: 22px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Premier bloc du haut: boutons avec label visible (step-by-step) */
+.zc-top-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--zc-module-toolbar-gap);
+}
+
+.zc-top-action-btn {
+  min-width: 108px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.zc-top-action-ico {
+  color: var(--zc-accent);
+  width: 16px;
+  text-align: center;
+  flex: 0 0 16px;
+}
+
+.zc-top-action-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--zc-text);
+  line-height: 1.1;
+}

@@ -1,0 +1,13 @@
+---
+description: Résumé de compréhension obligatoire avant toute modification de code
+alwaysApply: true
+---
+
+# Très important — alignement avant les changements
+
+Avant d’entamer des modifications (édition de fichiers, refactors, ajout de code), l’assistant doit **obligatoirement** :
+
+1. **Rédiger un court résumé** de ce qu’il a compris de la demande (objectif, périmètre, fichiers ou zones concernés si identifiables, contraintes implicites).
+2. **Attendre validation implicite ou explicite** : si l’utilisateur n’a pas encore confirmé, poser une question du type « Est-ce bien cela que tu veux ? » plutôt que d’éditer tout de suite.
+
+Cette étape prime sur la rapidité : mieux vaut une phrase de clarification qu’un malentendu coûteux.

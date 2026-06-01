@@ -1,0 +1,26 @@
+# Normalisation des fins de ligne : Git gère LF en interne,
+# et restitue les fins de ligne natives à la sortie selon la plateforme.
+* text=auto
+
+# Scripts shell/unix toujours en LF
+*.sh text eol=lf
+
+# Scripts batch Windows toujours en CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Fichiers binaires : ne jamais convertir
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.rar binary
+*.zip binary
+*.mp3 binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

@@ -1,0 +1,21 @@
+{
+  "name": "Alfamous",
+  "short_name": "App",
+  "description": "Alfamous est une application Web qui comprend 2 modules de recherche des versets et termes du Coran (Zoom-Coran & Lexique++)",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "img/ZC.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/LEX.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
