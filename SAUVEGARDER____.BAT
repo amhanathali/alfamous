@@ -1,8 +1,10 @@
 @echo off
 REM =============================================================================
-REM Sauvegarde WinRAR uniquement — NE SUPPRIME AUCUN FICHIER du projet.
+REM Snapshot complet WinRAR - NE SUPPRIME AUCUN FICHIER du projet.
+REM Inclut le code ET les secrets non versionnes par Git (key.json, secrets.gs,
+REM cles adminsdk, quick-login.json, .env, dossier other\), pour une migration complete.
+REM ATTENTION : l'archive contient des SECRETS - a conserver dans un endroit sur.
 REM Cree un .rar dans le dossier du script (racine Alfamous).
-REM Encodage: enregistrer ce fichier en ANSI ou UTF-8 sans BOM si cmd affiche des erreurs.
 REM =============================================================================
 setlocal EnableExtensions EnableDelayedExpansion
 
@@ -35,10 +37,15 @@ if exist "functions\" (
 if exist "Gscript\" >>"%LST%" echo Gscript
 if exist "firebase-backend\" >>"%LST%" echo firebase-backend
 if exist "other\" >>"%LST%" echo other
-for %%F in (firebase.json .firebaserc firestore.rules firestore.indexes.json storage.rules package.json package-lock.json firebase-storage-cors.json cors.json .gitignore) do (
+for %%F in (firebase.json .firebaserc firestore.rules firestore.indexes.json storage.rules package.json package-lock.json firebase-storage-cors.json cors.json .gitignore .gitattributes) do (
   if exist "%%~F" >>"%LST%" echo %%~F
 )
-for %%F in (DEPLOYER____.BAT SAUVEGARDER____.BAT lancer-alfamous.bat) do (
+REM Secrets a la racine NON versionnes par Git - indispensables pour une migration complete.
+REM Les secrets de functions\ et Gscript\secrets.gs sont deja inclus via leurs dossiers.
+for %%F in (key.json key.json.json serviceAccountKey.json .env) do (
+  if exist "%%~F" >>"%LST%" echo %%~F
+)
+for %%F in (DEPLOYER____.BAT SAUVEGARDER____.BAT LANCER_ALFAMOUS.BAT GIT_Sauvegarder_sur_GitHub.bat GIT_Recuperer_de_GitHub.bat GIT_Etat_du_projet.bat) do (
   if exist "%%~F" >>"%LST%" echo %%~F
 )
 
@@ -62,6 +69,9 @@ if exist "%DEST%" (
 )
 
 :END
+echo.
+echo [RAPPEL] Cette archive contient vos SECRETS : conservez-la dans un endroit sur
+echo          (cle USB chiffree / cloud prive), jamais sur un espace public ni sur GitHub.
 echo.
 echo [DONE] Fin. Aucun fichier du projet n'a ete supprime par ce script.
 echo Appuyez sur une touche pour fermer...
