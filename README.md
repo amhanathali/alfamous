@@ -54,21 +54,34 @@ Alfamous a été conçu comme un **bien commun** au service de l'étude du texte
 
 ## 🔑 Fonctionnalités principales
 
-- 🔎 **Recherche par racines** arabes et par mots du Coran
-- 📖 **Lexique Ibn Fāris** (Maqāyīs al-Lugha) intégré et consultable
-- 🌍 **Multilingue** : français, anglais, arabe (et traductions kabyles)
-- 🗣️ **Synthèse et reconnaissance vocale** (Text-to-Speech / Speech-to-Text) pour les notes
-- 💬 **Forum** communautaire (fils publics et privés)
-- ✍️ **Témoignages** modérés
-- 📨 **Newsletter** avec désabonnement
-- 📎 **Partage de médias** et favoris
-- ❤️ Compteurs « J'aime » et statistiques de présence en temps réel
+L'interface est organisée en **panneaux**, repris ici fidèlement. *(Interface multilingue : FR, EN, AR, ES, KAB ; menu contextuel sur la sélection.)*
 
-## 🧩 Les modules
+### 🔎 Recherche Soura
+Choisir une **sourate (1–114)**, puis : 📄 **Warsh** (PDF), 🔊 **Écoute** (audio), 📖 **Lis** (lecture du texte).
 
-- **SAWM — recherche libre** : dans le Coran ou un livre de *tafsir*, plus le lexique et le recueil de commentaires liés aux versets.
-- **SALAT — recherche par racines** : statistiques de racines, analyse d'expressions, mots co-occurrents (« amis de la racine ») et formes dérivées — inspiré des travaux du Dr Sameer Islambulli.
-- **CHOKR — partage des connaissances** : messagerie, partage de médias, accès aux articles du blog, forum d'idées, et contribution de commentaires sur un verset ou une expression.
+### 🔎 Recherche de versets
+Saisir des **mots** (arabe ou latin), un **n° de page** ou une **aya** (ex. `3.14`). Navigation verset par verset (1 / 1844), bascule **ME** (mot entier) / **MC**, historique des recherches.
+
+### 🧰 Outils
+🔁 Nouvelle instance · ℹ️ Informations · ♻️ Réinitialiser · ☁️⬆️ / ☁️⬇️ Import / export · 📋 Copier · 🌙 Thème clair / sombre.
+
+### ⚙️ Paramètres
+Mot entier (**ME**), ordre des mots (**MC**), choix du **livre de tafsir**.
+
+### 📚 Cherche — *module SAWM*
+📖 Coran & **commentaires** · 📒 **Lexique** (Ibn Fāris) · 📚 **Articles** du blog · 🌐 lien vers le **blog** public.
+
+### 🌿 Racines — *module SALAT*
+📊 **Statistiques** de racines · ⚛️ **Synonymes & atomes** · 🔗 **Amis de la racine** (cooccurrences) · 🧩 **Formes dérivées**. Inspiré des travaux du Dr Sameer Islambulli.
+
+### 📤 Partage — *module CHOKR*
+✍️ **Mes Notes** (privé / public) avec **synthèse et reconnaissance vocale** (TTS / STT) · 💬 **Forum** d'idées (fils publics et privés) · 📎 **Partage de médias** et favoris · ✉️ **Messagerie / contact** · 🗣️ **Témoignages** modérés · 🔗 Partage de lien · ❤️ « J'aime ».
+
+### 🔐 Admin *(réservé, niveau ≥ 3)*
+Outils d'administration : **médias**, **traductions**, **newsletter** (@) avec désabonnement, gestion des **utilisateurs**, **lexique**.
+
+### 👥 Visiteurs
+Statistiques de **présence en temps réel** (connectés · onglets actifs · cumul) et **connexion / déconnexion**.
 
 ## 🌐 Écosystème
 

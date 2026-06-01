@@ -54,21 +54,34 @@ Alfamous was conceived as a **common good** serving the study of the Quranic tex
 
 ## 🔑 Key features
 
-- 🔎 **Search by Arabic roots** and by Quranic words
-- 📖 **Ibn Fāris lexicon** (Maqāyīs al-Lugha) integrated and searchable
-- 🌍 **Multilingual**: French, English, Arabic (and Kabyle translations)
-- 🗣️ **Text-to-Speech / Speech-to-Text** for notes
-- 💬 Community **forum** (public and private threads)
-- ✍️ Moderated **testimonials**
-- 📨 **Newsletter** with unsubscribe
-- 📎 **Media sharing** and favorites
-- ❤️ "Like" counters and real-time presence statistics
+The interface is organized into **panels**, mirrored faithfully below. *(Multilingual UI: FR, EN, AR, ES, KAB; context menu on selection.)*
 
-## 🧩 The modules
+### 🔎 Surah search
+Pick a **surah (1–114)**, then: 📄 **Warsh** (PDF), 🔊 **Listen** (audio), 📖 **Read** (text).
 
-- **SAWM — free search**: across the Quran or a *tafsir* (commentary) book, plus the lexicon and the collection of comments tied to verses.
-- **SALAT — search by roots**: root statistics, expression analysis, co-occurring words ("root friends") and inflected forms — inspired by the work of Dr. Sameer Islambulli.
-- **CHOKR — share knowledge**: messaging, media sharing, access to blog articles, an ideas forum, and contributing comments on a verse or expression.
+### 🔎 Verse search
+Enter **words** (Arabic or Latin), a **page number**, or an **aya** reference (e.g. `3.14`). Verse-by-verse navigation (1 / 1844), **ME** (whole word) / **MC** toggle, search history.
+
+### 🧰 Tools
+🔁 New instance · ℹ️ Info · ♻️ Reset · ☁️⬆️ / ☁️⬇️ Import / export · 📋 Copy · 🌙 Light / dark theme.
+
+### ⚙️ Settings
+Whole word (**ME**), word order (**MC**), choice of **tafsir book**.
+
+### 📚 Search — *SAWM module*
+📖 Quran & **commentary** · 📒 **Lexicon** (Ibn Fāris) · 📚 Blog **articles** · 🌐 link to the public **blog**.
+
+### 🌿 Roots — *SALAT module*
+📊 **Root statistics** · ⚛️ **Synonyms & atoms** · 🔗 **Root friends** (co-occurrences) · 🧩 **Inflected forms**. Inspired by the work of Dr. Sameer Islambulli.
+
+### 📤 Share — *CHOKR module*
+✍️ **My Notes** (private / public) with **Text-to-Speech / Speech-to-Text** · 💬 **Ideas forum** (public and private threads) · 📎 **Media sharing** and favorites · ✉️ **Messaging / contact** · 🗣️ Moderated **testimonials** · 🔗 Link sharing · ❤️ "Like".
+
+### 🔐 Admin *(restricted, level ≥ 3)*
+Administration tools: **media**, **translations**, **newsletter** (@) with unsubscribe, **user** management, **lexicon**.
+
+### 👥 Visitors
+**Real-time presence** statistics (connected · active tabs · cumulative) and **login / logout**.
 
 ## 🌐 Ecosystem
 
