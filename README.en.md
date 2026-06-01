@@ -63,32 +63,65 @@ Pick a **surah (1–114)**, then: 📄 **Warsh** (PDF), 🔊 **Listen** (audio),
 Enter **words** (Arabic or Latin), a **page number**, or an **aya** reference (e.g. `3.14`). Verse-by-verse navigation (1 / 1844), **ME** (whole word) / **MC** toggle, search history.
 
 ### 🧰 Tools
-🔁 New instance · ℹ️ Info · ♻️ Reset · ☁️⬆️ / ☁️⬇️ Import / export · 📋 Copy · 🌙 Light / dark theme.
+
+| | Feature |
+|---|---|
+| 🔁 | **Transliteration** — Arabic ↔ Latin characters in the search field |
+| ℹ️ | **Help** — information and reference table for transliteration |
+| ↺ | **Reset** — clear personal history (lexicon kept) |
+| ☁️⬆️ | **Export Historik** — to Firebase Storage |
+| ☁️⬇️ | **Import Historik** — from Firebase Storage |
+| 📋 | **Copy selection** — selected verses to the clipboard |
+| 🌙 | **Theme** — light / dark toggle |
 
 ### ⚙️ Settings
 Whole word (**ME**), word order (**MC**), choice of **tafsir book**.
 
 ### 📚 Search — *SAWM module*
-📖 Quran & **commentary** · 📒 **Lexicon** (Ibn Fāris) · 📚 Blog **articles** · 🌐 link to the public **blog**.
+
+| | Feature |
+|---|---|
+| 📖🍃 | Auto search and **Zoom 0-1-2-3** window (Quran + commentary), depending on context |
+| 📖 | Auto search and **Zoom 0-2-3** window (Zoom-Coran), depending on context |
+| 📒 | Auto search and **Zoom 0-3** window (Lexicon), depending on context |
+| 📕 | **Ibn Fāris lexicon** via OpenITI |
 
 ### 🌿 Roots — *SALAT module*
-📊 **Root statistics** · ⚛️ **Synonyms & atoms** · 🔗 **Root friends** (co-occurrences) · 🧩 **Inflected forms**. Inspired by the work of Dr. Sameer Islambulli.
+
+| | Feature |
+|---|---|
+| 📊 | **Statistics** of Quranic roots |
+| 🌿 | **Roots of a verse** (e.g. `3.14`) |
+| ⚛️ | **Synonymy** — atoms (sounds) and roots combined in a phrase |
+| 🔗 | **Friends of the root** — words in the verse (d=1, if contiguous) |
+| 🧩 | **Inflections** of the words of a root |
+
+*Inspired by the work of Dr. Sameer Islambulli.*
 
 ### 📤 Share — *CHOKR module*
-✍️ **My Notes** (private / public) with **Text-to-Speech / Speech-to-Text** · 💬 **Ideas forum** (public and private threads) · 📎 **Media sharing** and favorites · ✉️ **Messaging / contact** · 🗣️ Moderated **testimonials** · 🔗 Link sharing · ❤️ "Like".
+
+| | Feature |
+|---|---|
+| 📝 | **My Notes** (private or public, forum) — Text-to-Speech / Speech-to-Text |
+| ✍️ | **My comments** (Lexicon / Quran) |
+| 💬 | **Ideas forum** 💡 — private and public posts |
+| 📚 | **Articles published on Alfamous** |
+| 🌐 | **Articles published on Blogger** ([blog.alfamous.ca](https://blog.alfamous.ca)) |
+| 🗣 | **Anonymous testimonials** (moderated) |
+| 💻 | **Digital library** |
 
 ### 🔐 Admin *(restricted, level ≥ 3)*
 Administration tools: **media**, **translations**, **newsletter** (@) with unsubscribe, **user** management, **lexicon**.
 
 ### 👥 Visitors
-**Real-time presence** statistics (connected · active tabs · cumulative) and **login / logout**.
+**Real-time presence** statistics (connected · active tabs · cumulative), **login / logout** · ✉️ **Messaging / contact** · 🔗 **Link sharing** · ❤️ **"Like"**.
 
 ## 🌐 Ecosystem
 
 The project rests on **two complementary pillars**:
 
 - **[Alfamous.ca](https://www.alfamous.ca)** — the in-text analysis tool (this application).
-- **[blog.alfamous.ca](https://lexique-coran.blogspot.com)** — the space for publishing and contextualization (articles, analyses, case studies).
+- **[blog.alfamous.ca](https://blog.alfamous.ca)** — the space for publishing and contextualization (articles, analyses, case studies).
 
 ## 👥 Who is it for?
 

@@ -614,10 +614,10 @@ window.I18N_TITLES.FR = {
   "BtnMsg": "Contact",
   "BiblioNumerique": "Bibliothèque numérique",
   "t-rechercher-articles-de-blog": "Articles publiés sur Alfamous",
-  "btnOpenBlogLexiqueCoran": "Blog public Zoom-Coran / DigneDeFoi (lexique-coran.blogspot.com)",
+  "btnOpenBlogLexiqueCoran": "Blog public Zoom-Coran (blog.alfamous.ca)",
   "ouvrirForum1": "Forum des idées 💡 : publications privées et publiques",
   "t-temoignages": "Témoignages anonymes",
-  "btnChokrBlogDigneDeFoi": "Articles publiés sur Blogger",
+  "btnChokrBlogDigneDeFoi": "Articles publiés sur blog.alfamous.ca",
   "ModifBtn": "Mes commentaires (Lexique / Coran)",
   "ModifBtnFree": "Mes commentaires (Lexique / Coran)",
   "AjoutModifNotes": "Mes Notes privées ou publiques (Forum)",
@@ -713,10 +713,10 @@ window.I18N_TITLES.EN = {
   "BtnMsg": "Contact",
   "BiblioNumerique": "Digital library",
   "t-rechercher-articles-de-blog": "Articles published on Alfamous",
-  "btnOpenBlogLexiqueCoran": "Public Zoom-Coran / DigneDeFoi blog (lexique-coran.blogspot.com)",
+  "btnOpenBlogLexiqueCoran": "Public Zoom-Coran blog (blog.alfamous.ca)",
   "ouvrirForum1": "Ideas forum 💡 : private and public posts",
   "t-temoignages": "Anonymous testimonies",
-  "btnChokrBlogDigneDeFoi": "Articles published on Blogger",
+  "btnChokrBlogDigneDeFoi": "Articles published on blog.alfamous.ca",
   "ModifBtn": "My comments (Lexicon / Quran)",
   "ModifBtnFree": "My comments (Lexicon / Quran)",
   "AjoutModifNotes": "My private or public Notes (Forum)",
@@ -812,10 +812,10 @@ window.I18N_TITLES.AR = {
   "BtnMsg": "اتصال",
   "BiblioNumerique": "مكتبة رقمية",
   "t-rechercher-articles-de-blog": "مقالات منشورة على Alfamous",
-  "btnOpenBlogLexiqueCoran": "مدونة Zoom-Coran / DigneDeFoi العامة (lexique-coran.blogspot.com)",
+  "btnOpenBlogLexiqueCoran": "مدونة Zoom-Coran العامة (blog.alfamous.ca)",
   "ouvrirForum1": "منتدى الأفكار 💡 : منشورات خاصة وعامة",
   "t-temoignages": "شهادات مجهولة",
-  "btnChokrBlogDigneDeFoi": "مقالات منشورة على Blogger",
+  "btnChokrBlogDigneDeFoi": "مقالات منشورة على blog.alfamous.ca",
   "ModifBtn": "تعليقاتي (المعجم / القرآن)",
   "ModifBtnFree": "تعليقاتي (المعجم / القرآن)",
   "AjoutModifNotes": "ملاحظاتي الخاصة أو العامة (المنتدى)",
@@ -911,10 +911,10 @@ window.I18N_TITLES.KAB = {
   "BtnMsg": "Anermis",
   "BiblioNumerique": "Tamkaḍt tifransit",
   "t-rechercher-articles-de-blog": "Imagraden yettwabḍan ɣef Alfamous",
-  "btnOpenBlogLexiqueCoran": "Ablug azayez Zoom-Coran / DigneDeFoi (lexique-coran.blogspot.com)",
+  "btnOpenBlogLexiqueCoran": "Ablug azayez Zoom-Coran (blog.alfamous.ca)",
   "ouvrirForum1": "Lmunada n yilugan 💡 : adwen usligen d izayzen",
   "t-temoignages": "Ticehhiḍin udrigen",
-  "btnChokrBlogDigneDeFoi": "Imagraden yettwabḍan ɣef Blogger",
+  "btnChokrBlogDigneDeFoi": "Imagraden yettwabḍan ɣef blog.alfamous.ca",
   "ModifBtn": "Iwenniten-iw (Amawal / Leqran)",
   "ModifBtnFree": "Iwenniten-iw (Amawal / Leqran)",
   "AjoutModifNotes": "Tiwennitin-iw usligen neɣ izayzen (Lmunada)",
@@ -1010,10 +1010,10 @@ window.I18N_TITLES.ES = {
   "BtnMsg": "Contacto",
   "BiblioNumerique": "Biblioteca digital",
   "t-rechercher-articles-de-blog": "Artículos publicados en Alfamous",
-  "btnOpenBlogLexiqueCoran": "Blog público Zoom-Coran / DigneDeFoi (lexique-coran.blogspot.com)",
+  "btnOpenBlogLexiqueCoran": "Blog público Zoom-Coran (blog.alfamous.ca)",
   "ouvrirForum1": "Foro de ideas 💡 : publicaciones privadas y públicas",
   "t-temoignages": "Testimonios anónimos",
-  "btnChokrBlogDigneDeFoi": "Artículos publicados en Blogger",
+  "btnChokrBlogDigneDeFoi": "Artículos publicados en blog.alfamous.ca",
   "ModifBtn": "Mis comentarios (léxico / Corán)",
   "ModifBtnFree": "Mis comentarios (léxico / Corán)",
   "AjoutModifNotes": "Mis notas privadas o públicas (foro)",
@@ -2297,7 +2297,7 @@ function savePos(container) {
 window.openChokrDigneDeFoiSearch = function openChokrDigneDeFoiSearch() {
   const el = document.getElementById("mot");
   const t = el ? String(el.value || "").replace(/\s+/g, " ").trim() : "";
-  const base = "https://lexique-coran.blogspot.com/search";
+  const base = "https://blog.alfamous.ca/search";
   const u = t ? base + "?q=" + encodeURIComponent(t) + "&m=1" : base;
   window.open(u, "_blank", "noopener,noreferrer");
 };

@@ -63,32 +63,65 @@ Choisir une **sourate (1–114)**, puis : 📄 **Warsh** (PDF), 🔊 **Écoute**
 Saisir des **mots** (arabe ou latin), un **n° de page** ou une **aya** (ex. `3.14`). Navigation verset par verset (1 / 1844), bascule **ME** (mot entier) / **MC**, historique des recherches.
 
 ### 🧰 Outils
-🔁 Nouvelle instance · ℹ️ Informations · ♻️ Réinitialiser · ☁️⬆️ / ☁️⬇️ Import / export · 📋 Copier · 🌙 Thème clair / sombre.
+
+| | Fonction |
+|---|---|
+| 🔁 | **Translittération** — arabe ↔ caractères latins dans le champ de recherche |
+| ℹ️ | **Aide** — informations et tableau sur la translittération |
+| ↺ | **Réinitialiser** — supprimer l’historik personnalisé (lexique conservé) |
+| ☁️⬆️ | **Export Historik** — vers Firebase Storage |
+| ☁️⬇️ | **Import Historik** — depuis Firebase Storage |
+| 📋 | **Copier sélection** — versets sélectionnés dans le presse-papiers |
+| 🌙 | **Thème** — bascule clair / sombre |
 
 ### ⚙️ Paramètres
 Mot entier (**ME**), ordre des mots (**MC**), choix du **livre de tafsir**.
 
 ### 📚 Cherche — *module SAWM*
-📖 Coran & **commentaires** · 📒 **Lexique** (Ibn Fāris) · 📚 **Articles** du blog · 🌐 lien vers le **blog** public.
+
+| | Fonction |
+|---|---|
+| 📖🍃 | Recherche auto et fenêtre **Zoom 0-1-2-3** (Coran + commentaires), selon le contexte |
+| 📖 | Recherche auto et fenêtre **Zoom 0-2-3** (Zoom-Coran), selon le contexte |
+| 📒 | Recherche auto et fenêtre **Zoom 0-3** (Lexique), selon le contexte |
+| 📕 | **Lexique Ibn Fāris** selon OpenITI |
 
 ### 🌿 Racines — *module SALAT*
-📊 **Statistiques** de racines · ⚛️ **Synonymes & atomes** · 🔗 **Amis de la racine** (cooccurrences) · 🧩 **Formes dérivées**. Inspiré des travaux du Dr Sameer Islambulli.
+
+| | Fonction |
+|---|---|
+| 📊 | **Statistique** des racines coraniques |
+| 🌿 | **Racines d’un verset** (ex. `3.14`) |
+| ⚛️ | **Synonymie** — atomes (sons) et racines combinées dans une expression |
+| 🔗 | **Amis de la racine** — mots dans le verset (d=1, si contigu) |
+| 🧩 | **Déclinaisons** des mots d’une racine |
+
+*Inspiré des travaux du Dr Sameer Islambulli.*
 
 ### 📤 Partage — *module CHOKR*
-✍️ **Mes Notes** (privé / public) avec **synthèse et reconnaissance vocale** (TTS / STT) · 💬 **Forum** d'idées (fils publics et privés) · 📎 **Partage de médias** et favoris · ✉️ **Messagerie / contact** · 🗣️ **Témoignages** modérés · 🔗 Partage de lien · ❤️ « J'aime ».
+
+| | Fonction |
+|---|---|
+| 📝 | **Mes Notes** privées ou publiques (Forum) — synthèse et reconnaissance vocale (TTS / STT) |
+| ✍️ | **Mes commentaires** (Lexique / Coran) |
+| 💬 | **Forum des idées** 💡 — publications privées et publiques |
+| 📚 | **Articles publiés sur Alfamous** |
+| 🌐 | **Articles publiés sur Blogger** ([blog.alfamous.ca](https://blog.alfamous.ca)) |
+| 🗣 | **Témoignages anonymes** (modération) |
+| 💻 | **Bibliothèque numérique** |
 
 ### 🔐 Admin *(réservé, niveau ≥ 3)*
 Outils d'administration : **médias**, **traductions**, **newsletter** (@) avec désabonnement, gestion des **utilisateurs**, **lexique**.
 
 ### 👥 Visiteurs
-Statistiques de **présence en temps réel** (connectés · onglets actifs · cumul) et **connexion / déconnexion**.
+Statistiques de **présence en temps réel** (connectés · onglets actifs · cumul), **connexion / déconnexion** · ✉️ **Messagerie / contact** · 🔗 **Partage de lien** · ❤️ « **J'aime** ».
 
 ## 🌐 Écosystème
 
 Le projet s'appuie sur **deux piliers complémentaires** :
 
 - **[Alfamous.ca](https://www.alfamous.ca)** — l'outil d'analyse dans le texte (cette application).
-- **[blog.alfamous.ca](https://lexique-coran.blogspot.com)** — l'espace de publication et de mise en perspective (articles, analyses, études de cas).
+- **[blog.alfamous.ca](https://blog.alfamous.ca)** — l'espace de publication et de mise en perspective (articles, analyses, études de cas).
 
 ## 👥 Pour qui ?
 

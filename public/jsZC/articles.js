@@ -405,7 +405,7 @@
               onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
               aria-label="Menu contextuel" title="Menu contextuel">☰</button>
             <div class="zc-forum-head-title">
-              <span class="zc-forum-page-title">📚 Articles du blog <a id="linkDigneDeFoiBlogHeader" href="https://lexique-coran.blogspot.com/search" target="_blank" rel="noopener noreferrer"
+              <span class="zc-forum-page-title">📚 Articles du blog <a id="linkDigneDeFoiBlogHeader" href="https://blog.alfamous.ca/search" target="_blank" rel="noopener noreferrer"
                 title="Recherche sur blog.alfamous.ca (mots-clés du champ, nouvel onglet)">blog.alfamous.ca</a></span>
             </div>
           </div>
@@ -1088,11 +1088,11 @@ function sanitizeMediaPermissions(listArticleDivs) {
   }
 
   /**
-   * Modèle URL Blogger : https://lexique-coran.blogspot.com/search?q=…&m=1
-   * Si query vide → https://lexique-coran.blogspot.com/search (sans query string).
+   * Modèle URL blog : https://blog.alfamous.ca/search?q=…&m=1
+   * Si query vide → https://blog.alfamous.ca/search (sans query string).
    */
   function buildDigneDeFoiSearchUrl(queryText) {
-    const base = "https://lexique-coran.blogspot.com/search";
+    const base = "https://blog.alfamous.ca/search";
     const q = String(queryText || "").replace(/\s+/g, " ").trim();
     if (!q) return base;
     return base + "?q=" + encodeURIComponent(q) + "&m=1";
@@ -1393,7 +1393,7 @@ function sanitizeMediaPermissions(listArticleDivs) {
       const url = buildDigneDeFoiSearchUrl(titrePourDdf);
       window.open(url, "_blank", "noopener,noreferrer");
     });
-    linkDdf.textContent = "🔍 Rechercher sur DigneDeFoi";
+    linkDdf.textContent = "🔍 Rechercher sur blog.alfamous.ca";
     linkDdf.setAttribute(
       "aria-label",
       "Rechercher cet article sur blog.alfamous.ca d’après le titre (nouvel onglet)"
