@@ -157,6 +157,7 @@ Une documentation technique détaillée est disponible dans le dossier [`docs/`]
 - [**Modèle de données**](./docs/DATA-MODEL.md) — collections Firestore et leur rôle.
 - [**Déploiement**](./docs/DEPLOYMENT.md) — mise en ligne sur Firebase, pas à pas.
 - [**Configuration**](./docs/CONFIGURATION.md) — secrets, clés API, variables d'environnement.
+- [**Migration**](./docs/MIGRATION.md) — réinstaller le projet sur un nouvel ordinateur.
 - [**Feuille de route**](./docs/ROADMAP.md) — pistes d'évolution et idées de contribution.
 
 ## 🤝 Contribuer
