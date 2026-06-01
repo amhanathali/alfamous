@@ -10,6 +10,8 @@
 
 *Étudier, explorer et préserver le texte coranique par la racine, le mot et le sens.*
 
+**🌍 Langue :** Français · [English](./README.en.md)
+
 </div>
 
 ---
