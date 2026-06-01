@@ -40,7 +40,7 @@ if errorlevel 1 (
 )
 
 echo [3/3] Envoi vers GitHub (push)...
-git push
+git push -u origin HEAD
 if errorlevel 1 (
   echo.
   echo [ERREUR] L'envoi a echoue. Verifiez votre connexion Internet
