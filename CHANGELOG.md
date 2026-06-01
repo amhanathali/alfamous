@@ -13,6 +13,10 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Fichier `LICENSE` (GNU GPL v3).
 - `.gitignore` et `.gitattributes` adaptés au projet.
 - Fichiers d'exemple de configuration : `.env.example`, `functions/quick-login.example.json`.
+- README enrichi : vision du projet, singularité (annotation multilingue des versets), capture d'écran.
+- Dossier `docs/` : `ARCHITECTURE.md`, `DATA-MODEL.md`, `DEPLOYMENT.md`, `CONFIGURATION.md`, `ROADMAP.md`.
+- `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1).
+- Modèles GitHub : rapports de bug, propositions de fonctionnalité, gabarit de Pull Request.
 
 ### Sécurité
 - Exclusion du suivi Git de tous les secrets (clés de service Firebase Admin,

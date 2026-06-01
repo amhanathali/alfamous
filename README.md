@@ -22,6 +22,27 @@ Le projet est publié sous licence **GPL v3** afin qu'il puisse être **étudié
 
 > 🌐 Démo en ligne : `https://alfamous-amha.web.app`
 
+![Aperçu de l'interface Alfamous](public/img/Alfamous-UI.jpg)
+
+## 🌟 Ce qui rend Alfamous unique
+
+À notre connaissance, Alfamous est **la seule application** qui réunit, dans un même espace de recherche coranique :
+
+- 💬 **L'annotation collaborative** : la possibilité d'**ajouter des commentaires** directement **aux versets** et à des **expressions multilingues** — une fonctionnalité inédite dans le domaine de la recherche coranique.
+- 🔗 **Le croisement racine ↔ mot ↔ sens** : navigation fluide entre les racines arabes, leurs occurrences dans le texte, et le lexique étymologique d'Ibn Fāris.
+- 🌍 **Une approche réellement multilingue** (arabe, français, anglais, et traductions kabyles), pensée pour l'étude comparée.
+
+## 🎯 Notre vision
+
+Alfamous a été conçu comme un **bien commun** au service de l'étude du texte coranique. En l'ouvrant sous licence GPL v3, l'objectif est de **le confier à une communauté** de passionné·e·s et de professionnel·le·s talentueux qui pourront :
+
+- **étudier** le fonctionnement de l'outil en toute transparence ;
+- **l'améliorer** et l'enrichir de nouvelles fonctionnalités ;
+- **vérifier** la rigueur des données et des traitements ;
+- **le préserver et le diffuser largement**, au-delà de son auteur initial.
+
+> Toute contribution allant dans ce sens est chaleureusement bienvenue (voir [CONTRIBUTING.md](./CONTRIBUTING.md)).
+
 ## 🔑 Fonctionnalités principales
 
 - 🔎 **Recherche par racines** arabes et par mots du Coran
@@ -128,9 +149,19 @@ Ce projet est distribué sous licence **GNU General Public License v3.0**. Voir 
 
 ⚠️ Le **code** est sous GPL v3, mais les **contenus** (texte coranique, traductions, lexiques, médias, polices) peuvent relever de droits ou licences distincts. Merci de vérifier la provenance et les conditions d'utilisation de chaque jeu de données avant toute réutilisation.
 
+## 📚 Documentation
+
+Une documentation technique détaillée est disponible dans le dossier [`docs/`](./docs/) :
+
+- [**Architecture**](./docs/ARCHITECTURE.md) — vue d'ensemble technique (frontend, backend, services).
+- [**Modèle de données**](./docs/DATA-MODEL.md) — collections Firestore et leur rôle.
+- [**Déploiement**](./docs/DEPLOYMENT.md) — mise en ligne sur Firebase, pas à pas.
+- [**Configuration**](./docs/CONFIGURATION.md) — secrets, clés API, variables d'environnement.
+- [**Feuille de route**](./docs/ROADMAP.md) — pistes d'évolution et idées de contribution.
+
 ## 🤝 Contribuer
 
-Les contributions sont les bienvenues ! Consultez [CONTRIBUTING.md](./CONTRIBUTING.md) pour les conventions et le processus.
+Les contributions sont les bienvenues ! Consultez [CONTRIBUTING.md](./CONTRIBUTING.md) pour les conventions et le processus, et [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) pour le cadre de bienveillance.
 
 ## 📝 Journal des modifications
 
