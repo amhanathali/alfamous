@@ -136,6 +136,14 @@
     return D[L] || D.fr;
   }
 
+  const NL_APP_BASE = "https://alfamous-amha.web.app";
+  const NL_SUBSCRIBE_URL = NL_APP_BASE + "/?prog=newsletter";
+
+  /** Pied de page commun (liens {{subscribe_link}} / {{unsubscribe_link}} rendus à l’envoi). */
+  const NL_STANDARD_FOOTER =
+    "Vous recevez ce message car vous êtes abonné(e) à la newsletter Alfamous.\n" +
+    "{{subscribe_link}} · {{unsubscribe_link}}";
+
   const MODELS = {
     actu: {
       label: "Actualités plateforme",
@@ -144,8 +152,8 @@
       intro: "Bonjour {{name}},",
       body: "Voici les nouveautés de la semaine sur Alfamous:\n- Nouveau contenu\n- Correctifs forum/commentaires\n- Conseils d'utilisation",
       ctaText: "Ouvrir Alfamous",
-      ctaUrl: "https://alfamous-amha.web.app/",
-      footer: "Vous recevez ce message car vous êtes abonné(e) à la newsletter.\nSe désabonner: {{unsubscribe_url}}"
+      ctaUrl: NL_APP_BASE + "/",
+      footer: NL_STANDARD_FOOTER
     },
     rappel: {
       label: "Rappel communauté",
@@ -154,10 +162,200 @@
       intro: "Salam {{name}},",
       body: "Nous vous invitons à participer au forum:\n- Poser une question\n- Répondre aux messages\n- Proposer des améliorations",
       ctaText: "Aller au forum",
-      ctaUrl: "https://alfamous-amha.web.app/",
-      footer: "Pour se désabonner, utilisez ce lien: {{unsubscribe_url}}"
+      ctaUrl: NL_APP_BASE + "/",
+      footer: NL_STANDARD_FOOTER
+    },
+    blogMois: {
+      label: "5 derniers articles (blog)",
+      subject: "",
+      preheader: "",
+      intro: "Bonjour {{name}},",
+      body: "",
+      ctaText: "Voir tous les articles dans Alfamous",
+      ctaUrl: NL_APP_BASE + "/?prog=articlesHtml",
+      footer: NL_STANDARD_FOOTER,
+      dynamic: true
     }
   };
+
+  function zcNewsletterSubscribeUrl() {
+    return NL_SUBSCRIBE_URL;
+  }
+
+  function zcNewsletterExpandFooterPlaceholders(footer) {
+    let out = String(footer || "");
+    out = out.replace(/<a\b[^>]*>[\s\S]*?<\/a>/gi, function (tag) {
+      if (/abonner/i.test(tag) && !/d[eé]sabonner/i.test(tag)) return "S'Abonner";
+      if (/d[eé]sabonner/i.test(tag)) return "Se Désabonner";
+      return "";
+    });
+    out = out.replace(/\{\{subscribe_url\}\}/g, "S'Abonner");
+    out = out.replace(/\{\{unsubscribe_url\}\}/g, "Se Désabonner");
+    out = out.replace(/\{\{subscribe_link\}\}/g, "S'Abonner");
+    out = out.replace(/\{\{unsubscribe_link\}\}/g, "Se Désabonner");
+    return out;
+  }
+
+  function parseArticleDateLoose(txt) {
+    const s = String(txt || "").trim();
+    if (!s) return null;
+    const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (slash) {
+      let mo = Number(slash[1]);
+      let da = Number(slash[2]);
+      const yr = Number(slash[3]);
+      if (mo > 12 && da <= 12) {
+        const t = mo;
+        mo = da;
+        da = t;
+      }
+      const dt = new Date(yr, mo - 1, da);
+      return Number.isNaN(dt.getTime()) ? null : dt;
+    }
+    const dt = new Date(s);
+    return Number.isNaN(dt.getTime()) ? null : dt;
+  }
+
+  function zcNewsletterBlogSearchUrl(queryText) {
+    const base = "https://blog.alfamous.ca/search";
+    const q = String(queryText || "").replace(/\s+/g, " ").trim();
+    if (!q) return base;
+    return base + "?q=" + encodeURIComponent(q) + "&m=1";
+  }
+
+  function zcNewsletterArticleSnippet(articleEl, max) {
+    const lim = max || 280;
+    const tmp = document.createElement("div");
+    tmp.innerHTML = articleEl.innerHTML;
+    const root = tmp.querySelector(".corps") || tmp;
+    root.querySelectorAll("style, script, noscript, link, meta").forEach(function (n) { n.remove(); });
+    const paras = Array.from(root.querySelectorAll("p"));
+    const pick = paras.find(function (el) {
+      return el.textContent.replace(/\s+/g, " ").trim().length > 10;
+    }) || paras[0];
+    const texte = ((pick ? pick.textContent : root.textContent) || "").replace(/\s+/g, " ").trim();
+    if (!texte) return "";
+    if (texte.length <= lim) return texte;
+    const cut = texte.lastIndexOf(" ", lim);
+    return texte.slice(0, cut > -1 ? cut : lim) + "…";
+  }
+
+  function zcNewsletterParseArticlesFromHtml(html) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = String(html || "");
+    let list = Array.from(tmp.querySelectorAll("div.article"));
+    return list.filter(function (a) { return !a.parentElement.closest("div.article"); });
+  }
+
+  async function zcNewsletterLoadArticlesDom() {
+    if (Array.isArray(window.allArticlesDOM) && window.allArticlesDOM.length) {
+      return window.allArticlesDOM;
+    }
+    if (typeof window.contenuArticlesHtml === "string" && window.contenuArticlesHtml.length > 200) {
+      return zcNewsletterParseArticlesFromHtml(window.contenuArticlesHtml);
+    }
+    if (typeof window.__buildArticlesHtmlLoadUrls === "function" && typeof window.loadFirstAvailable === "function") {
+      const urls = await window.__buildArticlesHtmlLoadUrls();
+      await window.loadFirstAvailable(urls);
+      if (typeof window.contenuArticlesHtml === "string" && window.contenuArticlesHtml.length > 200) {
+        return zcNewsletterParseArticlesFromHtml(window.contenuArticlesHtml);
+      }
+    }
+    if (typeof window.loadScriptOnce === "function" && typeof window.__withV === "function") {
+      await window.loadScriptOnce(window.__withV("jsZC/articles-format-html.js"));
+      if (typeof window.contenuArticlesHtml === "string" && window.contenuArticlesHtml.length > 200) {
+        return zcNewsletterParseArticlesFromHtml(window.contenuArticlesHtml);
+      }
+    }
+    throw new Error("Liste d’articles du blog indisponible (mettez à jour la liste via « Mise à jour des articles »).");
+  }
+
+  const NL_BLOG_RECENT_COUNT = 5;
+
+  async function buildBlogRecentNewsletterFields() {
+    const base = MODELS.blogMois;
+    const all = await zcNewsletterLoadArticlesDom();
+    const rows = [];
+    all.forEach(function (article) {
+      const dateTxt = (article.querySelector(".date") && article.querySelector(".date").textContent || "").trim();
+      const dt = parseArticleDateLoose(dateTxt);
+      const titre = (
+        article.querySelector("h2") && article.querySelector("h2").textContent ||
+        article.getAttribute("data-titre") ||
+        "Sans titre"
+      ).replace(/\s+/g, " ").trim();
+      rows.push({
+        dt: dt || new Date(0),
+        dateTxt: dateTxt,
+        titre: titre,
+        snippet: zcNewsletterArticleSnippet(article, 300),
+        url: zcNewsletterBlogSearchUrl(titre)
+      });
+    });
+    rows.sort(function (a, b) { return b.dt - a.dt; });
+    const top = rows.slice(0, NL_BLOG_RECENT_COUNT);
+    const lines = [];
+    top.forEach(function (r, idx) {
+      lines.push("(" + (idx + 1) + ") " + r.titre);
+      lines.push("🗓 " + (r.dateTxt || "—"));
+      if (r.snippet) lines.push(r.snippet);
+      if (r.url) lines.push("→ " + r.url);
+      lines.push("");
+    });
+    const count = top.length;
+    const body = count
+      ? (
+        "Les " + count + " articles les plus récents du blog Alfamous " +
+        "(comme dans « Articles du blog ») :\n\n" +
+        lines.join("\n").trim()
+      )
+      : (
+        "Aucun article dans la liste Alfamous. Lancez une mise à jour des articles " +
+        "(bouton admin) puis resélectionnez ce modèle."
+      );
+    return {
+      subject: count
+        ? "Blog Alfamous — " + count + " dernier" + (count > 1 ? "s" : "") + " article" + (count > 1 ? "s" : "")
+        : "Blog Alfamous — articles récents",
+      preheader: count
+        ? "Les " + count + " derniers articles sur blog.alfamous.ca"
+        : "Actualité du blog Alfamous",
+      intro: base.intro,
+      body: body,
+      ctaText: base.ctaText,
+      ctaUrl: base.ctaUrl,
+      footer: base.footer
+    };
+  }
+
+  function fillNewsletterFieldsFromModel(m) {
+    document.getElementById("nlSubject").value = m.subject || "";
+    document.getElementById("nlPreheader").value = m.preheader || "";
+    document.getElementById("nlIntro").value = m.intro || "";
+    document.getElementById("nlBody").value = m.body || "";
+    document.getElementById("nlCtaText").value = m.ctaText || "";
+    document.getElementById("nlCtaUrl").value = m.ctaUrl || "";
+    document.getElementById("nlFooter").value = m.footer || "";
+    updatePreview();
+  }
+
+  function populateNlModelSelect() {
+    const sel = document.getElementById("nlModel");
+    if (!sel) return;
+    const keep = sel.value;
+    sel.innerHTML = "";
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = nlDict().chooseModel;
+    sel.appendChild(empty);
+    Object.keys(MODELS).forEach(function (key) {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = MODELS[key].label || key;
+      sel.appendChild(opt);
+    });
+    if (keep && MODELS[keep]) sel.value = keep;
+  }
 
   function getDb() {
     if (window.db) return window.db;
@@ -196,8 +394,48 @@
     return Number.isFinite(n) ? n : 0;
   }
 
+  function hasRealFirebaseAuth() {
+    if (typeof window.zcFirebaseHasRealSignedInUser === "function") {
+      return window.zcFirebaseHasRealSignedInUser();
+    }
+    try {
+      if (typeof firebase === "undefined" || !firebase.auth) return false;
+      const u = firebase.auth().currentUser;
+      const em = String((u && u.email) || "").trim().toLowerCase();
+      return !!u && em.includes("@") && em !== "anonyme@blog.alfamous.ca";
+    } catch (_) {
+      return false;
+    }
+  }
+
   function canSendNewsletter() {
-    return isConnectedUser() && getUserLevel() >= 3;
+    return isConnectedUser() && getUserLevel() >= 3 && hasRealFirebaseAuth();
+  }
+
+  /** Session Firebase e-mail (pas anonyme) — requis pour newsletterCampaigns. */
+  async function zcNewsletterEnsureRealAuthForWrite() {
+    try {
+      if (typeof window.__zcAuthReady !== "undefined" && window.__zcAuthReady) {
+        await window.__zcAuthReady;
+      }
+    } catch (_) { }
+    if (hasRealFirebaseAuth()) {
+      return firebase.auth().currentUser;
+    }
+    if (typeof firebase === "undefined" || !firebase.auth) return null;
+    const auth = firebase.auth();
+    try {
+      if (typeof auth.authStateReady === "function") await auth.authStateReady();
+    } catch (_) { }
+    if (hasRealFirebaseAuth()) return auth.currentUser;
+    const mail = String(localStorage.getItem("mailUser") || "").trim().toLowerCase();
+    if (mail && mail.includes("@") && mail !== "anonyme@blog.alfamous.ca") {
+      for (let i = 0; i < 40; i++) {
+        await new Promise(function (r) { setTimeout(r, 150); });
+        if (hasRealFirebaseAuth()) return auth.currentUser;
+      }
+    }
+    return null;
   }
 
   /** ID Firestore du brouillon / campagne courante (même doc du brouillon jusqu’à l’envoi). */
@@ -434,7 +672,7 @@
     const back = byId("nlBackToSubscribe"); if (back) back.textContent = T.back;
     const lDraft = document.querySelector('label[for="nlDraftSelect"]'); if (lDraft) lDraft.textContent = T.draft;
     const lModel = document.querySelector('label[for="nlModel"]'); if (lModel) lModel.textContent = T.model;
-    const modelSel = byId("nlModel"); if (modelSel && modelSel.options && modelSel.options[0]) modelSel.options[0].textContent = T.chooseModel;
+    populateNlModelSelect();
     const recLabel = document.querySelector(".nl-recipients-field .zc-popup-label"); if (recLabel) recLabel.textContent = T.recipients;
     const bAll = byId("nlRecipientsAll"); if (bAll) bAll.textContent = T.all;
     const bNone = byId("nlRecipientsNone"); if (bNone) bNone.textContent = T.none;
@@ -534,8 +772,6 @@
             <div class="zc-popup-field-row">
               <select id="nlModel" class="newsletter-input">
                 <option value="">Choisir un modèle...</option>
-                <option value="actu">Actualités plateforme</option>
-                <option value="rappel">Rappel communauté</option>
               </select>
             </div>
           </div>
@@ -574,7 +810,13 @@
     ov.addEventListener("click", function (e) { if (e.target === ov) closeNewsletterPopup(); });
     document.getElementById("nlTabSend").addEventListener("click", function () { switchTab("send"); });
     document.getElementById("nlBackToSubscribe").addEventListener("click", function () { switchTab("subscribe"); });
-    document.getElementById("nlModel").addEventListener("change", applyModel);
+    populateNlModelSelect();
+    document.getElementById("nlModel").addEventListener("change", function () {
+      applyModel().catch(function (e) {
+        console.warn("applyModel:", e);
+        toast(String((e && e.message) || "Impossible d’appliquer le modèle."), "orange", 4500);
+      });
+    });
     [
       "nlSubject", "nlPreheader", "nlIntro", "nlBody", "nlCtaText", "nlCtaUrl", "nlFooter"
     ].forEach((id) => {
@@ -619,29 +861,41 @@
     if (!allowed) switchTab("subscribe");
   }
 
-  function applyModel() {
+  async function applyModel() {
     const key = document.getElementById("nlModel").value;
     const m = MODELS[key];
     if (!m) return;
-    document.getElementById("nlSubject").value = m.subject;
-    document.getElementById("nlPreheader").value = m.preheader;
-    document.getElementById("nlIntro").value = m.intro;
-    document.getElementById("nlBody").value = m.body;
-    document.getElementById("nlCtaText").value = m.ctaText;
-    document.getElementById("nlCtaUrl").value = m.ctaUrl;
-    document.getElementById("nlFooter").value = m.footer;
-    updatePreview();
+    if (m.dynamic && key === "blogMois") {
+      toast("Chargement des 5 derniers articles…", "orange", 2800);
+      const fields = await buildBlogRecentNewsletterFields();
+      fillNewsletterFieldsFromModel(fields);
+      toast(
+        fields.body.indexOf("Aucun article dans la liste") === 0
+          ? "Modèle appliqué (liste vide)."
+          : "Modèle « 5 derniers articles » appliqué.",
+        "green",
+        3200
+      );
+      return;
+    }
+    fillNewsletterFieldsFromModel(m);
+  }
+
+  function zcNewsletterBodyForPreview(body) {
+    return String(body || "")
+      .replace(/^→\s+https?:\/\/\S+\s*$/gm, "")
+      .replace(/^\((\d+)\)\s+(.+)$/gm, "($1) $2  [titre = lien bleu]");
   }
 
   function buildModelText() {
     const subject = document.getElementById("nlSubject").value.trim();
     const preheader = document.getElementById("nlPreheader").value.trim();
     const intro = document.getElementById("nlIntro").value.trim();
-    const body = document.getElementById("nlBody").value.trim();
+    const body = zcNewsletterBodyForPreview(document.getElementById("nlBody").value.trim());
     const ctaText = document.getElementById("nlCtaText").value.trim();
     const ctaUrl = document.getElementById("nlCtaUrl").value.trim();
-    const footer = document.getElementById("nlFooter").value.trim();
-    return `OBJET: ${subject}
+    const footer = zcNewsletterExpandFooterPlaceholders(document.getElementById("nlFooter").value.trim());
+    return `OBJET (e-mail, pas répété dans le corps): ${subject}
 PRE-HEADER: ${preheader}
 
 ${intro}
@@ -743,6 +997,15 @@ ${footer}`;
       toast("Niveau 3 requis pour enregistrer ou envoyer une campagne (même règle que le serveur).", "orange", 4000);
       return;
     }
+    const authUser = await zcNewsletterEnsureRealAuthForWrite();
+    if (!authUser) {
+      toast(
+        "Connexion Firebase requise (e-mail / mot de passe via « Connexion »). Le niveau 3 seul dans le navigateur ne suffit pas pour enregistrer une campagne.",
+        "orange",
+        5500
+      );
+      return;
+    }
     const payload = {
       subject: (document.getElementById("nlSubject").value || "").trim(),
       preheader: (document.getElementById("nlPreheader").value || "").trim(),
@@ -811,7 +1074,16 @@ ${footer}`;
       toast("Brouillon enregistré.", "green", 3200);
     } catch (e) {
       console.error("save campaign:", e);
-      toast("Impossible d'enregistrer la campagne.", "red", 3500);
+      const full = String((e && e.message) || e || "");
+      if (/Missing or insufficient permissions|PERMISSION_DENIED/i.test(full)) {
+        toast(
+          "Firestore a refusé l’enregistrement : connectez-vous avec le même e-mail qu’en admin (Connexion), puis réessayez. Si le problème persiste, déployez firestore.rules.",
+          "red",
+          6200
+        );
+      } else {
+        toast("Impossible d'enregistrer la campagne.", "red", 3500);
+      }
     }
   }
 
@@ -868,6 +1140,18 @@ ${footer}`;
     }
     window.addEventListener("storage", refreshAll);
     window.addEventListener("focus", refreshAll);
+    try {
+      if (typeof firebase !== "undefined" && firebase.auth) {
+        firebase.auth().onAuthStateChanged(function () {
+          try { refreshAll(); } catch (_) { }
+        });
+      }
+      if (typeof window.__zcAuthReady !== "undefined" && window.__zcAuthReady) {
+        window.__zcAuthReady.then(function () {
+          try { refreshAll(); } catch (_) { }
+        });
+      }
+    } catch (_) { }
     window.addEventListener("uiLangChanged", function () {
       try { applyNewsletterI18n(); } catch (_) { }
       try { refreshNewsletterButtonContext(); } catch (_) { }

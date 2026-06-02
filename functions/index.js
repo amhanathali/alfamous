@@ -192,52 +192,203 @@ function buildNewsletterUnsubscribeUrl(email) {
   return `${base}/newsletter-unsubscribe?e=${e}&x=${x}&sig=${sig}`;
 }
 
+function buildNewsletterSubscribeUrl() {
+  const cfg = getMailConfig();
+  const base = String(cfg.appUrl || "https://alfamous-amha.web.app").replace(/\/$/, "");
+  return `${base}/?prog=newsletter`;
+}
+
+const NL_LINK_STYLE = "color:#1a73e8;text-decoration:underline;font-weight:600;";
+const NL_TITLE_LINK_STYLE = "color:#1a73e8;text-decoration:underline;font-weight:700;";
+
+function newsletterLabeledLinkHtml(href, label) {
+  return `<a href="${escapeHtml(href)}" style="${NL_LINK_STYLE}">${escapeHtml(label)}</a>`;
+}
+
+function newsletterTitleLinkHtml(href, title) {
+  return `<a href="${escapeHtml(href)}" style="${NL_TITLE_LINK_STYLE}">${escapeHtml(title)}</a>`;
+}
+
+/** Texte du pied de page sans les liens (gérés à part, comme « Lire… »). */
+function extractNewsletterFooterMessage(footer, toName) {
+  let msg = String(footer || "")
+    .replace(/\{\{name\}\}/g, toName || "ami")
+    .replace(/<a\b[^>]*>[\s\S]*?<\/a>/gi, "")
+    .replace(/\{\{subscribe_url\}\}/g, "")
+    .replace(/\{\{unsubscribe_url\}\}/g, "")
+    .replace(/\{\{subscribe_link\}\}/g, "")
+    .replace(/\{\{unsubscribe_link\}\}/g, "")
+    .replace(/\s*·\s*/g, " ")
+    .trim();
+  const line = msg
+    .split(/\n/)
+    .map((l) => l.trim())
+    .find((l) => l.length > 0);
+  return line || "Vous recevez ce message car vous êtes abonné(e) à la newsletter Alfamous.";
+}
+
+function renderNewsletterFooterHtml(footer, toEmail, toName) {
+  const msg = extractNewsletterFooterMessage(footer, toName);
+  const sub = newsletterLabeledLinkHtml(buildNewsletterSubscribeUrl(), "S'Abonner");
+  const unsub = newsletterLabeledLinkHtml(buildNewsletterUnsubscribeUrl(toEmail), "Se Désabonner");
+  return (
+    `<p style="font-size:12px;color:#64748b;margin:0;line-height:1.55;">` +
+    `${escapeHtml(msg)}<br/>` +
+    `${sub} · ${unsub}` +
+    `</p>`
+  );
+}
+
+function renderNewsletterFooterText(footer, toEmail, toName) {
+  const msg = extractNewsletterFooterMessage(footer, toName);
+  const sub = buildNewsletterSubscribeUrl();
+  const unsub = buildNewsletterUnsubscribeUrl(toEmail);
+  return `${msg}\nS'Abonner : ${sub}\nSe Désabonner : ${unsub}`;
+}
+
+/** Corps : titres d’articles (n) … → lien bleu gras ; ligne → URL absorbée ; autres liens bleus. */
+function newsletterBodyToHtml(body) {
+  const lines = String(body || "").split(/\r?\n/);
+  const parts = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].replace(/\s+$/, "");
+    const titleMatch = line.match(/^\((\d+)\)\s+(.+)$/);
+    if (titleMatch) {
+      const num = titleMatch[1];
+      const title = titleMatch[2].trim();
+      i += 1;
+      const blockLines = [];
+      let articleUrl = "";
+      while (i < lines.length) {
+        const ln = lines[i].replace(/\s+$/, "");
+        if (!ln.trim()) {
+          i += 1;
+          break;
+        }
+        const arrow = ln.match(/^→\s+(https?:\/\/\S+)\s*$/);
+        if (arrow) {
+          articleUrl = arrow[1];
+          i += 1;
+          continue;
+        }
+        if (/^\(\d+\)\s+/.test(ln)) break;
+        blockLines.push(ln);
+        i += 1;
+      }
+      const titleInner = articleUrl
+        ? newsletterTitleLinkHtml(articleUrl, title)
+        : `<strong>${escapeHtml(title)}</strong>`;
+      parts.push(
+        `<p style="margin:0 0 6px;line-height:1.45;">` +
+        `<span style="color:#64748b;">(${num})</span> ${titleInner}</p>`
+      );
+      blockLines.forEach((bl) => {
+        const isDate = /^🗓/.test(bl) || /^\d{1,2}\/\d{1,2}\/\d{2,4}/.test(bl.trim());
+        const style = isDate
+          ? "margin:0 0 4px;font-size:13px;color:#64748b;"
+          : "margin:0 0 6px;line-height:1.55;color:#334155;";
+        parts.push(`<p style="${style}">${escapeHtml(bl)}</p>`);
+      });
+      parts.push('<p style="margin:0 0 16px;line-height:0;">&nbsp;</p>');
+      continue;
+    }
+    const arrow = line.match(/^→\s+(https?:\/\/\S+)\s*$/);
+    if (arrow) {
+      parts.push(
+        `<p style="margin:0 0 14px;">${newsletterLabeledLinkHtml(arrow[1], "Lire…")}</p>`
+      );
+      i += 1;
+      continue;
+    }
+    if (!line.trim()) {
+      parts.push('<p style="margin:0 0 10px;line-height:0;">&nbsp;</p>');
+      i += 1;
+      continue;
+    }
+    parts.push(`<p style="margin:0 0 6px;line-height:1.55;">${escapeHtml(line)}</p>`);
+    i += 1;
+  }
+  return parts.join("");
+}
+
+function newsletterBodyToPlainText(body) {
+  const lines = String(body || "").split(/\r?\n/);
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const titleMatch = line.match(/^\((\d+)\)\s+(.+)$/);
+    if (titleMatch) {
+      const num = titleMatch[1];
+      const title = titleMatch[2].trim();
+      i += 1;
+      const blockLines = [];
+      let articleUrl = "";
+      while (i < lines.length) {
+        const ln = lines[i];
+        if (!String(ln).trim()) {
+          i += 1;
+          break;
+        }
+        const arrow = String(ln).match(/^→\s+(https?:\/\/\S+)\s*$/);
+        if (arrow) {
+          articleUrl = arrow[1];
+          i += 1;
+          continue;
+        }
+        if (/^\(\d+\)\s+/.test(ln)) break;
+        blockLines.push(ln);
+        i += 1;
+      }
+      out.push(`(${num}) ${title}`);
+      if (articleUrl) out.push(`Lire… : ${articleUrl}`);
+      blockLines.forEach((bl) => out.push(bl));
+      out.push("");
+      continue;
+    }
+    out.push(line);
+    i += 1;
+  }
+  return out.join("\n").replace(/^→\s+(https?:\/\/\S+)\s*$/gm, "Lire… : $1");
+}
+
 function renderNewsletterHtml(payload, toEmail, toName) {
-  const subject = String(payload.subject || "").trim();
   const preheader = String(payload.preheader || "").trim();
   const intro = String(payload.intro || "").trim().replace(/\{\{name\}\}/g, toName || "ami");
   const body = String(payload.body || "").trim().replace(/\{\{name\}\}/g, toName || "ami");
   const ctaText = String(payload.ctaText || "").trim();
   const ctaUrl = String(payload.ctaUrl || "").trim();
-  const unsubscribeUrl = buildNewsletterUnsubscribeUrl(toEmail);
-  const footer = String(payload.footer || "")
-    .replace(/\{\{unsubscribe_url\}\}/g, unsubscribeUrl)
-    .replace(/\{\{name\}\}/g, toName || "ami");
   const pre = preheader ? `<div style="display:none!important;opacity:0;color:transparent;height:0;width:0;overflow:hidden;">${escapeHtml(preheader)}</div>` : "";
-  const bodyHtml = escapeHtml(body).replace(/\n/g, "<br/>");
-  const introHtml = escapeHtml(intro);
-  const ctaHtml = (ctaText && ctaUrl)
-    ? `<p style="margin:18px 0;"><a href="${escapeHtml(ctaUrl)}" style="background:#0d9488;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;display:inline-block;">${escapeHtml(ctaText)}</a></p>`
+  const introHtml = intro
+    ? `<p style="margin:0 0 16px;line-height:1.55;">${escapeHtml(intro)}</p>`
     : "";
-  const footerHtml = escapeHtml(footer)
-    .replace(/&lt;a href="([^"]+)"&gt;([^<]+)&lt;\/a&gt;/g, '<a href="$1">$2</a>')
-    .replace(/\n/g, "<br/>");
+  const bodyHtml = body ? newsletterBodyToHtml(body) : "";
+  const ctaHtml = (ctaText && ctaUrl)
+    ? `<p style="margin:18px 0;">${newsletterLabeledLinkHtml(ctaUrl, ctaText)}</p>`
+    : "";
+  const footerHtml = renderNewsletterFooterHtml(payload.footer, toEmail, toName);
   return (
     `${pre}` +
     `<div style="font-family:Arial,sans-serif;line-height:1.5;color:#0f172a">` +
-    `<p>Bonjour,</p>` +
-    (subject ? `<p><strong>${escapeHtml(subject)}</strong></p>` : "") +
-    (introHtml ? `<p>${introHtml}</p>` : "") +
-    (bodyHtml ? `<p>${bodyHtml}</p>` : "") +
+    introHtml +
+    bodyHtml +
     `${ctaHtml}` +
     `<hr style="border:none;border-top:1px solid #e2e8f0;margin:18px 0"/>` +
-    `<p style="font-size:12px;color:#64748b">${footerHtml}</p>` +
+    footerHtml +
     `</div>`
   );
 }
 
 function renderNewsletterText(payload, toEmail, toName) {
-  const unsubscribeUrl = buildNewsletterUnsubscribeUrl(toEmail);
   const intro = String(payload.intro || "").replace(/\{\{name\}\}/g, toName || "ami");
-  const body = String(payload.body || "").replace(/\{\{name\}\}/g, toName || "ami");
-  const footer = String(payload.footer || "")
-    .replace(/\{\{unsubscribe_url\}\}/g, unsubscribeUrl)
-    .replace(/\{\{name\}\}/g, toName || "ami");
+  const body = newsletterBodyToPlainText(String(payload.body || "").replace(/\{\{name\}\}/g, toName || "ami"));
+  const footer = renderNewsletterFooterText(payload.footer, toEmail, toName);
   const ctaText = String(payload.ctaText || "").trim();
   const ctaUrl = String(payload.ctaUrl || "").trim();
   return (
     `${intro}\n\n${body}\n\n` +
-    (ctaText && ctaUrl ? `${ctaText}: ${ctaUrl}\n\n` : "") +
+    (ctaText && ctaUrl ? `${ctaText} : ${ctaUrl}\n\n` : "") +
     `${footer}\n`
   ).trim();
 }
