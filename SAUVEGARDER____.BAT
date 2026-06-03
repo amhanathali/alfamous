@@ -52,7 +52,7 @@ for %%F in (firebase.json .firebaserc firestore.rules firestore.indexes.json sto
 for %%F in (key.json serviceAccountKey.json .env) do (
   if exist "%%~F" call :ADD_LIST %%F
 )
-for %%F in (DEPLOYER____.BAT SAUVEGARDER____.BAT LANCER_ALFAMOUS.BAT GIT_Sauvegarder_sur_GitHub.bat GIT_Recuperer_de_GitHub.bat GIT_Etat_du_projet.bat) do (
+for %%F in (DEPLOYER____.BAT SAUVEGARDER____.BAT LANCER_ALFAMOUS.BAT GIT_Assistant____.BAT GIT_Sauvegarder_sur_GitHub.bat GIT_Recuperer_de_GitHub.bat GIT_Etat_du_projet.bat) do (
   if exist "%%~F" call :ADD_LIST %%F
 )
 
