@@ -1734,9 +1734,27 @@
   margin-inline-start: 0.25rem;
 }
 
+/* Stats pied Visiteurs : chiffres sans cadre, séparés par un tiret */
+.zc-footer-tab-head .tag {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--zc-text);
+}
+
 .zc-footer-stats-sep {
-  opacity: 0.45;
+  opacity: 0.55;
   user-select: none;
+  padding: 0 0.2rem;
+}
+
+.zc-footer-stats-sep::before {
+  content: "—";
 }
 
 .zc-footer-toolbar {
