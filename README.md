@@ -60,7 +60,7 @@ L'interface est organisée en **panneaux**, repris ici fidèlement. *(Interface 
 Choisir une **sourate (1–114)**, puis : 📄 **Warsh** (PDF), 🔊 **Écoute** (audio), 📖 **Lis** (lecture du texte).
 
 ### 🔎 Recherche de versets
-Saisir des **mots** (arabe ou latin), un **n° de page** ou une **aya** (ex. `3.14`). Navigation verset par verset (1 / 1844), bascule **ME** (mot entier) / **MC**, historique des recherches.
+Saisir des **mots** (arabe ou latin), un **n° de page** ou une **aya** (ex. `3.14`). Navigation verset par verset (1 / 1844), bascule **ME** (mot entier) / **MC** (mots contigus), historique des recherches.
 
 ### 🧰 Outils
 
