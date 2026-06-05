@@ -2,300 +2,276 @@
 
 # Alfamous
 
-**FR** · Outils de recherche dans le codex coranique — commentaires sur versets et mots  
-**EN** · Research tools in the Quranic codex — comments on verses and words  
-**AR** · أدوات البحث في المصحف · تعليقات على الآيات والكلمات  
-**ES** · Herramientas en el codex coránico — comentarios en versículos y palabras  
-**KAB** · Allalen n unadi deg udlis n Leqran — awalen i wawalen
+**Open-source workshop for studying the Quranic codex**
+
+*Search by words, roots and pages · comments on verses and lexicon · forum and blog — the text first.*
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 [![Made with JavaScript](https://img.shields.io/badge/Made%20with-JavaScript-f7df1e.svg)](https://developer.mozilla.org/docs/Web/JavaScript)
 [![Firebase](https://img.shields.io/badge/Backend-Firebase-ffca28.svg)](https://firebase.google.com/)
 
-*Study, explore and preserve the Quranic text through roots, words and meaning.*
-
-**🌍 Language:** English · [Français](./README.md)
-
-**📌 Positioning:** open-source workshop — **research in the Quranic codex** and **comments** on verses and words — **the text first**; translations and forum as resources, **no hadith in the analytical apparatus**. See the [“About” manifesto](https://alfamous-amha.web.app/APropos.html).
+**🌍 Language:** English · [Français](./README.md) · [العربية](./README.ar.md)
 
 </div>
 
 ---
 
-## ✨ Overview
+## What is Alfamous?
 
-**Alfamous** (interface "Zoom-Coran") is an open-source platform for the **semantic and lexical search of the Quran**. It lets you explore the text by **Arabic roots**, by **words** and by **synonyms**, and cross-reference this data with a reference lexicon (*Maqāyīs al-Lugha* by Ibn Fāris) and multilingual translations.
+**Alfamous** is an **open-source** web application (GPL v3) for **working with the Quranic text**: searching it, browsing it, adding **comments** on verses and words, and exchanging with other readers.
 
-But Alfamous is much more than a search engine: it is a **collective workshop** to *work* the Book — not merely to consult it.
-
-> 🌐 Live demo: `https://alfamous-amha.web.app` · 📖 [Full manifesto ("About" page)](https://alfamous-amha.web.app/APropos.html)
+> 🌐 **Try it online:** [alfamous-amha.web.app](https://alfamous-amha.web.app)  
+> 📖 **Manifesto and methodological charter:** [“About” page](https://alfamous-amha.web.app/APropos.html)
 
 ![Preview of the Alfamous interface](public/img/Alfamous-UI.jpg)
 
-## 🧭 Our approach
+### At a glance
 
-- **Open to everyone.** The Quran is not reserved for religious elites: no degree is required to read, search, comment, propose a meaning, open a thread or publish a note. What counts is **the text** — not the title, the authority, or any affiliation.
-- **The text first.** As a methodological choice, the reading starts **exclusively from the Quranic text**. Hadiths are not part of the analytical apparatus (neither as evidence, nor authority, nor an imposed grid): a clear line is kept between *what the text says*, *what we measure*, and *what we propose*.
-- **A living knowledge base.** This is not a frozen encyclopedia: anyone can enrich the corpus (comments on verses, themes in the lexicon). "Not a chapel. A worksite."
-- **Search that connects.** A single word runs, in one pass, through the Quran, the lexicon, the forum, testimonials, articles and media.
+- **Search** in the codex (words, roots, pages, verse references).
+- **Comments** attached to verses or lexicon entries, in the language of your choice.
+- **Collective workshop:** forum, notes, articles, media — around the **text**, not institutional authority.
 
-## 🌟 What makes Alfamous unique
+### Our editorial line
 
-To our knowledge, Alfamous is **the only application** that brings together, within a single Quranic research space:
+- **The text first.** Reading and analysis start from the **Quranic codex**. Hadiths are **not part** of the analytical apparatus (neither as evidence nor as an imposed framework).
+- **Open to everyone.** No degree required to read, search, comment, or propose a meaning.
+- **A living knowledge base.** “Not a chapel. A worksite.”
 
-- 💬 **Collaborative annotation**: add **comments** directly **to verses** and to **expressions**, in the **language of your choice** — a feature unprecedented in Quranic research.
-- 🔗 **Root ↔ word ↔ meaning cross-referencing**, backed by Ibn Fāris's etymological lexicon and root statistics.
-- 🌍 **A genuinely multilingual approach** (Arabic, French, English, Spanish, Kabyle), designed for comparative study — with audio listening of verses and surahs.
+---
 
-## 🎯 Our vision
+## Get started
 
-Alfamous was conceived as a **common good** serving the study of the Quranic text. By opening it under the GPL v3 license, the goal is to **entrust it to a community** of passionate and talented people who can:
+| You want to… | Link |
+|---|---|
+| Use the application | [alfamous-amha.web.app](https://alfamous-amha.web.app) |
+| Read the blog | [blog.alfamous.ca](https://blog.alfamous.ca) |
+| Contribute code | [CONTRIBUTING.md](./CONTRIBUTING.md) |
+| Report a bug | [Issues](../../issues) |
+| Install locally | see [Local installation](#-local-installation) below |
 
-- **study** how the tool works, in full transparency;
-- **improve** it and enrich it with new features;
-- **verify** the rigor of the data and processing;
-- **preserve and widely share** it, beyond its original author.
+```bash
+git clone https://github.com/amhanathali/alfamous.git
+cd alfamous
+```
 
-> Any contribution — technical, editorial, or spiritual — is warmly welcome (see [CONTRIBUTING.md](./CONTRIBUTING.md)).
+---
 
-## 🔑 Key features
+## Main features
 
-The interface is organized into **panels**, mirrored faithfully below. *(Multilingual UI: FR, EN, AR, ES, KAB; context menu on selection.)*
+The interface is organized into **panels** *(FR, EN, AR, ES, KAB)*.
 
 ### 🔎 Surah search
-Pick a **surah (1–114)**, then: 📄 **Warsh** (PDF), 🔊 **Listen** (audio), 📖 **Read** (text).
+Choose a **surah (1–114)**, then: 📄 **Warsh** (PDF), 🔊 **Listen** (audio), 📖 **Read** (text).
 
 ### 🔎 Verse search
-Enter **words** (Arabic or Latin), a **page number**, or an **aya** reference (e.g. `3.14`). Verse-by-verse navigation (1 / 1844), **ME** (whole word) / **MC** toggle, search history.
+Enter **words** (Arabic or Latin script), a **page number**, or an **aya** (e.g. `3.14`). Verse-by-verse navigation (1 / 1844), toggle **ME** (whole word) / **MC** (contiguous words), search history.
 
 ### 🧰 Tools
 
-| | Feature |
+| | Function |
 |---|---|
-| 🔁 | **Transliteration** — Arabic ↔ Latin characters in the search field |
-| ℹ️ | **Help** — information and reference table for transliteration |
-| ↺ | **Reset** — clear personal history (lexicon kept) |
-| ☁️⬆️ | **Export Historik** — to Firebase Storage |
-| ☁️⬇️ | **Import Historik** — from Firebase Storage |
-| 📋 | **Copy selection** — selected verses to the clipboard |
-| 🌙 | **Theme** — light / dark toggle |
+| 🔁 | **Transliteration** — Arabic ↔ Latin characters |
+| ℹ️ | **Help** — transliteration table |
+| ↺ | **Reset** — personalized historik (lexicon kept) |
+| ☁️⬆️ / ☁️⬇️ | **Export / import Historik** — Firebase Storage |
+| 📋 | **Copy selection** — verses to clipboard |
+| 🌙 | **Theme** — light / dark |
 
 ### ⚙️ Settings
-Whole word (**ME**), word order (**MC**), choice of **tafsir book**.
+Whole word (**ME**), word order (**MC**), choice of **commentary book**.
 
-### 📚 Search — *SAWM module*
+### 📚 Cherche — *SAWM module*
 
-| | Feature |
+| | Function |
 |---|---|
-| 📖🍃 | Auto search and **Zoom 0-1-2-3** window (Quran + commentary), depending on context |
-| 📖 | Auto search and **Zoom 0-2-3** window (Zoom-Coran), depending on context |
-| 📒 | Auto search and **Zoom 0-3** window (Lexicon), depending on context |
-| 📕 | **Ibn Fāris lexicon** via OpenITI |
+| 📖🍃 | **Zoom 0-1-2-3** window (Quran + comments), context-dependent |
+| 📖 | **Zoom 0-2-3** window (Zoom-Coran) |
+| 📒 | **Zoom 0-3** window (Lexicon) |
+| 📕 | Lexical consultation (OpenITI) |
 
 ### 🌿 Roots — *SALAT module*
 
-| | Feature |
+| | Function |
 |---|---|
-| 📊 | **Statistics** of Quranic roots |
+| 📊 | Quranic **root statistics** |
 | 🌿 | **Roots of a verse** (e.g. `3.14`) |
-| ⚛️ | **Synonymy** — atoms (sounds) and roots combined in a phrase |
-| 🔗 | **Friends of the root** — words in the verse (d=1, if contiguous) |
-| 🧩 | **Inflections** of the words of a root |
+| ⚛️ | **Synonymy** — atoms (sounds) and combined roots |
+| 🔗 | **Root friends** — co-occurrences in the verse |
+| 🧩 | **Inflections** of a root |
 
-*Inspired by the work of Dr. Sameer Islambulli.*
+*Inspired by the work of Dr Sameer Islambulli.*
 
 ### 📤 Share — *CHOKR module*
 
-| | Feature |
+| | Function |
 |---|---|
-| 📝 | **My Notes** (private or public, forum) — Text-to-Speech / Speech-to-Text |
+| 📝 | **My Notes** (private / public) — TTS / STT |
 | ✍️ | **My comments** (Lexicon / Quran) |
-| 💬 | **Ideas forum** 💡 — private and public posts |
-| 📚 | **Articles published on Alfamous** |
-| 🌐 | **Articles published on Blogger** ([blog.alfamous.ca](https://blog.alfamous.ca)) |
+| 💬 | **Ideas forum** — private and public posts |
+| 📚 | **Articles** published on Alfamous |
+| 🌐 | **Articles** on [blog.alfamous.ca](https://blog.alfamous.ca) |
 | 🗣 | **Anonymous testimonials** (moderated) |
 | 💻 | **Digital library** |
 
-### 🔐 Admin *(restricted, level ≥ 3)*
-Administration tools: **media**, **translations**, **newsletter** (@) with unsubscribe, **user** management, **lexicon**.
-
 ### 👥 Visitors
-**Real-time presence** statistics (connected · active tabs · cumulative), **login / logout** · ✉️ **Messaging / contact** · 🔗 **Link sharing** · ❤️ **"Like"**.
+Real-time presence, login, messaging, link sharing, “Like”.
 
-## 🌐 Ecosystem
+### 🔐 Admin *(level ≥ 3)*
+Media, translations, newsletter, users, lexicon.
 
-The project rests on **two complementary pillars**:
+---
 
-- **[Alfamous.ca](https://www.alfamous.ca)** — the in-text analysis tool (this application).
-- **[blog.alfamous.ca](https://blog.alfamous.ca)** — the space for publishing and contextualization (articles, analyses, case studies).
+## Ecosystem
 
-## 👥 Who is it for?
+| Site | Role |
+|---|---|
+| [alfamous-amha.web.app](https://alfamous-amha.web.app) | Application (this repository) |
+| [blog.alfamous.ca](https://blog.alfamous.ca) | Articles, analyses, perspective |
 
-For **anyone** who wants to read the Quran and contribute — curious readers, students, researchers — **with no institutional expertise required**. The same tools uphold the same methodological rigor: text, data, analyses.
+---
 
-## 🧱 Tech stack
+## Who is it for?
+
+Curious readers, students, researchers — **no institutional prerequisites**. Same tools, same standard: **text**, data, verifiable analysis.
+
+---
+
+## Tech stack
 
 | Layer | Technologies |
 |---|---|
-| **Frontend** | HTML, CSS (modular), vanilla JavaScript, Firebase SDK (compat) |
-| **Backend** | Firebase Cloud Functions (Node.js 20), Express |
-| **Database** | Cloud Firestore |
-| **Authentication** | Firebase Auth |
-| **Storage** | Firebase Storage |
+| **Frontend** | HTML, modular CSS, JavaScript, Firebase SDK |
+| **Backend** | Cloud Functions (Node.js 20), Express |
+| **Data** | Firestore, Firebase Auth, Firebase Storage |
 | **Hosting** | Firebase Hosting |
-| **Services** | Google Text-to-Speech / Speech, Nodemailer (SMTP), Google Sheets / Apps Script |
 
-## 📁 Repository structure
+---
+
+## Repository structure
 
 ```text
 Alfamous/
-├── public/              # Web app (frontend deployed on Firebase Hosting)
-│   ├── jsZC/            # JavaScript modules (search, forum, lexicon, media…)
-│   ├── styles/          # Modular stylesheets
-│   └── *.html           # Pages (index, contact, about…)
-├── functions/           # Firebase Cloud Functions (Node.js backend)
-├── Gscript/             # Google Apps Script files (.gs)
-├── firebase.json        # Hosting / Functions / Firestore / Storage config
-├── firestore.rules      # Firestore security rules
-├── storage.rules        # Storage security rules
-├── firestore.indexes.json
-└── package.json
+├── public/              # Frontend (Hosting)
+│   ├── jsZC/            # JS modules
+│   └── styles/          # Modular CSS
+├── functions/           # Cloud Functions
+├── Gscript/             # Google Apps Script
+├── docs/                # Technical documentation
+├── firebase.json
+└── firestore.rules
 ```
 
-## 🚀 Local setup
+---
+
+## Local installation
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) **20+**
-- [Firebase CLI](https://firebase.google.com/docs/cli): `npm install -g firebase-tools`
-- A Firebase project (for deployment)
+- [Firebase CLI](https://firebase.google.com/docs/cli)
+- Firebase project (for emulators or deployment)
 
 ### Steps
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/<your-username>/alfamous.git
+git clone https://github.com/amhanathali/alfamous.git
 cd alfamous
 
-# 2. Install backend dependencies
-cd functions
-npm install
-cd ..
+cd functions && npm install && cd ..
 
-# 3. Configure secrets (see the Configuration section)
 cp .env.example .env
 cp functions/quick-login.example.json functions/quick-login.json
+# Fill in secrets locally — never commit them
 
-# 4. Run locally (Firebase emulators)
 firebase emulators:start
 ```
 
-> The frontend (`public/`) can also be served by any static file server for development.
+> The `public/` folder can also be served by a static file server for quick tests.
 
-## ⚙️ Configuration & secrets
+Details: [docs/CONFIGURATION.md](./docs/CONFIGURATION.md) · [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
-Alfamous requires several credentials that are **never included in the repository** (see `.gitignore`):
+---
 
-| Item | Where to get it | Local file (ignored) |
-|---|---|---|
-| Google Cloud service account key | Google Cloud Console → Service accounts | `key.json` / `functions/*-adminsdk-*.json` |
-| OAuth client secret | Google Cloud Console → Credentials | `functions/client_secret*.json` |
-| SMTP & app credentials | `firebase functions:config:set` | (Firebase config) |
-| Quick login (dev) | Yourself | `functions/quick-login.json` |
+## Configuration & secrets
 
-**Templates** are provided: `*.example.json` and `.env.example`. Copy them and fill them in **without ever committing the real versions**.
+Sensitive credentials are **not** in the repository. Templates provided: `.env.example`, `functions/quick-login.example.json`, etc.
 
-> 🔒 The Firebase `apiKey` in `firebaseConfig.js` is a **public web key by design** (protected by Firestore rules and domain restriction); it is not a secret.
+| Item | Local file (ignored by Git) |
+|---|---|
+| Google service account | `key.json`, `functions/*-adminsdk-*.json` |
+| OAuth client | `functions/client_secret*.json` |
+| Quick login (dev) | `functions/quick-login.json` |
 
-## ☁️ Deployment
+> The Firebase Web key in `firebaseConfig.js` is **public by nature**; security relies on Firestore rules and HTTP referrers.
+
+---
+
+## Deployment
 
 ```bash
-# Deploy everything (hosting + functions + rules)
-firebase deploy
-
-# Or target a specific part
-firebase deploy --only hosting
-firebase deploy --only functions
-firebase deploy --only firestore:rules
+firebase deploy                  # everything
+firebase deploy --only hosting   # frontend only
 ```
 
-## 📜 License
+On Windows, the `DEPLOYER____.BAT` script chains deployment and Git backup.
 
-This project is distributed under the **GNU General Public License v3.0**. See the [LICENSE](./LICENSE) file.
+---
 
-### Data and content licensing
+## License
 
-⚠️ The **code** is under GPL v3, but the **content** (Quranic text, translations, lexicons, media, fonts) may be subject to separate rights or licenses. Please check the provenance and terms of use of each dataset before any reuse.
+Code under **[GPL v3](./LICENSE)**. **Content** (Quranic text, translations, lexicons, media) may be under separate licenses — check provenance before reuse.
 
-## 📚 Documentation
+---
 
-Detailed technical documentation is available in the [`docs/`](./docs/) folder (in French):
+## Documentation
 
-- [**Architecture**](./docs/ARCHITECTURE.md) — technical overview (frontend, backend, services).
-- [**Data model**](./docs/DATA-MODEL.md) — Firestore collections and their roles.
-- [**Deployment**](./docs/DEPLOYMENT.md) — going live on Firebase, step by step.
-- [**Configuration**](./docs/CONFIGURATION.md) — secrets, API keys, environment variables.
-- [**Migration**](./docs/MIGRATION.md) — reinstalling the project on a new computer.
-- [**Roadmap**](./docs/ROADMAP.md) — evolution ideas and contribution opportunities.
+| Document | Contents |
+|---|---|
+| [Architecture](./docs/ARCHITECTURE.md) | Technical overview |
+| [Data model](./docs/DATA-MODEL.md) | Firestore collections |
+| [Deployment](./docs/DEPLOYMENT.md) | Firebase go-live |
+| [Configuration](./docs/CONFIGURATION.md) | Secrets and variables |
+| [Migration](./docs/MIGRATION.md) | New computer setup |
+| [Roadmap](./docs/ROADMAP.md) | Planned evolution |
 
-## 🤝 Contributing
+---
 
-Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for conventions and the process, and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for the community guidelines.
+## Contributing
 
-## 📝 Changelog
+Contributions are welcome: code, documentation, usage feedback.
 
-See [CHANGELOG.md](./CHANGELOG.md).
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — process and conventions  
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) — community guidelines  
+- [CHANGELOG.md](./CHANGELOG.md) — release history
 
-## 👤 Author
+---
 
-**Amha NathAli** — gmpcdz@gmail.com
+## Related projects on GitHub
 
-A civil engineer holding a Master's in project management, and a self-taught programmer since 1993. His tool-assisted research on the Quranic text, started in 2009, gave rise to **Alfamous** (the application) and **blog.alfamous.ca** (the blog).
+Repositories close in **roots**, **concordance**, or **morphology**. The *editorial line* column indicates proximity to Alfamous: **Quranic codex first**, no hadith in the analytical apparatus.
 
-## 🔍 Keywords (GitHub search)
+| Repository | Link | Proximity | Editorial line |
+|-------|------|-----------|------------------|
+| **quran-bil-quran** | [R3GENESI5/quran-bil-quran](https://github.com/R3GENESI5/quran-bil-quran) | Concordance, semantic families | **Strong** |
+| **quran-search-engine** | [adelpro/quran-search-engine](https://github.com/adelpro/quran-search-engine) | Text / roots / lemmas engine | **Strong** |
+| **Mawrid Reader** | [ejtaal/mr](https://github.com/ejtaal/mr) | Arabic concordance, dictionaries | **Strong** |
+| **quran (Text-Fabric)** | [q-ran/quran](https://github.com/q-ran/quran) | Morphological corpus | **Corpus** |
+| **Quranic Arabic Corpus** | [corpus.quran.com](https://corpus.quran.com/) | Morphology (GPL) | **Resource** |
 
-`quran` · `coran` · `arabic` · `quranic-studies` · `semantic-search` · `concordance` · `arabic-roots` · `morphology` · `ibn-faris` · `maqayis` · `lexicon` · `tafsir` · `text-first` · `open-source` · `firebase` · `javascript` · `zoom-coran`
+> Alfamous stands out for the **full workshop** (search + verse comments + forum + blog) and an **explicit methodological charter** in the application.
 
-## 🌐 Related projects on GitHub
+---
 
-Repositories **functionally close** to Alfamous (roots, concordance, morphology). The *editorial line* column reflects proximity to Alfamous methodology: **the Quranic codex alone** as the starting point, with no hadith in the analytical apparatus.
+## Author
 
-| Repository | Link | Close to Alfamous | Editorial line |
-|------------|------|-------------------|----------------|
-| **quran-bil-quran** | [R3GENESI5/quran-bil-quran](https://github.com/R3GENESI5/quran-bil-quran) | Root concordance, semantic families, Mufradat / Furuq | **Strong** — “Quran by the Quran”; tafsir as resource, not imposed grid |
-| **quran-search-engine** | [adelpro/quran-search-engine](https://github.com/adelpro/quran-search-engine) | TS engine: text, lemmas, roots, semantics (Corpus v4) | **Strong** — text-centric neutral engine |
-| **Mawrid Reader** | [ejtaal/mr](https://github.com/ejtaal/mr) | Arabic concordance (CQM), Ibn Fāris Maqāyīs (MML), classical dictionaries | **Strong** — lexical and Quranic concordance tools |
-| **quran-arabic-roots-lane-lexicon** | [aliozdenisik/quran-arabic-roots-lane-lexicon](https://github.com/aliozdenisik/quran-arabic-roots-lane-lexicon) | 1,651 roots + Lane + morphology | **Data** — lexical base to cross with Alfamous |
-| **quran (Text-Fabric)** | [q-ran/quran](https://github.com/q-ran/quran) | Text + Corpus 0.4 morphology in research format | **Corpus** — academic text foundation |
-| **arabic_lexicons** | [wizsk/arabic_lexicons](https://github.com/wizsk/arabic_lexicons) | Maqāyīs, Mufradāt al-Qurʾān (Raghib), GPL-3 | **Lexicons** — offline mobile complement |
-| **OpenITI** | [OpenITI](https://github.com/OpenITI) | Ibn Fāris corpus / classical Arabic texts | **Philology** — source cited by Alfamous (Ibn Fāris) |
-| **QuranHub API** | [misraj-ai/quranhub](https://github.com/misraj-ai/quranhub) | Morphology, roots, tags API | **Partial** — general-purpose “Islamic apps” backend |
-| **Clarus** | [aliozdenisik/Clarus](https://github.com/aliozdenisik/Clarus) | Multi-text RAG (Quran + Bible, etc.) | **Weak** — different scope; hadith bridges elsewhere |
+**Amha NathAli** — [gmpcdz@gmail.com](mailto:gmpcdz@gmail.com)
 
-**Foundational resource (off GitHub):** [Quranic Arabic Corpus](https://corpus.quran.com/) (morphology, GPL) — used by many projects above.
-
-> Alfamous stands out as a **full workshop** (search + verse annotations + forum + blog + media) with an **explicit methodological charter**: measurable text, open proposals, hadiths outside the apparatus.
-
-## 🚀 Going public on GitHub
-
-When you switch the repository to **Public** (`Settings → General → Change visibility`), fill in **About**:
-
-| Field | Suggested value |
-|-------|-----------------|
-| **Description** | Copy the **FR · AR · EN** line from [`.github/ABOUT-DESCRIPTION.txt`](./.github/ABOUT-DESCRIPTION.txt) |
-| **Website** | `https://alfamous-amha.web.app` |
-| **Topics** | `quran` `coran` `codex` `arabic` `semantic-search` `quranic-studies` `concordance` `commentary` `firebase` `javascript` `open-source` |
-
-**About description (FR · AR · EN — one line, ≤350 chars):**
-
-```text
-FR: Outils de recherche dans le codex coranique · commentaires sur versets et mots | EN: Research tools in the Quranic codex · comments on verses and words | AR: أدوات البحث في المصحف · تعليقات على الآيات والكلمات
-```
-
-Add a **Social preview** (1280×640): logo + “Alfamous — Quran semantic search · text first”.
+Civil engineer, Master’s in project management, self-taught programmer since 1993. Tool-assisted study of the Quranic text since 2009.
 
 ---
 
 <div align="center">
-<sub>"Making the project studiable, verifiable and preservable by the community."</sub>
+
+<sub>“Make the project studyable, verifiable, and preservable by the community.”</sub>
+
 </div>
