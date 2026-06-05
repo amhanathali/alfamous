@@ -2,7 +2,11 @@
 
 # Alfamous
 
-**Semantic search platform for the Quran**
+**FR** · Plateforme de recherche sémantique du Coran  
+**EN** · Quranic semantic search platform  
+**AR** · منصة البحث الدلالي في القرآن  
+**ES** · Plataforma de búsqueda semántica del Corán  
+**KAB** · Ttalunt n unadi s sementik n Leqran
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 [![Made with JavaScript](https://img.shields.io/badge/Made%20with-JavaScript-f7df1e.svg)](https://developer.mozilla.org/docs/Web/JavaScript)
@@ -278,9 +282,15 @@ When you switch the repository to **Public** (`Settings → General → Change v
 
 | Field | Suggested value |
 |-------|-----------------|
-| **Description** | Open-source workshop for Quranic text study — roots, concordance, Ibn Fāris lexicon. Text first. GPL-3. |
+| **Description** | Copy the **short version** from [`.github/ABOUT-DESCRIPTION.txt`](./.github/ABOUT-DESCRIPTION.txt) (FR · EN · AR · ES · KAB) |
 | **Website** | `https://alfamous-amha.web.app` |
 | **Topics** | `quran` `coran` `arabic` `semantic-search` `quranic-studies` `concordance` `arabic-roots` `ibn-faris` `lexicon` `firebase` `javascript` `open-source` |
+
+**About description (5 languages, one line):**
+
+```text
+FR: Recherche sémantique du Coran · racines · Ibn Fāris · texte d'abord | EN: Quranic semantic search · roots · Ibn Fāris · text first | AR: بحث دلالي في القرآن · جذور · ابن فارس · النص أولًا | ES: Búsqueda semántica del Corán · raíces · Ibn Fāris · texto primero | KAB: Anadi s sementik n Leqran · iẓuran · Ibn Fāris · aḍris qbel
+```
 
 Add a **Social preview** (1280×640): logo + “Alfamous — Quran semantic search · text first”.
 

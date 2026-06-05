@@ -1,6 +1,6 @@
 {
   "name": "alfamous",
-  "description": "Open-source workshop for Quranic text study — roots, concordance, Ibn Fāris lexicon. Text first. GPL-3.",
+  "description": "FR: Recherche sémantique du Coran | EN: Quranic semantic search | AR: بحث دلالي في القرآن | ES: Búsqueda semántica del Corán | KAB: Anadi s sementik n Leqran — roots, Ibn Fāris, text first",
   "version": "1.0.0",
   "license": "GPL-3.0-or-later",
   "repository": {

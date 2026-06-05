@@ -1,0 +1,15 @@
+# Description GitHub (bloc About) — 5 langues Alfamous
+# Copier-coller sur : https://github.com/amhanathali/alfamous
+# Code → colonne droite → About → icône engrenage → Description
+#
+# Limite GitHub : ~350 caractères. Deux versions ci-dessous.
+
+# --- VERSION COURTE (recommandée pour About, tient dans la limite) ---
+FR: Recherche sémantique du Coran · racines · Ibn Fāris · texte d'abord | EN: Quranic semantic search · roots · Ibn Fāris · text first | AR: بحث دلالي في القرآن · جذور · ابن فارس · النص أولًا | ES: Búsqueda semántica del Corán · raíces · Ibn Fāris · texto primero | KAB: Anadi s sementik n Leqran · iẓuran · Ibn Fāris · aḍris qbel
+
+# --- VERSION LONGUE (référence ; peut être tronquée par GitHub) ---
+# FR: Atelier open source d'étude du texte coranique — recherche sémantique, racines, concordance, lexique Ibn Fāris. Le codex d'abord.
+# EN: Open-source workshop for Quranic text study — semantic search, roots, concordance, Ibn Fāris lexicon. The codex first.
+# AR: منصة مفتوحة لدراسة نص القرآن — بحث دلالي، جذور، معجم ابن فارس. النصّ أولًا.
+# ES: Taller open source del texto coránico — búsqueda semántica, raíces, léxico Ibn Fāris. El texto primero.
+# KAB: Ttalunt n uɣella i usleḍ n uḍris n Leqran — anadi s sementik, iẓuran, Ibn Fāris. Aḍris d amezwaru.
