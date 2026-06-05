@@ -1,4 +1,27 @@
 {
+  "name": "alfamous",
+  "description": "Open-source workshop for Quranic text study — roots, concordance, Ibn Fāris lexicon. Text first. GPL-3.",
+  "version": "1.0.0",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amhanathali/alfamous.git"
+  },
+  "homepage": "https://alfamous-amha.web.app",
+  "keywords": [
+    "quran",
+    "coran",
+    "arabic",
+    "semantic-search",
+    "quranic-studies",
+    "concordance",
+    "arabic-roots",
+    "ibn-faris",
+    "maqayis",
+    "lexicon",
+    "firebase",
+    "text-first"
+  ],
   "scripts": {
     "sync-quick-login": "node -e \"const fs=require('fs');const path=require('path');const src=path.join('other','quick-login.json');const dst=path.join('functions','quick-login.json');if(!fs.existsSync(src)){console.error('Fichier manquant:',src,'— copiez other/quick-login.example.json vers other/quick-login.json');process.exit(1);}const j=JSON.parse(fs.readFileSync(src,'utf8'));const out={};Object.keys(j||{}).forEach(k=>{if(String(k).startsWith('_'))return;const v=j[k]||{};const email=String(v.email||'').trim().toLowerCase();if(!email)return;out[String(k).toLowerCase()]={email,name:String(v.name||'').trim()};});fs.mkdirSync(path.dirname(dst),{recursive:true});fs.writeFileSync(dst,JSON.stringify(out,null,2)+'\\n','utf8');console.log('OK →',dst,'(email+name, sans mot de passe)');\""
   },

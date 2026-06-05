@@ -12,6 +12,8 @@
 
 **🌍 Langue :** Français · [English](./README.en.md)
 
+**📌 Positionnement :** atelier open source d'étude du **texte coranique** (racines · mots · concordances · lexique Ibn Fāris) — **le codex d'abord** ; traductions et commentaires comme ressources, **sans hadith dans l'appareil d'analyse**. Voir le [manifeste « À propos »](https://alfamous-amha.web.app/APropos.html).
+
 </div>
 
 ---
@@ -245,6 +247,42 @@ Voir [CHANGELOG.md](./CHANGELOG.md).
 **Amha NathAli** — gmpcdz@gmail.com
 
 Ingénieur civil et titulaire d'un Master en gestion de projet, programmeur autodidacte depuis 1993. Sa recherche outillée du texte coranique, initiée en 2009, a donné naissance à **Alfamous** (l'application) et à **blog.alfamous.ca** (le blog).
+
+## 🔍 Mots-clés (recherche GitHub)
+
+`quran` · `coran` · `arabic` · `quranic-studies` · `semantic-search` · `concordance` · `arabic-roots` · `morphology` · `ibn-faris` · `maqayis` · `lexicon` · `tafsir` · `text-first` · `open-source` · `firebase` · `javascript` · `zoom-coran`
+
+## 🌐 Projets voisins sur GitHub
+
+Dépôts **proches fonctionnellement** d'Alfamous (racines, concordance, morphologie). La colonne *ligne éditoriale* indique la proximité avec la méthode Alfamous : **valoriser le seul texte coranique** comme point de départ, sans hadith dans l'appareil d'analyse.
+
+| Dépôt | Lien | Proche d'Alfamous | Ligne éditoriale |
+|-------|------|-------------------|------------------|
+| **quran-bil-quran** | [R3GENESI5/quran-bil-quran](https://github.com/R3GENESI5/quran-bil-quran) | Concordance par racines, familles sémantiques, Mufradat / Furuq | **Forte** — étude « Coran par le Coran » ; tafsir en ressource, pas comme grille imposée |
+| **quran-search-engine** | [adelpro/quran-search-engine](https://github.com/adelpro/quran-search-engine) | Moteur TS : texte, lemmes, racines, sémantique (Corpus v4) | **Forte** — moteur neutre centré sur le texte |
+| **Mawrid Reader** | [ejtaal/mr](https://github.com/ejtaal/mr) | Concordance arabe (CQM), Maqāyīs Ibn Fāris (MML), dictionnaires classiques | **Forte** — outils lexicaux et concordance coranique |
+| **quran-arabic-roots-lane-lexicon** | [aliozdenisik/quran-arabic-roots-lane-lexicon](https://github.com/aliozdenisik/quran-arabic-roots-lane-lexicon) | 1 651 racines + Lane + morphologie | **Données** — base lexicale, à croiser avec Alfamous |
+| **quran (Text-Fabric)** | [q-ran/quran](https://github.com/q-ran/quran) | Texte + morphologie Corpus 0.4 en format recherche | **Corpus** — fondation académique du texte |
+| **arabic_lexicons** | [wizsk/arabic_lexicons](https://github.com/wizsk/arabic_lexicons) | Maqāyīs, Mufradāt al-Qurʾān (Raghib), GPL-3 | **Lexiques** — complément mobile hors-ligne |
+| **OpenITI** | [OpenITI](https://github.com/OpenITI) | Corpus Ibn Fāris / textes arabes classiques | **Philologie** — source citée par Alfamous (Ibn Fāris) |
+| **QuranHub API** | [misraj-ai/quranhub](https://github.com/misraj-ai/quranhub) | API morphologie, racines, tags | **Partielle** — backend généraliste « apps islamiques » |
+| **Clarus** | [aliozdenisik/Clarus](https://github.com/aliozdenisik/Clarus) | RAG multi-textes (Coran + Bible, etc.) | **Faible** — autre périmètre ; ponts hadith possibles ailleurs |
+
+**Ressource fondatrice (hors GitHub)** : [Quranic Arabic Corpus](https://corpus.quran.com/) (morphologie, GPL) — utilisée par de nombreux projets ci-dessus.
+
+> Alfamous se distingue par l'**atelier complet** (recherche + annotations sur versets + forum + blog + médias) et la **charte méthodologique explicite** : texte mesurable, propositions ouvertes, hadiths hors dispositif.
+
+## 🚀 Rendre le dépôt public (GitHub)
+
+Quand vous passez le dépôt en **Public** (`Settings → General → Change visibility`), renseignez le bloc **About** :
+
+| Champ | Valeur suggérée |
+|-------|-----------------|
+| **Description** | Atelier open source d'étude du texte coranique — racines, concordance, lexique Ibn Fāris. Texte d'abord. GPL-3. |
+| **Website** | `https://alfamous-amha.web.app` |
+| **Topics** | `quran` `coran` `arabic` `semantic-search` `quranic-studies` `concordance` `arabic-roots` `ibn-faris` `lexicon` `firebase` `javascript` `open-source` |
+
+Ajoutez une **Social preview** (1280×640) : logo + « Alfamous — Quran semantic search · text first ».
 
 ---
 

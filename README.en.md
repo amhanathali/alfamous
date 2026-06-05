@@ -12,6 +12,8 @@
 
 **🌍 Language:** English · [Français](./README.md)
 
+**📌 Positioning:** open-source workshop for **Quranic text study** (roots · words · concordance · Ibn Fāris lexicon) — **the codex first**; translations and commentary as resources, **no hadith in the analytical apparatus**. See the [“About” manifesto](https://alfamous-amha.web.app/APropos.html).
+
 </div>
 
 ---
@@ -245,6 +247,42 @@ See [CHANGELOG.md](./CHANGELOG.md).
 **Amha NathAli** — gmpcdz@gmail.com
 
 A civil engineer holding a Master's in project management, and a self-taught programmer since 1993. His tool-assisted research on the Quranic text, started in 2009, gave rise to **Alfamous** (the application) and **blog.alfamous.ca** (the blog).
+
+## 🔍 Keywords (GitHub search)
+
+`quran` · `coran` · `arabic` · `quranic-studies` · `semantic-search` · `concordance` · `arabic-roots` · `morphology` · `ibn-faris` · `maqayis` · `lexicon` · `tafsir` · `text-first` · `open-source` · `firebase` · `javascript` · `zoom-coran`
+
+## 🌐 Related projects on GitHub
+
+Repositories **functionally close** to Alfamous (roots, concordance, morphology). The *editorial line* column reflects proximity to Alfamous methodology: **the Quranic codex alone** as the starting point, with no hadith in the analytical apparatus.
+
+| Repository | Link | Close to Alfamous | Editorial line |
+|------------|------|-------------------|----------------|
+| **quran-bil-quran** | [R3GENESI5/quran-bil-quran](https://github.com/R3GENESI5/quran-bil-quran) | Root concordance, semantic families, Mufradat / Furuq | **Strong** — “Quran by the Quran”; tafsir as resource, not imposed grid |
+| **quran-search-engine** | [adelpro/quran-search-engine](https://github.com/adelpro/quran-search-engine) | TS engine: text, lemmas, roots, semantics (Corpus v4) | **Strong** — text-centric neutral engine |
+| **Mawrid Reader** | [ejtaal/mr](https://github.com/ejtaal/mr) | Arabic concordance (CQM), Ibn Fāris Maqāyīs (MML), classical dictionaries | **Strong** — lexical and Quranic concordance tools |
+| **quran-arabic-roots-lane-lexicon** | [aliozdenisik/quran-arabic-roots-lane-lexicon](https://github.com/aliozdenisik/quran-arabic-roots-lane-lexicon) | 1,651 roots + Lane + morphology | **Data** — lexical base to cross with Alfamous |
+| **quran (Text-Fabric)** | [q-ran/quran](https://github.com/q-ran/quran) | Text + Corpus 0.4 morphology in research format | **Corpus** — academic text foundation |
+| **arabic_lexicons** | [wizsk/arabic_lexicons](https://github.com/wizsk/arabic_lexicons) | Maqāyīs, Mufradāt al-Qurʾān (Raghib), GPL-3 | **Lexicons** — offline mobile complement |
+| **OpenITI** | [OpenITI](https://github.com/OpenITI) | Ibn Fāris corpus / classical Arabic texts | **Philology** — source cited by Alfamous (Ibn Fāris) |
+| **QuranHub API** | [misraj-ai/quranhub](https://github.com/misraj-ai/quranhub) | Morphology, roots, tags API | **Partial** — general-purpose “Islamic apps” backend |
+| **Clarus** | [aliozdenisik/Clarus](https://github.com/aliozdenisik/Clarus) | Multi-text RAG (Quran + Bible, etc.) | **Weak** — different scope; hadith bridges elsewhere |
+
+**Foundational resource (off GitHub):** [Quranic Arabic Corpus](https://corpus.quran.com/) (morphology, GPL) — used by many projects above.
+
+> Alfamous stands out as a **full workshop** (search + verse annotations + forum + blog + media) with an **explicit methodological charter**: measurable text, open proposals, hadiths outside the apparatus.
+
+## 🚀 Going public on GitHub
+
+When you switch the repository to **Public** (`Settings → General → Change visibility`), fill in **About**:
+
+| Field | Suggested value |
+|-------|-----------------|
+| **Description** | Open-source workshop for Quranic text study — roots, concordance, Ibn Fāris lexicon. Text first. GPL-3. |
+| **Website** | `https://alfamous-amha.web.app` |
+| **Topics** | `quran` `coran` `arabic` `semantic-search` `quranic-studies` `concordance` `arabic-roots` `ibn-faris` `lexicon` `firebase` `javascript` `open-source` |
+
+Add a **Social preview** (1280×640): logo + “Alfamous — Quran semantic search · text first”.
 
 ---
 
