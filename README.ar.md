@@ -45,8 +45,8 @@
 
 | تريد… | الرابط |
 |---|---|
-| استخدام التطبيق | [alfamous-amha.web.app](https://alfamous-amha.web.app) |
-| قراءة المدونة | [blog.alfamous.ca](https://blog.alfamous.ca) |
+| استخدام التطبيق | [alfamous.ca](https://www.alfamous.ca) · [alfamous-amha.web.app](https://alfamous-amha.web.app) |
+| قراءة المدونة | [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) |
 | المساهمة في الكود | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 | الإبلاغ عن خلل | [Issues](../../issues) |
 | التثبيت محلياً | انظر [التثبيت المحلي](#-التثبيت-المحلي) أدناه |
@@ -111,7 +111,7 @@ cd alfamous
 | ✍️ | **تعليقاتي** (المعجم / القرآن) |
 | 💬 | **منتدى الأفكار** — منشورات خاصة وعامة |
 | 📚 | **مقالات** منشورة على Alfamous |
-| 🌐 | **مقالات** على [blog.alfamous.ca](https://blog.alfamous.ca) |
+| 🌐 | **مقالات** على [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) |
 | 🗣 | **شهادات** مجهولة (إشراف) |
 | 💻 | **مكتبة رقمية** |
 
@@ -127,8 +127,8 @@ cd alfamous
 
 | الموقع | الدور |
 |---|---|
-| [alfamous-amha.web.app](https://alfamous-amha.web.app) | التطبيق (هذا المستودع) |
-| [blog.alfamous.ca](https://blog.alfamous.ca) | مقالات، تحليلات، سياق |
+| [alfamous.ca](https://www.alfamous.ca) · [alfamous-amha.web.app](https://alfamous-amha.web.app) | التطبيق (هذا المستودع) |
+| [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) | مقالات، تحليلات، سياق |
 
 ---
 

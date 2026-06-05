@@ -128,8 +128,11 @@ function ouvrirLienExterne(nL) {
 function partagerLien() {
   var input = document.getElementById('mot').value.trim();
   input = input.replace(/\ /g, "+");
-  copierTexte(`https://alfamous.ca?texte=${input}`);
-  alertMsgBoxTemp(tMsg('linkCopied', { url: "https://alfamous.ca?texte=" + input }));
+  var url = (window.ALFAMOUS_URLS && window.ALFAMOUS_URLS.appShareUrl)
+    ? window.ALFAMOUS_URLS.appShareUrl("texte=" + input)
+    : "https://alfamous-amha.web.app?texte=" + input;
+  copierTexte(url);
+  alertMsgBoxTemp(tMsg('linkCopied', { url: url }));
   //alertMsgBoxPopup("Lien copié: https://alfamous.ca?texte=" + input);
   //alertMsgBoxPopup("Partagez le lien copié: https://alfamous.ca?texte=" + input)
 }

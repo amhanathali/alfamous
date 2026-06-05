@@ -744,7 +744,9 @@ function ajouterGestionnaireBouton(docId) {
   const btn = m1El('partagerMedia'); if (!btn) return;
   btn.onclick = function () {
     zcMediasTmpMsg((currentMediaDocId && docId && currentMediaDocId === docId && currentMediaIsPrivate) ? "Lien copie (prive)." : "Lien copie (public).", "green", 2000);
-    copierTexte('https://alfamous.ca?prog=medias1&docMedia=' + docId);
+    copierTexte((window.ALFAMOUS_URLS && window.ALFAMOUS_URLS.appShareUrl)
+      ? window.ALFAMOUS_URLS.appShareUrl("prog=medias1&docMedia=" + docId)
+      : "https://alfamous-amha.web.app?prog=medias1&docMedia=" + docId);
   };
 }
 
@@ -1659,8 +1661,8 @@ function parseUrlLoose(href = "") { const s = String(href || "").trim(); if (!s)
 function normalizeDomain(host = "") {
   const h0 = String(host || "").toLowerCase(); const h = h0.replace(/^www\./, "");
   if (h === "youtu.be" || h === "youtube.com" || h.endsWith(".youtube.com") || h === "youtube-nocookie.com" || h.endsWith(".youtube-nocookie.com") || h === "m.youtube.com") return "youtube.com";
-  if (h === "alfamous.ca" || h.endsWith(".alfamous.ca")) return "alfamous.ca";
-  if (h === "blog.alfamous.ca" || h.endsWith(".blog.alfamous.ca")) return "blog.alfamous.ca";
+  if (h === "alfamous.ca" || h.endsWith(".alfamous.ca") || h === "alfamous-amha.web.app") return "alfamous.ca";
+  if (h === "blog.alfamous.ca" || h.endsWith(".blog.alfamous.ca") || h === "lexique-coran.blogspot.com") return "blog.alfamous.ca";
   return h;
 }
 function deriveTypeFromUrl(url = "", mediaName = "") {

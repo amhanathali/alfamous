@@ -43,8 +43,8 @@
 
 | You want to… | Link |
 |---|---|
-| Use the application | [alfamous-amha.web.app](https://alfamous-amha.web.app) |
-| Read the blog | [blog.alfamous.ca](https://blog.alfamous.ca) |
+| Use the application | [alfamous.ca](https://www.alfamous.ca) · [alfamous-amha.web.app](https://alfamous-amha.web.app) |
+| Read the blog | [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) |
 | Contribute code | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 | Report a bug | [Issues](../../issues) |
 | Install locally | see [Local installation](#-local-installation) below |
@@ -109,7 +109,7 @@ Whole word (**ME**), word order (**MC**), choice of **commentary book**.
 | ✍️ | **My comments** (Lexicon / Quran) |
 | 💬 | **Ideas forum** — private and public posts |
 | 📚 | **Articles** published on Alfamous |
-| 🌐 | **Articles** on [blog.alfamous.ca](https://blog.alfamous.ca) |
+| 🌐 | **Articles** on [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) |
 | 🗣 | **Anonymous testimonials** (moderated) |
 | 💻 | **Digital library** |
 
@@ -125,8 +125,8 @@ Media, translations, newsletter, users, lexicon.
 
 | Site | Role |
 |---|---|
-| [alfamous-amha.web.app](https://alfamous-amha.web.app) | Application (this repository) |
-| [blog.alfamous.ca](https://blog.alfamous.ca) | Articles, analyses, perspective |
+| [alfamous.ca](https://www.alfamous.ca) · [alfamous-amha.web.app](https://alfamous-amha.web.app) | Application (this repository) |
+| [blog.alfamous.ca](https://blog.alfamous.ca) · [lexique-coran.blogspot.com](https://lexique-coran.blogspot.com/) | Articles, analyses, perspective |
 
 ---
 

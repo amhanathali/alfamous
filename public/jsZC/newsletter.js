@@ -217,8 +217,11 @@
   }
 
   function zcNewsletterBlogSearchUrl(queryText) {
-    const base = "https://blog.alfamous.ca/search";
     const q = String(queryText || "").replace(/\s+/g, " ").trim();
+    if (window.ALFAMOUS_URLS && typeof window.ALFAMOUS_URLS.blogSearchUrl === "function") {
+      return window.ALFAMOUS_URLS.blogSearchUrl(q);
+    }
+    const base = "https://lexique-coran.blogspot.com/search";
     if (!q) return base;
     return base + "?q=" + encodeURIComponent(q) + "&m=1";
   }
@@ -318,7 +321,7 @@
         ? "Blog Alfamous — " + count + " dernier" + (count > 1 ? "s" : "") + " article" + (count > 1 ? "s" : "")
         : "Blog Alfamous — articles récents",
       preheader: count
-        ? "Les " + count + " derniers articles sur blog.alfamous.ca"
+        ? "Les " + count + " derniers articles (blog.alfamous.ca · lexique-coran.blogspot.com)"
         : "Actualité du blog Alfamous",
       intro: base.intro,
       body: body,

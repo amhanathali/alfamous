@@ -75,7 +75,7 @@ function genererContenuEmail(articles, nomDestinataire = "") {
     ? `<p>Bonjour ${nomDestinataire},</p>`
     : `<p>Bonjour,</p>`;
 
-  contenu += `<p>Voici les derniers articles publiés sur le blog <a href='https://blog.alfamous.ca'>blog.alfamous.ca</a> :</p>`;
+  contenu += `<p>Voici les derniers articles publiés sur le blog (<a href='https://blog.alfamous.ca'>blog.alfamous.ca</a> · <a href='https://lexique-coran.blogspot.com/'>lexique-coran.blogspot.com</a>) :</p>`;
 
 
 articles.forEach(article => {
@@ -119,8 +119,8 @@ articles.forEach(article => {
   contenu += `
     <hr />
     <p>Merci de votre lecture et à bientôt !</p>
-    <p><small>***Pour vous désabonner, cliquez ici : <a href="https://blog.alfamous.ca/p/abonnement.html">https://blog.alfamous.ca/p/abonnement.html</a></small></p>
-    <p><small>***À propos du projet Alfamous, cliquez ici : <a href="https://alfamous.ca/index.html">https://alfamous.ca/index.html</a></small></p>
+    <p><small>***Pour vous désabonner : <a href="https://blog.alfamous.ca/p/abonnement.html">blog.alfamous.ca/p/abonnement.html</a> · <a href="https://lexique-coran.blogspot.com/p/abonnement.html">lexique-coran.blogspot.com/p/abonnement.html</a></small></p>
+    <p><small>***À propos du projet Alfamous : <a href="https://alfamous.ca/index.html">alfamous.ca</a> · <a href="https://alfamous-amha.web.app/index.html">alfamous-amha.web.app</a></small></p>
   </div>`;
 
   return contenu;

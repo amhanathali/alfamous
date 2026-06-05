@@ -614,10 +614,10 @@ window.I18N_TITLES.FR = {
   "BtnMsg": "Contact",
   "BiblioNumerique": "Bibliothèque numérique",
   "t-rechercher-articles-de-blog": "Articles publiés sur Alfamous",
-  "btnOpenBlogLexiqueCoran": "Blog public Zoom-Coran (blog.alfamous.ca)",
+  "btnOpenBlogLexiqueCoran": "Blog public Zoom-Coran (blog.alfamous.ca · lexique-coran.blogspot.com)",
   "ouvrirForum1": "Forum des idées 💡 : publications privées et publiques",
   "t-temoignages": "Témoignages anonymes",
-  "btnChokrBlogDigneDeFoi": "Articles publiés sur blog.alfamous.ca",
+  "btnChokrBlogDigneDeFoi": "Articles publiés sur blog.alfamous.ca · lexique-coran.blogspot.com",
   "ModifBtn": "Mes commentaires (Lexique / Coran)",
   "ModifBtnFree": "Mes commentaires (Lexique / Coran)",
   "AjoutModifNotes": "Mes Notes privées ou publiques (Forum)",
@@ -713,10 +713,10 @@ window.I18N_TITLES.EN = {
   "BtnMsg": "Contact",
   "BiblioNumerique": "Digital library",
   "t-rechercher-articles-de-blog": "Articles published on Alfamous",
-  "btnOpenBlogLexiqueCoran": "Public Zoom-Coran blog (blog.alfamous.ca)",
+  "btnOpenBlogLexiqueCoran": "Public Zoom-Coran blog (blog.alfamous.ca · lexique-coran.blogspot.com)",
   "ouvrirForum1": "Ideas forum 💡 : private and public posts",
   "t-temoignages": "Anonymous testimonies",
-  "btnChokrBlogDigneDeFoi": "Articles published on blog.alfamous.ca",
+  "btnChokrBlogDigneDeFoi": "Articles published on blog.alfamous.ca · lexique-coran.blogspot.com",
   "ModifBtn": "My comments (Lexicon / Quran)",
   "ModifBtnFree": "My comments (Lexicon / Quran)",
   "AjoutModifNotes": "My private or public Notes (Forum)",
@@ -812,10 +812,10 @@ window.I18N_TITLES.AR = {
   "BtnMsg": "اتصال",
   "BiblioNumerique": "مكتبة رقمية",
   "t-rechercher-articles-de-blog": "مقالات منشورة على Alfamous",
-  "btnOpenBlogLexiqueCoran": "مدونة Zoom-Coran العامة (blog.alfamous.ca)",
+  "btnOpenBlogLexiqueCoran": "مدونة Zoom-Coran العامة (blog.alfamous.ca · lexique-coran.blogspot.com)",
   "ouvrirForum1": "منتدى الأفكار 💡 : منشورات خاصة وعامة",
   "t-temoignages": "شهادات مجهولة",
-  "btnChokrBlogDigneDeFoi": "مقالات منشورة على blog.alfamous.ca",
+  "btnChokrBlogDigneDeFoi": "مقالات منشورة على blog.alfamous.ca · lexique-coran.blogspot.com",
   "ModifBtn": "تعليقاتي (المعجم / القرآن)",
   "ModifBtnFree": "تعليقاتي (المعجم / القرآن)",
   "AjoutModifNotes": "ملاحظاتي الخاصة أو العامة (المنتدى)",
@@ -911,10 +911,10 @@ window.I18N_TITLES.KAB = {
   "BtnMsg": "Anermis",
   "BiblioNumerique": "Tamkaḍt tifransit",
   "t-rechercher-articles-de-blog": "Imagraden yettwabḍan ɣef Alfamous",
-  "btnOpenBlogLexiqueCoran": "Ablug azayez Zoom-Coran (blog.alfamous.ca)",
+  "btnOpenBlogLexiqueCoran": "Ablug azayez Zoom-Coran (blog.alfamous.ca · lexique-coran.blogspot.com)",
   "ouvrirForum1": "Lmunada n yilugan 💡 : adwen usligen d izayzen",
   "t-temoignages": "Ticehhiḍin udrigen",
-  "btnChokrBlogDigneDeFoi": "Imagraden yettwabḍan ɣef blog.alfamous.ca",
+  "btnChokrBlogDigneDeFoi": "Imagraden yettwabḍan ɣef blog.alfamous.ca · lexique-coran.blogspot.com",
   "ModifBtn": "Iwenniten-iw (Amawal / Leqran)",
   "ModifBtnFree": "Iwenniten-iw (Amawal / Leqran)",
   "AjoutModifNotes": "Tiwennitin-iw usligen neɣ izayzen (Lmunada)",
@@ -1010,10 +1010,10 @@ window.I18N_TITLES.ES = {
   "BtnMsg": "Contacto",
   "BiblioNumerique": "Biblioteca digital",
   "t-rechercher-articles-de-blog": "Artículos publicados en Alfamous",
-  "btnOpenBlogLexiqueCoran": "Blog público Zoom-Coran (blog.alfamous.ca)",
+  "btnOpenBlogLexiqueCoran": "Blog público Zoom-Coran (blog.alfamous.ca · lexique-coran.blogspot.com)",
   "ouvrirForum1": "Foro de ideas 💡 : publicaciones privadas y públicas",
   "t-temoignages": "Testimonios anónimos",
-  "btnChokrBlogDigneDeFoi": "Artículos publicados en blog.alfamous.ca",
+  "btnChokrBlogDigneDeFoi": "Artículos publicados en blog.alfamous.ca · lexique-coran.blogspot.com",
   "ModifBtn": "Mis comentarios (léxico / Corán)",
   "ModifBtnFree": "Mis comentarios (léxico / Corán)",
   "AjoutModifNotes": "Mis notas privadas o públicas (foro)",
@@ -2293,12 +2293,13 @@ function savePos(container) {
   }
 })();
 
-/** CHOKR : recherche sur blog.alfamous.ca avec le texte du champ #mot (toujours nouvel onglet). */
+/** CHOKR : recherche blog (URL stable) avec le texte du champ #mot (toujours nouvel onglet). */
 window.openChokrDigneDeFoiSearch = function openChokrDigneDeFoiSearch() {
   const el = document.getElementById("mot");
   const t = el ? String(el.value || "").replace(/\s+/g, " ").trim() : "";
-  const base = "https://blog.alfamous.ca/search";
-  const u = t ? base + "?q=" + encodeURIComponent(t) + "&m=1" : base;
+  const u = (window.ALFAMOUS_URLS && window.ALFAMOUS_URLS.blogSearchUrl)
+    ? window.ALFAMOUS_URLS.blogSearchUrl(t)
+    : "https://lexique-coran.blogspot.com/search" + (t ? "?q=" + encodeURIComponent(t) + "&m=1" : "");
   window.open(u, "_blank", "noopener,noreferrer");
 };
 

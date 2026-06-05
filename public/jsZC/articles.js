@@ -405,8 +405,8 @@
               onclick="return window.zcShowSelectionContextMenuFromMot && window.zcShowSelectionContextMenuFromMot(this);"
               aria-label="Menu contextuel" title="Menu contextuel">☰</button>
             <div class="zc-forum-head-title">
-              <span class="zc-forum-page-title">📚 Articles du blog <a id="linkDigneDeFoiBlogHeader" href="https://blog.alfamous.ca/search" target="_blank" rel="noopener noreferrer"
-                title="Recherche sur blog.alfamous.ca (mots-clés du champ, nouvel onglet)">blog.alfamous.ca</a></span>
+              <span class="zc-forum-page-title">📚 Articles du blog <a id="linkDigneDeFoiBlogHeader" href="https://lexique-coran.blogspot.com/search" target="_blank" rel="noopener noreferrer"
+                title="Recherche blog (blog.alfamous.ca · lexique-coran.blogspot.com)">blog.alfamous.ca · lexique-coran.blogspot.com</a></span>
             </div>
           </div>
         </header>
@@ -1088,12 +1088,15 @@ function sanitizeMediaPermissions(listArticleDivs) {
   }
 
   /**
-   * Modèle URL blog : https://blog.alfamous.ca/search?q=…&m=1
-   * Si query vide → https://blog.alfamous.ca/search (sans query string).
+   * Modèle URL blog (stable) : …/search?q=…&m=1
+   * Si query vide → …/search (sans query string).
    */
   function buildDigneDeFoiSearchUrl(queryText) {
-    const base = "https://blog.alfamous.ca/search";
     const q = String(queryText || "").replace(/\s+/g, " ").trim();
+    if (window.ALFAMOUS_URLS && typeof window.ALFAMOUS_URLS.blogSearchUrl === "function") {
+      return window.ALFAMOUS_URLS.blogSearchUrl(q);
+    }
+    const base = "https://lexique-coran.blogspot.com/search";
     if (!q) return base;
     return base + "?q=" + encodeURIComponent(q) + "&m=1";
   }
@@ -1393,10 +1396,10 @@ function sanitizeMediaPermissions(listArticleDivs) {
       const url = buildDigneDeFoiSearchUrl(titrePourDdf);
       window.open(url, "_blank", "noopener,noreferrer");
     });
-    linkDdf.textContent = "🔍 Rechercher sur blog.alfamous.ca";
+    linkDdf.textContent = "🔍 Rechercher sur le blog (blog.alfamous.ca · lexique-coran.blogspot.com)";
     linkDdf.setAttribute(
       "aria-label",
-      "Rechercher cet article sur blog.alfamous.ca d’après le titre (nouvel onglet)"
+      "Rechercher cet article sur le blog d’après le titre (nouvel onglet)"
     );
     Object.assign(linkDdf.style, {
       display: "inline-flex",
