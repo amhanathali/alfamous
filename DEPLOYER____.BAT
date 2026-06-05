@@ -121,22 +121,12 @@ if errorlevel 1 (
 echo [INFO] Deploiement Firebase termine.
 echo.
 
-REM === Sauvegarde automatique sur GitHub (remplace l'ancienne archive .rar) ===
-echo.
-echo [GIT] Sauvegarde du projet sur GitHub...
-git rev-parse --is-inside-work-tree >nul 2>&1
+REM === Sauvegarde automatique sur GitHub (apres deploy reussi) ===
+call :GIT_SAVE_AFTER_DEPLOY
 if errorlevel 1 (
-  echo [WARN] Pas de depot Git ici : sauvegarde GitHub ignoree.
-) else (
-  for /f %%A in ('powershell -NoProfile -Command "(Get-Date).ToString(\"yyyy-MM-dd HH:mm\")"') do set "GITTS=%%A"
-  git add -A
-  git commit -m "deploy: mise en ligne du !GITTS!"
-  git push -u origin HEAD
-  if errorlevel 1 (
-    echo [WARN] Envoi GitHub echoue. Pensez a sauvegarder manuellement plus tard.
-  ) else (
-    echo [OK] Projet sauvegarde sur GitHub.
-  )
+  echo.
+  echo [ATTENTION] Deploiement Firebase OK, mais GitHub n'est pas a jour.
+  echo            Utilisez GIT_Assistant____.BAT ^(option 3 ou 4^) pour corriger.
 )
 
 :END
@@ -147,6 +137,54 @@ pause >nul
 if "%TM_PUSHED%"=="1" popd
 endlocal
 exit /b
+
+REM ---------------------------------------------------------------------------
+REM Enregistre sur GitHub apres un deploy Firebase reussi.
+REM Ordre : commit local ^> pull --rebase ^> push (branche courante).
+REM ---------------------------------------------------------------------------
+:GIT_SAVE_AFTER_DEPLOY
+echo.
+echo [GIT] Sauvegarde du projet sur GitHub...
+git rev-parse --is-inside-work-tree >nul 2>&1
+if errorlevel 1 (
+  echo [WARN] Pas de depot Git ici : sauvegarde GitHub ignoree.
+  exit /b 1
+)
+
+set "GIT_BRANCH="
+for /f "delims=" %%B in ('git branch --show-current 2^>nul') do set "GIT_BRANCH=%%B"
+if not defined GIT_BRANCH (
+  echo [ERREUR] Branche Git courante introuvable.
+  exit /b 1
+)
+
+for /f %%A in ('powershell -NoProfile -Command "(Get-Date).ToString(\"yyyy-MM-dd HH:mm\")"') do set "GITTS=%%A"
+
+echo [GIT] Branche : !GIT_BRANCH!
+echo [GIT] 1/3 Enregistrement local ^(commit^)...
+git add -A
+git commit -m "deploy: mise en ligne du !GITTS!"
+if errorlevel 1 (
+  echo [INFO] Rien de nouveau a committer ^(deja enregistre^). On continue vers GitHub.
+)
+
+echo [GIT] 2/3 Synchronisation avec GitHub ^(pull --rebase^)...
+git pull --rebase origin "!GIT_BRANCH!"
+if errorlevel 1 (
+  echo [ERREUR] pull --rebase echoue ^(conflit ou reseau^).
+  echo          Corrigez avec GIT_Assistant____.BAT ^(option 1 puis 4 ou 8^), puis option 3.
+  exit /b 1
+)
+
+echo [GIT] 3/3 Envoi vers GitHub ^(push^)...
+git push -u origin HEAD
+if errorlevel 1 (
+  echo [ERREUR] push echoue. Verifiez Internet / authentification GitHub.
+  exit /b 1
+)
+
+echo [OK] GitHub a jour sur la branche !GIT_BRANCH! ^(deploy + fichiers locaux^).
+exit /b 0
 
 :SYNC_ONE
 set "SYNC_SRC=%~1"

@@ -50,6 +50,18 @@ pause
 exit /b 0
 
 REM ---------------------------------------------------------------------------
+:CHECK_SYNC_HINT
+if /I not "!CUR_BRANCH!"=="main" exit /b 0
+git fetch origin 2>nul
+set "BEHIND=0"
+for /f %%N in ('git rev-list --count HEAD..origin/main 2^>nul') do set "BEHIND=%%N"
+if !BEHIND! GTR 0 (
+  echo [RAPPEL] main est en retard de !BEHIND! commit^(s^) sur GitHub.
+  echo          Apres une fusion sur le site ^(Merge pull request^), choisissez 4.
+  echo.
+)
+exit /b 0
+
 :MENU
 cls
 call :SHOW_BRANCH
@@ -59,27 +71,31 @@ echo ============================================================
 echo   Dossier  : %CD%
 echo   Branche  : !CUR_BRANCH!
 echo ============================================================
+call :CHECK_SYNC_HINT
 echo.
 echo   1  Etat du projet ^(lecture seule^)
 echo   2  Changer de branche ou en creer une
 echo   3  Enregistrer et envoyer ^(commit + push^)
-echo   4  Recuperer depuis GitHub ^(pull^)
-echo   5  Fusionner la branche courante dans main
+echo   4  Apres fusion sur GitHub : mettre main a jour sur ce PC
+echo      ^(checkout main + pull — a faire sur chaque ordinateur^)
+echo   5  Fusionner la branche courante dans main ^(sur ce PC^)
 echo   6  Snapshot complet ^(SAUVEGARDER____.BAT^)
 echo   7  Deployer Firebase ^(DEPLOYER____.BAT^)
+echo   8  Pull sur la branche courante seulement
 echo.
 echo   0  Quitter
 echo.
 set "CHOIX="
-set /p "CHOIX=Votre choix (0-7) : "
+set /p "CHOIX=Votre choix (0-8) : "
 if "%CHOIX%"=="0" goto :QUIT
 if "%CHOIX%"=="1" goto :DO_STATUS
 if "%CHOIX%"=="2" goto :DO_BRANCH
 if "%CHOIX%"=="3" goto :DO_COMMIT_PUSH
-if "%CHOIX%"=="4" goto :DO_PULL
+if "%CHOIX%"=="4" goto :DO_PULL_MAIN_AFTER_GITHUB
 if "%CHOIX%"=="5" goto :DO_MERGE_MAIN
 if "%CHOIX%"=="6" goto :DO_SAVE_RAR
 if "%CHOIX%"=="7" goto :DO_DEPLOY
+if "%CHOIX%"=="8" goto :DO_PULL_CURRENT
 echo [INFO] Choix invalide.
 goto :MENU
 
@@ -163,7 +179,48 @@ call :PAUSE_MENU
 goto :MENU
 
 REM ---------------------------------------------------------------------------
-:DO_PULL
+:DO_PULL_MAIN_AFTER_GITHUB
+cls
+echo ============================================================
+echo   SYNC main apres fusion sur GitHub
+echo ============================================================
+echo   Vous avez fusionne une Pull Request sur github.com ?
+echo   Cette option met CE PC a jour : bascule sur main puis pull.
+echo   Repetez sur chaque ordinateur qui travaille sur Alfamous.
+echo.
+set "CONF="
+set /p "CONF=Continuer la synchronisation de main ? (O/N) : "
+if /I not "!CONF!"=="O" goto :MENU
+
+echo.
+echo [1/2] Bascule sur main...
+git checkout main
+if errorlevel 1 (
+  echo [ERREUR] Impossible de basculer sur main.
+  call :PAUSE_MENU
+  goto :MENU
+)
+
+echo [2/2] Recuperation depuis GitHub ^(git pull^)...
+git pull origin main
+if errorlevel 1 (
+  echo [ERREUR] Pull echoue. Conflit ou fichiers locaux non commites ?
+  echo          Reglez avec l'option 1 ^(etat^) avant de recommencer.
+  call :PAUSE_MENU
+  goto :MENU
+)
+
+echo.
+echo [OK] main est a jour sur ce PC avec GitHub.
+echo === Fichiers recents ===
+git log --oneline -5
+echo.
+git status -sb
+call :PAUSE_MENU
+goto :MENU
+
+REM ---------------------------------------------------------------------------
+:DO_PULL_CURRENT
 cls
 call :SHOW_BRANCH
 echo Branche : !CUR_BRANCH!
@@ -172,7 +229,7 @@ git pull
 if errorlevel 1 (
   echo [ERREUR] Pull echoue. Conflit possible : reglez avant de continuer.
 ) else (
-  echo [OK] Projet a jour avec GitHub sur cette branche.
+  echo [OK] Projet a jour avec GitHub sur la branche !CUR_BRANCH!.
 )
 call :PAUSE_MENU
 goto :MENU
@@ -195,6 +252,9 @@ echo   Branche a integrer : !SRC_BRANCH!
 echo.
 echo   Etapes : checkout main ^> pull ^> merge !SRC_BRANCH! ^> push main
 echo   ATTENTION : en cas de conflit, Git s'arretera ; reglez a la main.
+echo.
+echo   Si vous fusionnez plutot sur GitHub ^(Pull Request^), ignorez l'option 5
+echo   et utilisez l'option 4 sur chaque PC pour recuperer les fichiers.
 echo.
 set "CONF="
 set /p "CONF=Continuer ? (O/N) : "
@@ -222,6 +282,8 @@ if errorlevel 1 goto :MERGE_FAIL
 
 echo.
 echo [OK] !SRC_BRANCH! fusionnee dans main et poussee sur GitHub.
+echo.
+echo [RAPPEL] Sur un autre PC : option 4 ^(checkout main + pull^).
 set /p "DELBR=Supprimer la branche locale !SRC_BRANCH! ? (O/N) : "
 if /I "!DELBR!"=="O" git branch -d "!SRC_BRANCH!"
 goto :MERGE_PAUSE
