@@ -1,6 +1,6 @@
 {
   "name": "alfamous",
-  "description": "FR: Recherche sémantique du Coran | EN: Quranic semantic search | AR: بحث دلالي في القرآن | ES: Búsqueda semántica del Corán | KAB: Anadi s sementik n Leqran — roots, Ibn Fāris, text first",
+  "description": "FR: Outils de recherche dans le codex coranique · commentaires versets et mots | EN: Research tools in the Quranic codex | AR: أدوات البحث في المصحف · تعليقات على الآيات والكلمات",
   "version": "1.0.0",
   "license": "GPL-3.0-or-later",
   "repository": {
