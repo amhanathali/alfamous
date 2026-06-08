@@ -29,14 +29,63 @@ Le fichier `functions/firebaseConfig.js` (et `public/jsZC/firebase-local-init.js
 
 > ℹ️ Cette `apiKey` Web **n'est pas un secret** : elle est conçue pour être visible côté navigateur. La sécurité réelle vient des [`firestore.rules`](../firestore.rules) et de la **restriction de la clé par domaine** (référents HTTP) dans la console Google Cloud.
 
-**Restriction recommandée** (Console Google Cloud → *Identifiants* → la clé Web) :
-- *Restrictions d'application* → **Référents HTTP**, par ex. :
-  - `alfamous-amha.web.app/*`
-  - `alfamous-amha.firebaseapp.com/*`
-  - `alfamous.ca/*`
-  - `*.alfamous.ca/*`
+**Restriction recommandée** (Console Google Cloud → *Identifiants* → clé **Browser key (auto created by Firebase)**) :
 
-## 3. Configuration des Cloud Functions (SMTP, newsletter)
+*Restrictions d'application* → **Sites Web** (référents HTTP) :
+
+```text
+https://alfamous-amha.web.app/*
+https://alfamous-amha.firebaseapp.com/*
+https://alfamous.ca/*
+https://*.alfamous.ca/*
+http://localhost/*
+http://127.0.0.1/*
+```
+
+*Restrictions d'API* → **Restreindre la clé**, puis cocher uniquement les APIs utilisées par l'app web :
+
+| API (nom console) | Usage Alfamous |
+|---|---|
+| Cloud Firestore API | Base de données |
+| Identity Toolkit API | Connexion e-mail / mot de passe |
+| Token Service API | Jetons Firebase Auth |
+| Firebase Installations API | Initialisation du SDK |
+| Cloud Functions API | Appels `httpsCallable` (newsletter, TTS, login rapide…) |
+| Cloud Storage for Firebase API | Médias, audio, fichiers |
+
+*(Optionnel : Firebase Realtime Database API — script chargé par précaution.)*
+
+> **Ne pas cocher** BigQuery, Blogger, App Engine, Cloud Build, etc. La **Blogger API** est utilisée par Apps Script avec une **autre** clé (`Gscript/secrets.gs`), pas cette clé navigateur.
+
+### E-mail « Clé API accessible publiquement » (GitHub)
+
+Google envoie parfois un message du type *Trust & Safety* signalant la clé `apiKey` trouvée sur GitHub (`functions/firebaseConfig.js`, `public/jsZC/firebase-local-init.js`).
+
+**Ce n'est pas une fuite de secret serveur.** C'est la clé **client Web Firebase**, visible de toute façon dans le navigateur de chaque visiteur. Après publication open source, l'alerte est **normale**.
+
+**À faire :** appliquer les restrictions ci-dessus ; vérifier la facturation ; **ne pas regénérer** la clé sans raison (abus constaté), sauf rotation volontaire.
+
+**Vrais secrets à ne jamais publier :** `*-adminsdk-*.json`, `client_secret*.json`, `.env`, `Gscript/secrets.gs` (voir section 1).
+
+## 3. Client OAuth « Client web 1 » (inactif)
+
+Dans *Identifiants*, un client OAuth de type **Application Web** (libellé **Client web 1**, ID se terminant par `.apps.googleusercontent.com`) peut afficher :
+
+> *Ce client OAuth n'a pas été utilisé. Les clients OAuth inactifs sont supprimés s'ils ne sont pas utilisés pendant six mois.*
+
+**Contexte Alfamous :** l'application utilise **uniquement** la connexion **e-mail + mot de passe** (`signInWithEmailAndPassword`). Il n'y a pas de bouton « Se connecter avec Google » dans le code. Ce client OAuth a probablement été créé automatiquement ou pour une fonctionnalité jamais activée.
+
+| Question | Réponse |
+|---|---|
+| Est-ce dangereux ? | **Non** — simple rappel de ménage Google. |
+| Faut-il agir ? | **Non**, si vous ne prévoyez pas Google Sign-In. |
+| Supprimer le client ? | **Optionnel.** L'app actuelle n'en a pas besoin. |
+| Politique du projet | **Laisser tel quel** : Google le supprimera seul après 6 mois d'inactivité si rien ne change. |
+| Ajouter Google Sign-In plus tard ? | Recréer ou reconfigurer un client OAuth + activer le fournisseur Google dans Firebase → *Authentication* → *Sign-in method*. |
+
+Le fichier `functions/client_secret*.json` (section 1) sert à un **secret OAuth serveur** distinct ; il n'est **pas** dans Git et n'est **pas** requis pour la connexion e-mail actuelle.
+
+## 4. Configuration des Cloud Functions (SMTP, newsletter)
 
 Définie via `firebase functions:config:set` (pas dans `.env`) :
 
@@ -63,14 +112,14 @@ firebase deploy --only functions
 | `app.public_url` | URL publique de l'app (liens dans les e-mails) |
 | `newsletter.secret` | Clé HMAC pour signer les liens de désabonnement |
 
-## 4. Variables d'environnement (`.env`)
+## 5. Variables d'environnement (`.env`)
 
 | Variable | Rôle |
 |---|---|
 | `GOOGLE_APPLICATION_CREDENTIALS` | Chemin local vers la clé de compte de service |
 | `FIREBASE_STORAGE_BUCKET` / `GCLOUD_STORAGE_BUCKET` | Bucket de stockage utilisé par le TTS |
 
-## 5. Clé API Blogger (Google Apps Script)
+## 6. Clé API Blogger (Google Apps Script)
 
 Utilisée par `Gscript/ArticlesBlogHtml.gs`. Deux façons de la fournir (par ordre de priorité) :
 
@@ -87,10 +136,11 @@ Utilisée par `Gscript/ArticlesBlogHtml.gs`. Deux façons de la fournir (par ord
 
 > Si une clé a déjà été exposée, **créez-en une nouvelle et supprimez l'ancienne** (les clés API ne se régénèrent pas en place).
 
-## 6. Checklist de sécurité avant publication publique
+## 7. Checklist de sécurité avant publication publique
 
 - [ ] Aucun fichier `*.json` de compte de service / OAuth n'est suivi par Git.
 - [ ] `functions/quick-login.json` et `Gscript/secrets.gs` sont bien ignorés.
-- [ ] La clé Web Firebase est restreinte par référents HTTP.
+- [ ] La clé Web Firebase est restreinte par référents HTTP **et** par APIs (section 2).
 - [ ] La clé API Blogger est restreinte à l'API Blogger v3.
-- [ ] Toute ancienne clé exposée a été supprimée côté Google Cloud.
+- [ ] Toute ancienne clé **secrète** exposée a été supprimée côté Google Cloud.
+- [ ] Le client OAuth « Client web 1 » inactif : connu, sans impact (section 3) — laisser tel quel ou supprimer si vous n'utiliserez jamais Google Sign-In.
