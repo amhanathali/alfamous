@@ -47,6 +47,8 @@
   let readOverlayCallerEl = null;
   let readOverlayBoundaryLiftAt = 0;
   let readOverlayPaused = false;
+  /** Incrémenté à l’arrêt / nouveau lancement pour ignorer les onend d’une file annulée. */
+  let readSpeakGen = 0;
 
   function getLc() {
     const raw = (
@@ -73,6 +75,102 @@
     return "fr-FR";
   }
 
+  function arabicSynthLangTag() {
+    try {
+      const v = typeof window.lngVoixAR === "string" ? String(window.lngVoixAR).trim() : "";
+      if (v) return v.indexOf("-") === -1 ? "ar-SA" : v;
+    } catch (_) {}
+    return "ar-SA";
+  }
+
+  function isArabicCodePoint(cp) {
+    return (
+      (cp >= 0x0600 && cp <= 0x06ff) ||
+      (cp >= 0x0750 && cp <= 0x077f) ||
+      (cp >= 0x08a0 && cp <= 0x08ff) ||
+      (cp >= 0xfb50 && cp <= 0xfdff) ||
+      (cp >= 0xfe70 && cp <= 0xfeff)
+    );
+  }
+
+  /**
+   * Classe un caractère pour la segmentation TTS : "ar" | "lat" | null (neutre).
+   * Chiffres occidentaux + « # » → latin (ex. #55.1 = segment FR séparé, pas collé à l’arabe).
+   * Chiffres arabes-indiens → arabe.
+   */
+  function ttsScriptKind(ch) {
+    if (!ch) return null;
+    if (/\s/.test(ch)) return null;
+    const cp = ch.codePointAt(0);
+    if (isArabicCodePoint(cp)) return "ar";
+    /* Chiffres arabes-indiens / persans : restent avec l’arabe. */
+    if (
+      (cp >= 0x660 && cp <= 0x669) ||
+      (cp >= 0x6f0 && cp <= 0x6f9)
+    ) {
+      return "ar";
+    }
+    /* #55.1, 3.14, etc. : latin pour TTS FR dédié (évite le décalage karaoke). */
+    if (cp >= 0x30 && cp <= 0x39) return "lat";
+    if (ch === "#" || ch === ".") return "lat";
+    if (/[.,;:!?…'"«»“”‘’()\[\]{}\-/\\@%&*=+_~^|<>]/.test(ch)) return null;
+    return "lat";
+  }
+
+  /**
+   * Découpe un texte mixte en segments arabe / latin pour enchaîner les voix.
+   * @param {string} text
+   * @param {string} latinLangTag ex. fr-FR / en-US
+   * @returns {{ text: string, lang: string, start: number }[]}
+   */
+  function splitTextByScriptForTts(text, latinLangTag) {
+    const out = [];
+    const s = String(text || "");
+    if (!s) return out;
+    const arLang = arabicSynthLangTag();
+    const latLang = String(latinLangTag || "fr-FR");
+    let currentKind = null;
+    let start = 0;
+
+    function flush(end) {
+      if (end <= start || !currentKind) return;
+      const slice = s.slice(start, end);
+      if (!slice.trim()) return;
+      out.push({
+        text: slice,
+        lang: currentKind === "ar" ? arLang : latLang,
+        start: start
+      });
+    }
+
+    for (let i = 0; i < s.length; ) {
+      const cp = s.codePointAt(i);
+      const ch = String.fromCodePoint(cp);
+      const k = ttsScriptKind(ch);
+      if (k && currentKind == null) {
+        currentKind = k;
+      } else if (k && k !== currentKind) {
+        flush(i);
+        start = i;
+        currentKind = k;
+      }
+      i += ch.length;
+    }
+    flush(s.length);
+
+    if (!out.length && s.trim()) {
+      const mostlyAr = (s.match(/[\u0600-\u06FF]/g) || []).length > s.replace(/\s/g, "").length / 2;
+      out.push({
+        text: s,
+        lang: mostlyAr ? arLang : latLang,
+        start: 0
+      });
+    }
+    return out;
+  }
+
+  window.zcSplitTextByScriptForTts = splitTextByScriptForTts;
+
   const TXT = {
     fr: {
       listen: "Lire le texte",
@@ -80,6 +178,10 @@
       mp3: "MP3",
       /** Infobulle + libellé Actions (court). */
       mp3TitleShort: "MP3 — synthèse sur Firebase ou transcription audio",
+      video: "Vidéo",
+      videoTitle: "Vidéo karaoke (Sujet + Texte)",
+      videoNeedSubject: "Indiquez un sujet pour nommer et titrer la vidéo.",
+      videoUnavailable: "Génération vidéo indisponible (module articles non chargé).",
       listenHelpHeading: "Lecture du texte",
       listenHelpHtml:
         "<p>Le bouton <strong>Lire</strong> utilise la <strong>synthèse vocale du navigateur</strong> pour lire à voix haute le contenu du champ <em>Texte</em>. Aucun enregistrement n’est envoyé sur le serveur pour cette lecture.</p>",
@@ -128,6 +230,10 @@
       listenTitle: "Read text aloud (browser)",
       mp3: "MP3",
       mp3TitleShort: "MP3 — Firebase synthesis or audio transcription",
+      video: "Video",
+      videoTitle: "Karaoke video (Subject + Text)",
+      videoNeedSubject: "Enter a subject to title and name the video.",
+      videoUnavailable: "Video generation unavailable (articles module not loaded).",
       listenHelpHeading: "Read aloud",
       listenHelpHtml:
         "<p>The <strong>Read</strong> button uses your browser’s <strong>speech synthesis</strong> to read the <em>Text</em> field aloud. Nothing is uploaded to the server for this playback.</p>",
@@ -175,6 +281,10 @@
       listenTitle: "قراءة النص بصوت عالٍ",
       mp3: "MP3",
       mp3TitleShort: "MP3 — تركيب على Firebase أو تفريغ صوتي",
+      video: "فيديو",
+      videoTitle: "فيديو كاريوكي (العنوان + النص)",
+      videoNeedSubject: "أدخل عنوانًا لتسمية الفيديو.",
+      videoUnavailable: "إنشاء الفيديو غير متاح.",
       listenHelpHeading: "قراءة النص",
       listenHelpHtml:
         "<p>زر <strong>استمع</strong> يستخدم <strong>تركيب الصوت في المتصفح</strong> لقراءة حقل <em>النص</em> بصوت عالٍ. لا يُرفع أي ملف للخادم لهذه القراءة.</p>",
@@ -220,6 +330,10 @@
       listenTitle: "Leer el texto en voz alta",
       mp3: "MP3",
       mp3TitleShort: "MP3 — síntesis en Firebase o transcripción de audio",
+      video: "Vídeo",
+      videoTitle: "Vídeo karaoke (Asunto + Texto)",
+      videoNeedSubject: "Indica un asunto para titular el vídeo.",
+      videoUnavailable: "Generación de vídeo no disponible.",
       listenHelpHeading: "Lectura del texto",
       listenHelpHtml:
         "<p>El botón <strong>Leer</strong> usa la <strong>síntesis de voz del navegador</strong> para leer en voz alta el campo <em>Texto</em>. No se sube ningún archivo al servidor para esta lectura.</p>",
@@ -756,13 +870,34 @@
 
   /**
    * Lance la synthèse avec événements boundary (Chrome/Edge : mot à mot ; autres : audio sans surbrillance détaillée).
+   * Détecte automatiquement les passages arabes / latins et enchaîne la voix adaptée.
    */
   function speakWithHighlight(fullText, wordStarts, bodyEl, opts) {
     opts = opts || {};
-    const langTag = String(opts.langTag || speechSynthLangTag());
+    const requestedLang = String(opts.langTag || speechSynthLangTag());
+    const latinLang =
+      requestedLang.toLowerCase().indexOf("ar") === 0 ? "fr-FR" : requestedLang;
     const rate = Number(opts.rate);
+    const rateVal = Number.isFinite(rate) && rate > 0 ? rate : 1;
+    const segments = splitTextByScriptForTts(fullText, latinLang);
+    if (!segments.length) {
+      segments.push({ text: fullText, lang: requestedLang, start: 0 });
+    }
+
+    function finishPlayback(ok) {
+      readOverlayPaused = false;
+      if (ok && wordStarts.length > 0) {
+        setWordHighlight(bodyEl, wordStarts.length - 1);
+      }
+      window.setTimeout(function () {
+        clearWordHighlight(bodyEl);
+        closeReadAloudOverlay();
+        if (typeof opts.onDone === "function") opts.onDone();
+      }, ok ? 520 : 0);
+    }
 
     function runSpeak() {
+      const myGen = ++readSpeakGen;
       try {
         window.speechSynthesis.cancel();
       } catch (_) {}
@@ -774,40 +909,57 @@
         );
       } catch (_) {}
 
-      const u = new SpeechSynthesisUtterance(fullText);
-      u.lang = langTag;
-      u.rate = Number.isFinite(rate) && rate > 0 ? rate : 1;
-      const voice = pickVoiceForRead(langTag);
-      if (voice) u.voice = voice;
+      let segIndex = 0;
 
-      u.onboundary = function (ev) {
-        if (ev.charIndex == null || Number.isNaN(Number(ev.charIndex))) return;
-        const wi = wordIndexFromChar(Number(ev.charIndex), wordStarts);
-        setWordHighlight(bodyEl, wi);
-        maybeLiftReadOverlayOnBoundary();
-      };
+      function speakNext() {
+        if (myGen !== readSpeakGen) return;
+        if (segIndex >= segments.length) {
+          finishPlayback(true);
+          return;
+        }
+        const seg = segments[segIndex++];
+        const u = new SpeechSynthesisUtterance(seg.text);
+        u.lang = seg.lang;
+        u.rate = rateVal;
+        const voice = pickVoiceForRead(seg.lang);
+        if (voice) u.voice = voice;
 
-      u.onend = function () {
-        readOverlayPaused = false;
-        if (wordStarts.length > 0) setWordHighlight(bodyEl, wordStarts.length - 1);
-        window.setTimeout(function () {
-          clearWordHighlight(bodyEl);
-          closeReadAloudOverlay();
-          if (typeof opts.onDone === "function") opts.onDone();
-        }, 520);
-      };
+        u.onboundary = function (ev) {
+          if (myGen !== readSpeakGen) return;
+          if (ev.charIndex == null || Number.isNaN(Number(ev.charIndex))) return;
+          const globalIdx = seg.start + Number(ev.charIndex);
+          const wi = wordIndexFromChar(globalIdx, wordStarts);
+          setWordHighlight(bodyEl, wi);
+          maybeLiftReadOverlayOnBoundary();
+        };
 
-      u.onerror = function () {
-        readOverlayPaused = false;
-        closeReadAloudOverlay();
-        if (typeof opts.onDone === "function") opts.onDone();
-      };
+        u.onend = function () {
+          if (myGen !== readSpeakGen) return;
+          speakNext();
+        };
 
-      try {
-        window.speechSynthesis.speak(u);
-      } catch (_) {
-        closeReadAloudOverlay();
+        u.onerror = function (ev) {
+          if (myGen !== readSpeakGen) return;
+          const err = ev && ev.error ? String(ev.error) : "";
+          if (err === "interrupted" || err === "canceled" || err === "cancelled") {
+            readOverlayPaused = false;
+            closeReadAloudOverlay();
+            if (typeof opts.onDone === "function") opts.onDone();
+            return;
+          }
+          // Erreur sur un segment : tenter le suivant plutôt que d’abandonner tout.
+          speakNext();
+        };
+
+        try {
+          window.speechSynthesis.speak(u);
+        } catch (_) {
+          if (myGen !== readSpeakGen) return;
+          finishPlayback(false);
+        }
       }
+
+      speakNext();
     }
 
     void window.speechSynthesis.getVoices();
@@ -818,8 +970,9 @@
         } catch (_) {}
         runSpeak();
       };
+    } else {
+      runSpeak();
     }
-    runSpeak();
   }
 
   function openReadAloudFullscreenDisplayThenSpeak(displayText, speakText, wordStarts, opts) {
@@ -926,6 +1079,7 @@
 
   /** Arrête la lecture vocale du champ Texte (navigateur). Appelée à la fermeture du modal ou si le texte change. */
   function stopAfModalListenPlayback() {
+    readSpeakGen++;
     closeReadAloudOverlay();
     try {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -965,8 +1119,9 @@
 
   /**
    * API globale réutilisable : lecture popup + surlignage mot à mot.
+   * Détecte automatiquement les passages arabes (voix ar) et latins (langTag / UI).
    * @param {string} text
-   * @param {{langTag?: string, rate?: number, title?: string, onDone?: Function}} [opts]
+   * @param {{langTag?: string, rate?: number, title?: string, callerEl?: Element, onDone?: Function}} [opts]
    */
   window.zcReadTextWithOverlay = function zcReadTextWithOverlay(text, opts) {
     if (!window.speechSynthesis) return false;
@@ -1454,8 +1609,10 @@
     const T = tstrings();
     const listen = document.getElementById("afModalBodyTtsListen");
     const mp3 = document.getElementById("afModalBodyTtsFirebase");
+    const video = document.getElementById("afModalBodyTtsVideo");
     const labListen = document.getElementById("afModalBodyTtsListen-label");
     const labMp3 = document.getElementById("afModalBodyTtsFirebase-label");
+    const labVideo = document.getElementById("afModalBodyTtsVideo-label");
     if (listen) {
       listen.setAttribute("title", T.listenTitle);
       listen.setAttribute("aria-label", T.listenTitle);
@@ -1469,6 +1626,13 @@
       mp3.setAttribute("data-zc-tab-title", mp3Short);
     }
     if (labMp3) labMp3.textContent = mp3Short;
+    const videoTitle = T.videoTitle || T.video || "Vidéo";
+    if (video) {
+      video.setAttribute("title", videoTitle);
+      video.setAttribute("aria-label", videoTitle);
+      video.setAttribute("data-zc-tab-title", videoTitle);
+    }
+    if (labVideo) labVideo.textContent = T.video || "Vidéo";
     const fileBtn = document.getElementById("afModalMesNoteAudioFileBtn");
     if (fileBtn) {
       const tit = T.sttFilePickTitle || "";
@@ -1625,6 +1789,51 @@
     }
   };
 
+  async function recordMesNoteVideo() {
+    const T = tstrings();
+    const body = getBodyText();
+    const subject = getSubjectText();
+    if (!body) {
+      toast(T.empty, "orange");
+      return;
+    }
+    if (!subject) {
+      popupPlainMessage(T.videoNeedSubject || T.mp3NeedSubject || T.empty);
+      return;
+    }
+    if (typeof window.zcRecordReadAloudVideo !== "function") {
+      popupPlainMessage(T.videoUnavailable || T.genFail);
+      return;
+    }
+    const btn = document.getElementById("afModalBodyTtsVideo");
+    const oldLabel = btn && btn.querySelector(".zc-top-action-label")
+      ? btn.querySelector(".zc-top-action-label").textContent
+      : null;
+    if (btn) {
+      btn.disabled = true;
+      if (btn.querySelector(".zc-top-action-label")) {
+        btn.querySelector(".zc-top-action-label").textContent = "…";
+      }
+    }
+    try {
+      await window.zcRecordReadAloudVideo(body, {
+        title: subject,
+        fileBase: subject,
+        callerEl: document.getElementById("afModalOverlay") || null
+      });
+    } catch (_) {
+      toast(T.genFail, "red");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        if (oldLabel != null && btn.querySelector(".zc-top-action-label")) {
+          btn.querySelector(".zc-top-action-label").textContent = oldLabel;
+        }
+      }
+      syncMesNotesTtsLabels();
+    }
+  }
+
   function bindDelegation() {
     if (document.body.dataset.zcMesNotesTtsBound === "1") return;
     document.body.dataset.zcMesNotesTtsBound = "1";
@@ -1635,6 +1844,11 @@
         if (t && t.closest && t.closest("#afModalBodyTtsListen")) {
           ev.preventDefault();
           speakBodyText();
+          return;
+        }
+        if (t && t.closest && t.closest("#afModalBodyTtsVideo")) {
+          ev.preventDefault();
+          void recordMesNoteVideo();
           return;
         }
         if (t && t.closest && t.closest("#afModalBodyTtsFirebase")) {

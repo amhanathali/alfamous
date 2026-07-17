@@ -1,4 +1,4 @@
-/* eslint-disable max-len, indent, object-curly-spacing, comma-dangle,
+﻿/* eslint-disable max-len, indent, object-curly-spacing, comma-dangle,
    operator-linebreak, require-jsdoc */
 /**
  * Cloud Functions — Alfamous
@@ -1306,6 +1306,11 @@ exports.synthesizeMesNoteAudio = functions
       payload.text != null ? payload.text : payload.body || ""
     ).trim();
     const subject = String(payload.subject != null ? payload.subject : "").trim();
+    const speechBodyOnly = !!(
+      payload.speechBodyOnly ||
+      payload.speakBodyOnly ||
+      payload.bodyOnly
+    );
     let langKey = String(payload.langKey || "fr")
       .toLowerCase()
       .trim();
@@ -1317,6 +1322,7 @@ exports.synthesizeMesNoteAudio = functions
       textLen: text.length,
       subjectLen: subject.length,
       langKey,
+      speechBodyOnly,
       payloadKeys: Object.keys(payload),
     });
     if (!text) {
@@ -1346,13 +1352,7 @@ exports.synthesizeMesNoteAudio = functions
     const phase = String(payload.phase || "").trim().toLowerCase();
     if (phase === "probe") {
       try {
-        const r = await probeMesNoteAudioUnchanged(
-          admin,
-          context.auth.uid,
-          text,
-          langKey,
-          subject
-        );
+        const r = await probeMesNoteAudioUnchanged(admin, context.auth.uid, text, langKey, subject, speechBodyOnly);
         return {
           probe: true,
           unchanged: r.unchanged,
@@ -1391,7 +1391,8 @@ exports.synthesizeMesNoteAudio = functions
         context.auth.uid,
         text,
         langKey,
-        subject
+        subject,
+        speechBodyOnly
       );
       return r;
     } catch (e) {

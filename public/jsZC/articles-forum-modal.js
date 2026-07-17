@@ -1068,6 +1068,7 @@
       /* Déplié : Lire / MP3 = libellé complet (plusieurs lignes si besoin). */
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsListen-label,
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsFirebase-label,
+      #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsVideo-label,
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyAnalyze-label {
         white-space: normal;
         overflow: visible;
@@ -1078,6 +1079,7 @@
       }
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsListen.zc-comment-popup-action-tile,
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsFirebase.zc-comment-popup-action-tile,
+      #afModalOverlay .zc-af-actions-toolbar #afModalBodyTtsVideo.zc-comment-popup-action-tile,
       #afModalOverlay .zc-af-actions-toolbar #afModalBodyAnalyze.zc-comment-popup-action-tile {
         align-items: flex-start;
       }
@@ -1406,6 +1408,10 @@
             <button type="button" id="afModalBodyTtsFirebase" class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-comment-popup-action-tile" title="" aria-label="">
               <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-cloud-upload-alt"></i></span>
               <span class="zc-top-action-label" id="afModalBodyTtsFirebase-label">MP3</span>
+            </button>
+            <button type="button" id="afModalBodyTtsVideo" class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-comment-popup-action-tile" title="" aria-label="">
+              <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-video"></i></span>
+              <span class="zc-top-action-label" id="afModalBodyTtsVideo-label">Vidéo</span>
             </button>
             <button type="button" id="afModalBodyAnalyze" class="menu-button active zc-top-action-btn zc-popup-tool-btn zc-comment-popup-action-tile" title="" aria-label="">
               <span class="zc-top-action-ico" aria-hidden="true"><i class="fas fa-chart-line"></i></span>

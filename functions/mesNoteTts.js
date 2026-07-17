@@ -24,12 +24,17 @@ const SUBJECT_BODY_SEP = "\n\n";
 
 /**
  * Texte lu par la synthèse : **sujet** puis **corps**, tronqué à MAX_CHARS au total.
+ * Si speechBodyOnly : uniquement le corps (ex. vidéo article, sans relire le titre).
  * @param {string} subjectTrim
  * @param {string} bodyRaw champ « Texte » (corps)
+ * @param {boolean} [speechBodyOnly]
  */
-function buildMesNoteTtsInput(subjectTrim, bodyRaw) {
-  const subj = String(subjectTrim || "").trim();
+function buildMesNoteTtsInput(subjectTrim, bodyRaw, speechBodyOnly) {
   const body = String(bodyRaw || "").trim();
+  if (speechBodyOnly) {
+    return body.slice(0, MAX_CHARS);
+  }
+  const subj = String(subjectTrim || "").trim();
   if (!subj) return "";
   if (!body) {
     return subj.slice(0, MAX_CHARS);
@@ -160,7 +165,14 @@ async function checkMesNoteMp3Unchanged(admin, uid, inputText, langKey, subjectT
  * @param {string} langKey fr|en|ar|es|kab
  * @param {string} subject sujet Mes Notes (nom du fichier .mp3)
  */
-async function synthesizeMesNoteAudioImpl(admin, uid, text, langKey, subject) {
+async function synthesizeMesNoteAudioImpl(
+  admin,
+  uid,
+  text,
+  langKey,
+  subject,
+  speechBodyOnly
+) {
   const subjectTrim = String(subject || "").trim();
   if (!subjectTrim) {
     const err = new Error("empty_subject");
@@ -177,7 +189,11 @@ async function synthesizeMesNoteAudioImpl(admin, uid, text, langKey, subject) {
     err.code = "EMPTY";
     throw err;
   }
-  const inputText = buildMesNoteTtsInput(subjectTrim, bodyRaw);
+  const inputText = buildMesNoteTtsInput(
+    subjectTrim,
+    bodyRaw,
+    !!speechBodyOnly
+  );
   if (!inputText) {
     const err = new Error("empty_text");
     err.code = "EMPTY";
@@ -250,7 +266,14 @@ async function synthesizeMesNoteAudioImpl(admin, uid, text, langKey, subject) {
 /**
  * Sonde seule (pas de TTS) — pour afficher « inchangé » avant confirmation côté client.
  */
-async function probeMesNoteAudioUnchanged(admin, uid, text, langKey, subject) {
+async function probeMesNoteAudioUnchanged(
+  admin,
+  uid,
+  text,
+  langKey,
+  subject,
+  speechBodyOnly
+) {
   const subjectTrim = String(subject || "").trim();
   if (!subjectTrim) {
     const err = new Error("empty_subject");
@@ -263,7 +286,11 @@ async function probeMesNoteAudioUnchanged(admin, uid, text, langKey, subject) {
     err.code = "EMPTY";
     throw err;
   }
-  const inputText = buildMesNoteTtsInput(subjectTrim, bodyRaw);
+  const inputText = buildMesNoteTtsInput(
+    subjectTrim,
+    bodyRaw,
+    !!speechBodyOnly
+  );
   if (!inputText) {
     const err = new Error("empty_text");
     err.code = "EMPTY";

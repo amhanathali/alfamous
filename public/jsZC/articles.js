@@ -1343,6 +1343,768 @@ function sanitizeMediaPermissions(listArticleDivs) {
     popup.style.zIndex = "";
   }
 
+  function articlePopupAlert(msg) {
+    if (typeof alertMsgBoxPopup === "function") {
+      try {
+        alertMsgBoxPopup(msg);
+        return;
+      } catch (_) {}
+    }
+    try {
+      window.alert(msg);
+    } catch (_) {}
+  }
+
+  function sanitizeArticleVideoFileBase(name) {
+    let s = String(name || "article").trim();
+    s = s
+      .replace(/[\u0000-\u001f\u007f\\\/:*?"<>|]/g, "_")
+      .replace(/\s+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    if (s.length > 80) s = s.slice(0, 80).replace(/_+$/g, "");
+    return s || "article";
+  }
+
+  function pickArticleVideoRecorderMime() {
+    if (!window.MediaRecorder || typeof MediaRecorder.isTypeSupported !== "function") {
+      return "";
+    }
+    const types = [
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp9",
+      "video/webm;codecs=vp8",
+      "video/webm"
+    ];
+    for (let i = 0; i < types.length; i++) {
+      if (MediaRecorder.isTypeSupported(types[i])) return types[i];
+    }
+    return "";
+  }
+
+  function articleVideoNotifyDone(opts, ok) {
+    if (opts && typeof opts.onDone === "function") {
+      try {
+        opts.onDone(!!ok);
+      } catch (_) {}
+    }
+  }
+
+  function latinLangKeyForArticleVideo() {
+    try {
+      if (typeof window.getUILang === "function") {
+        const ui = String(window.getUILang() || "fr")
+          .toLowerCase()
+          .slice(0, 2);
+        if (ui === "en" || ui === "es") return ui;
+        if (ui === "ar") return "fr";
+      }
+    } catch (_) {}
+    return "fr";
+  }
+
+  function langTagToLangKey(langTag) {
+    const t = String(langTag || "").toLowerCase();
+    if (t.indexOf("ar") === 0) return "ar";
+    if (t.indexOf("en") === 0) return "en";
+    if (t.indexOf("es") === 0) return "es";
+    return "fr";
+  }
+
+  function splitArticleTextForVideo(text) {
+    const latinTag =
+      latinLangKeyForArticleVideo() === "en"
+        ? "en-US"
+        : latinLangKeyForArticleVideo() === "es"
+          ? "es-ES"
+          : "fr-FR";
+    let segs = [];
+    if (typeof window.zcSplitTextByScriptForTts === "function") {
+      segs = window.zcSplitTextByScriptForTts(text, latinTag) || [];
+    }
+    if (!segs.length) {
+      segs = [{ text: text, lang: latinTag, start: 0 }];
+    }
+    /* Fusionner les segments adjacents de même langue. */
+    const merged = [];
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i];
+      const prev = merged[merged.length - 1];
+      if (prev && prev.lang === s.lang) {
+        prev.text += s.text;
+      } else {
+        merged.push({ text: s.text, lang: s.lang, start: s.start });
+      }
+    }
+    return merged;
+  }
+
+  function downloadArticleVideoBlob(blob, fileBase) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = sanitizeArticleVideoFileBase(fileBase) + ".webm";
+    document.body.appendChild(a);
+    a.click();
+    try {
+      a.remove();
+    } catch (_) {}
+    window.setTimeout(function () {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (_) {}
+    }, 2500);
+  }
+
+  function normalizeArticleVideoText(text) {
+    return String(text || "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .replace(/[ \t\u00a0\f\v]+/g, " ")
+      .replace(/ *\n */g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function wrapArticleVideoWords(text) {
+    const words = [];
+    const re = /\S+|\n+/g;
+    let m;
+    const s = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    while ((m = re.exec(s)) !== null) {
+      if (/^\n+$/.test(m[0])) {
+        words.push({
+          text: m[0],
+          start: m.index,
+          end: m.index + m[0].length,
+          weight: 0,
+          isBreak: true,
+          breakLines: m[0].length >= 2 ? 2 : 1
+        });
+      } else {
+        const isAr = /[\u0600-\u06FF]/.test(m[0]);
+        const chars = Array.from(m[0]).length;
+        let weight = Math.max(1, Math.round(chars * (isAr ? 1.8 : 1)));
+        /* Réfs de versets (#55.1) : la synthèse FR dure plus longtemps que le nb de caractères. */
+        if (/^#?\d+(?:[.:]\d+)+$/.test(m[0]) || /^#\d+/.test(m[0])) {
+          weight = Math.max(weight * 4, 18);
+        }
+        words.push({
+          text: m[0],
+          start: m.index,
+          end: m.index + m[0].length,
+          weight: weight,
+          isBreak: false,
+          breakLines: 0,
+          isAr: isAr
+        });
+      }
+    }
+    return words;
+  }
+
+  function wordIndexFromWeightedProgress(segWords, progress01) {
+    if (!segWords.length) return 0;
+    const speakable = [];
+    for (let i = 0; i < segWords.length; i++) {
+      if (segWords[i] && segWords[i].weight > 0 && !segWords[i].isBreak) {
+        speakable.push({ local: i, weight: segWords[i].weight });
+      }
+    }
+    if (!speakable.length) return 0;
+    const total = speakable.reduce(function (acc, w) {
+      return acc + w.weight;
+    }, 0);
+    const target = Math.min(1, Math.max(0, progress01)) * total;
+    let acc = 0;
+    for (let i = 0; i < speakable.length; i++) {
+      acc += speakable[i].weight;
+      if (target <= acc) return speakable[i].local;
+    }
+    return speakable[speakable.length - 1].local;
+  }
+
+  /**
+   * Aligne les mots affichés sur le texte réellement envoyé au TTS (spokenText).
+   */
+  function attachSegmentSyncWords(allWords, seg) {
+    const spokenWords = wrapArticleVideoWords(seg.spokenText || "").filter(function (w) {
+      return !w.isBreak && w.weight > 0;
+    });
+    const raw = String(seg.text || "");
+    const end = seg.start + raw.length;
+    const inRange = [];
+    for (let wi = 0; wi < allWords.length; wi++) {
+      if (allWords[wi].isBreak) continue;
+      if (allWords[wi].start >= seg.start && allWords[wi].start < end) {
+        inRange.push(wi);
+      }
+    }
+    seg.wordIndexes = [];
+    seg.segWords = [];
+    const n = Math.min(spokenWords.length, inRange.length);
+    for (let i = 0; i < n; i++) {
+      const gi = inRange[i];
+      seg.wordIndexes.push(gi);
+      seg.segWords.push({
+        text: spokenWords[i].text,
+        start: allWords[gi].start,
+        end: allWords[gi].end,
+        weight: spokenWords[i].weight,
+        isBreak: false
+      });
+    }
+  }
+
+  async function resolveMesNoteMp3Url(payload) {
+    if (payload && payload.downloadURL) return String(payload.downloadURL);
+    const storagePath = payload && payload.storagePath;
+    if (!storagePath || typeof firebase === "undefined" || !firebase.storage) return "";
+    try {
+      return await firebase.storage().ref(storagePath).getDownloadURL();
+    } catch (_) {
+      return "";
+    }
+  }
+
+  async function synthesizeArticleVideoSegment(segText, langKey, subject) {
+    const fn = firebase
+      .app()
+      .functions("europe-west1")
+      .httpsCallable("synthesizeMesNoteAudio", { timeout: 120000 });
+    const res = await fn({
+      text: segText,
+      subject: subject,
+      langKey: langKey,
+      speechBodyOnly: true
+    });
+    const payload = res && res.data;
+    const mp3Url = await resolveMesNoteMp3Url(payload);
+    if (!mp3Url) throw new Error("mp3_url");
+    const resp = await fetch(mp3Url);
+    if (!resp.ok) throw new Error("fetch_mp3");
+    return await resp.arrayBuffer();
+  }
+
+  /**
+   * Karaoke canvas + buffers audio (segments ar/fr) muxés → WebM synchronisé.
+   * Défilement auto sur le mot actif ; ✖ / Échap annule sans téléchargement.
+   */
+  function recordCanvasKaraokeWithAudioBuffers(fullText, preparedSegs, opts) {
+    return new Promise(function (resolve) {
+      const words = wrapArticleVideoWords(fullText);
+      preparedSegs.forEach(function (seg) {
+        attachSegmentSyncWords(words, seg);
+      });
+
+      const wrap = document.createElement("div");
+      wrap.id = "zcArticleVideoRecOverlay";
+      Object.assign(wrap.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "2147483000",
+        background: "rgba(15,23,42,.92)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+        boxSizing: "border-box"
+      });
+
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.textContent = "✖";
+      closeBtn.title = "Fermer sans télécharger";
+      closeBtn.setAttribute("aria-label", "Fermer sans télécharger la vidéo");
+      Object.assign(closeBtn.style, {
+        position: "fixed",
+        top: "14px",
+        right: "18px",
+        zIndex: "2147483001",
+        width: "44px",
+        height: "44px",
+        border: "none",
+        borderRadius: "10px",
+        background: "rgba(15,23,42,.85)",
+        color: "#fff",
+        fontSize: "22px",
+        fontWeight: "700",
+        cursor: "pointer",
+        lineHeight: "1",
+        boxShadow: "0 4px 16px rgba(0,0,0,.35)"
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.min(1280, Math.max(640, window.innerWidth || 1280));
+      canvas.height = Math.min(720, Math.max(360, window.innerHeight || 720));
+      Object.assign(canvas.style, {
+        width: "min(96vw, 1280px)",
+        height: "auto",
+        maxHeight: "92vh",
+        borderRadius: "12px",
+        background: "#0b1220",
+        boxShadow: "0 12px 40px rgba(0,0,0,.35)"
+      });
+      wrap.appendChild(canvas);
+      wrap.appendChild(closeBtn);
+      document.body.appendChild(wrap);
+
+      const headerTitle = String(
+        (opts && (opts.title || opts.fileBase)) || "Alfamous"
+      ).trim() || "Alfamous";
+
+      const ctx2d = canvas.getContext("2d");
+      let activeWi = 0;
+      let raf = 0;
+      let stopped = false;
+      let wantDownload = true;
+      let highlightFn = function () {};
+      let currentSource = null;
+      let wordLayout = null;
+
+      function buildWordLayout() {
+        if (!ctx2d) return [];
+        const w = canvas.width;
+        const leftM = 40;
+        const rightM = w - 40;
+        const lineH = 44;
+        const fontBody = "32px Tahoma, 'Segoe UI', 'Noto Naskh Arabic', sans-serif";
+        ctx2d.font = fontBody;
+        const layout = [];
+        let y = 0;
+        let inRtl = false;
+        let xLtr = leftM;
+        let xRtl = rightM;
+        let lineHasGlyph = false;
+
+        function newLine() {
+          y += lineH;
+          xLtr = leftM;
+          xRtl = rightM;
+          lineHasGlyph = false;
+        }
+
+        for (let i = 0; i < words.length; i++) {
+          const W = words[i];
+          if (W.isBreak) {
+            inRtl = false;
+            xLtr = leftM;
+            xRtl = rightM;
+            y += lineH * (W.breakLines || 1);
+            lineHasGlyph = false;
+            continue;
+          }
+          const isAr = /[\u0600-\u06FF]/.test(W.text);
+          ctx2d.direction = isAr ? "rtl" : "ltr";
+          const word = W.text + " ";
+          const ww = Math.max(1, ctx2d.measureText(word).width);
+
+          if (isAr) {
+            if (!inRtl) {
+              if (lineHasGlyph) newLine();
+              inRtl = true;
+              xRtl = rightM;
+            }
+            if (xRtl - ww < leftM && lineHasGlyph) {
+              newLine();
+              inRtl = true;
+              xRtl = rightM;
+            }
+            const xLeft = xRtl - ww;
+            layout.push({
+              i: i,
+              x: xLeft,
+              y: y,
+              w: ww,
+              lineH: lineH,
+              isAr: true,
+              word: word
+            });
+            xRtl = xLeft;
+            lineHasGlyph = true;
+          } else {
+            if (inRtl) {
+              if (lineHasGlyph) newLine();
+              inRtl = false;
+              xLtr = leftM;
+            }
+            if (xLtr + ww > rightM && lineHasGlyph) {
+              newLine();
+            }
+            layout.push({
+              i: i,
+              x: xLtr,
+              y: y,
+              w: ww,
+              lineH: lineH,
+              isAr: false,
+              word: word
+            });
+            xLtr += ww;
+            lineHasGlyph = true;
+          }
+        }
+        ctx2d.direction = "ltr";
+        return layout;
+      }
+
+      function drawHeaderTitle(w) {
+        ctx2d.fillStyle = "#e2e8f0";
+        ctx2d.font = "bold 26px Tahoma, 'Segoe UI', 'Noto Naskh Arabic', sans-serif";
+        ctx2d.textAlign = "center";
+        ctx2d.direction = "ltr";
+        const maxTitleW = w - 100;
+        let label = headerTitle;
+        if (ctx2d.measureText(label).width > maxTitleW) {
+          while (label.length > 4 && ctx2d.measureText(label + "…").width > maxTitleW) {
+            label = label.slice(0, -1);
+          }
+          label += "…";
+        }
+        const isAr = /[\u0600-\u06FF]/.test(headerTitle);
+        ctx2d.direction = isAr ? "rtl" : "ltr";
+        ctx2d.fillText(label, w / 2, 48);
+        ctx2d.direction = "ltr";
+      }
+
+      function drawFrame() {
+        if (!ctx2d) return;
+        if (!wordLayout) wordLayout = buildWordLayout();
+        const w = canvas.width;
+        const h = canvas.height;
+        const headerH = 88;
+        const footerPad = 28;
+        const viewH = h - headerH - footerPad;
+
+        let scrollY = 0;
+        let activeLayout = null;
+        for (let li = 0; li < wordLayout.length; li++) {
+          if (wordLayout[li].i === activeWi) {
+            activeLayout = wordLayout[li];
+            break;
+          }
+        }
+        if (activeLayout) {
+          const target = activeLayout.y + activeLayout.lineH / 2 - viewH / 2;
+          scrollY = Math.max(0, target);
+        }
+
+        ctx2d.fillStyle = "#0b1220";
+        ctx2d.fillRect(0, 0, w, h);
+        drawHeaderTitle(w);
+
+        ctx2d.save();
+        ctx2d.beginPath();
+        ctx2d.rect(0, headerH, w, viewH);
+        ctx2d.clip();
+
+        /* textBaseline top : la 1re ligne (y=0) reste visible sous le titre. */
+        ctx2d.textBaseline = "top";
+        ctx2d.textAlign = "left";
+        ctx2d.direction = "ltr";
+        ctx2d.font = "32px Tahoma, 'Segoe UI', 'Noto Naskh Arabic', sans-serif";
+        for (let i = 0; i < wordLayout.length; i++) {
+          const L = wordLayout[i];
+          const drawY = headerH + L.y - scrollY;
+          if (drawY + L.lineH < headerH || drawY > headerH + viewH) continue;
+          ctx2d.fillStyle = L.i === activeWi ? "#fbbf24" : "#e2e8f0";
+          ctx2d.fillText(L.word, L.x, drawY);
+        }
+        ctx2d.restore();
+        ctx2d.textBaseline = "alphabetic";
+        ctx2d.textAlign = "left";
+        ctx2d.direction = "ltr";
+      }
+
+      function tick() {
+        if (stopped) return;
+        try {
+          highlightFn();
+        } catch (_) {}
+        drawFrame();
+        raf = window.requestAnimationFrame(tick);
+      }
+
+      const canvasStream = canvas.captureStream(30);
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const dest = audioCtx.createMediaStreamDestination();
+      const tracks = canvasStream.getVideoTracks().slice();
+      const audioTracks = dest.stream.getAudioTracks();
+      for (let i = 0; i < audioTracks.length; i++) tracks.push(audioTracks[i]);
+
+      if (!audioTracks.length) {
+        try {
+          wrap.remove();
+        } catch (_) {}
+        try {
+          audioCtx.close();
+        } catch (_) {}
+        articlePopupAlert("Impossible d’attacher la piste audio à la vidéo.");
+        resolve(false);
+        return;
+      }
+
+      const mixed = new MediaStream(tracks);
+      const mime = pickArticleVideoRecorderMime();
+      let recorder;
+      try {
+        recorder = mime
+          ? new MediaRecorder(mixed, { mimeType: mime, videoBitsPerSecond: 2500000 })
+          : new MediaRecorder(mixed);
+      } catch (_) {
+        try {
+          wrap.remove();
+        } catch (_) {}
+        try {
+          audioCtx.close();
+        } catch (_) {}
+        articlePopupAlert("Impossible de démarrer l’enregistreur vidéo.");
+        resolve(false);
+        return;
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = function (e) {
+        if (e && e.data && e.data.size) chunks.push(e.data);
+      };
+      recorder.onstop = function () {
+        stopped = true;
+        try {
+          window.cancelAnimationFrame(raf);
+        } catch (_) {}
+        try {
+          document.removeEventListener("keydown", onEsc, true);
+        } catch (_) {}
+        try {
+          wrap.remove();
+        } catch (_) {}
+        try {
+          canvasStream.getTracks().forEach(function (t) {
+            t.stop();
+          });
+        } catch (_) {}
+        try {
+          audioCtx.close();
+        } catch (_) {}
+        if (!wantDownload || !chunks.length) {
+          resolve(false);
+          return;
+        }
+        downloadArticleVideoBlob(
+          new Blob(chunks, { type: recorder.mimeType || "video/webm" }),
+          opts && opts.fileBase
+        );
+        resolve(true);
+      };
+
+      function finish(download) {
+        if (stopped) return;
+        wantDownload = download !== false;
+        stopped = true;
+        highlightFn = function () {};
+        try {
+          if (currentSource) currentSource.stop();
+        } catch (_) {}
+        currentSource = null;
+        try {
+          if (recorder.state === "recording" && typeof recorder.requestData === "function") {
+            recorder.requestData();
+          }
+        } catch (_) {}
+        try {
+          if (recorder.state !== "inactive") recorder.stop();
+        } catch (_) {}
+      }
+
+      function onEsc(ev) {
+        if (ev.key === "Escape") {
+          ev.preventDefault();
+          finish(false);
+        }
+      }
+      document.addEventListener("keydown", onEsc, true);
+      closeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        finish(false);
+      });
+
+      function playBuffer(audioBuffer, seg) {
+        return new Promise(function (resolvePlay) {
+          if (stopped) {
+            resolvePlay();
+            return;
+          }
+          const source = audioCtx.createBufferSource();
+          source.buffer = audioBuffer;
+          source.connect(dest);
+          source.connect(audioCtx.destination);
+          currentSource = source;
+          const startedAt = audioCtx.currentTime;
+          const dur = audioBuffer.duration || 0.01;
+          /* Compense le silence / padding fréquent en tête des MP3 Google TTS. */
+          const leadIn = Math.min(0.28, Math.max(0.08, dur * 0.04));
+          const trail = Math.min(0.12, Math.max(0.02, dur * 0.02));
+          const effective = Math.max(0.08, dur - leadIn - trail);
+          highlightFn = function () {
+            const t = audioCtx.currentTime - startedAt - leadIn;
+            const p = Math.min(1, Math.max(0, t / effective));
+            if (seg.segWords && seg.segWords.length && seg.wordIndexes && seg.wordIndexes.length) {
+              const local = wordIndexFromWeightedProgress(seg.segWords, p);
+              activeWi = seg.wordIndexes[local];
+            }
+          };
+          source.onended = function () {
+            if (currentSource === source) currentSource = null;
+            highlightFn = function () {};
+            resolvePlay();
+          };
+          try {
+            source.start(0);
+          } catch (_) {
+            currentSource = null;
+            resolvePlay();
+          }
+        });
+      }
+
+      (async function run() {
+        try {
+          recorder.start(1000);
+        } catch (_) {
+          articlePopupAlert("Échec du démarrage de l’enregistrement.");
+          finish(false);
+          resolve(false);
+          return;
+        }
+        if (audioCtx.state === "suspended") {
+          try {
+            await audioCtx.resume();
+          } catch (_) {}
+        }
+        drawFrame();
+        tick();
+        for (let i = 0; i < preparedSegs.length; i++) {
+          if (stopped) break;
+          const seg = preparedSegs[i];
+          try {
+            const audioBuffer = await audioCtx.decodeAudioData(seg.arrayBuffer.slice(0));
+            await playBuffer(audioBuffer, seg);
+          } catch (_) {
+            /* segment suivant */
+          }
+        }
+        if (!stopped) window.setTimeout(function () {
+          finish(true);
+        }, 400);
+      })();
+    });
+  }
+
+  /**
+   * Vidéo karaoke : titre + corps lus/surlignés ; réfs #s.v en segment FR séparé.
+   */
+  async function recordArticleReadAloudVideo(text, opts) {
+    opts = opts || {};
+    const raw = String(text || "").trim();
+    if (!raw) {
+      articlePopupAlert("Aucun texte à lire dans cet article.");
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+    if (typeof window.MediaRecorder !== "function") {
+      articlePopupAlert("MediaRecorder non supporté par ce navigateur.");
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+    if (typeof firebase === "undefined" || !firebase.auth || !firebase.auth().currentUser) {
+      articlePopupAlert(
+        "Pour une vidéo avec son, connectez-vous : la voix est générée comme le MP3 (Firebase)."
+      );
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+    if (!firebase.app || typeof firebase.app().functions !== "function") {
+      articlePopupAlert("Firebase Functions indisponible pour la synthèse audio.");
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+
+    const title = normalizeArticleVideoText(opts.title || "");
+    const maxChars = 4500;
+    let body = normalizeArticleVideoText(raw);
+    let fullText = title ? title + "\n\n" + body : body;
+    let truncated = false;
+    if (fullText.length > maxChars) {
+      fullText = fullText.slice(0, maxChars);
+      truncated = true;
+    }
+
+    let scriptSegs = splitArticleTextForVideo(fullText);
+    if (scriptSegs.length > 12) {
+      scriptSegs = scriptSegs.slice(0, 12);
+    }
+    const proceed = window.confirm(
+      "Générer une vidéo karaoke avec son\n\n" +
+        "Titre + texte, segments FR/AR auto (réfs #s.v en FR).\n" +
+        "Segments : " +
+        scriptSegs.length +
+        (truncated ? "\nTexte tronqué à " + maxChars + " caractères." : "") +
+        "\n\nContinuer ?"
+    );
+    if (!proceed) {
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+
+    const base = sanitizeArticleVideoFileBase(opts.fileBase || title || "article");
+    const stamp = Date.now();
+    const prepared = [];
+    try {
+      for (let i = 0; i < scriptSegs.length; i++) {
+        const seg = scriptSegs[i];
+        const segText = normalizeArticleVideoText(seg.text || "");
+        if (!segText) continue;
+        const langKey = langTagToLangKey(seg.lang);
+        const subject = base + "_v" + stamp + "_" + i + "_" + langKey;
+        const arrayBuffer = await synthesizeArticleVideoSegment(
+          segText,
+          langKey,
+          subject
+        );
+        prepared.push({
+          text: seg.text,
+          spokenText: segText,
+          start: seg.start,
+          lang: seg.lang,
+          langKey: langKey,
+          arrayBuffer: arrayBuffer
+        });
+      }
+    } catch (err) {
+      articlePopupAlert(
+        "Échec de la synthèse audio Firebase" +
+          (err && err.message ? " : " + err.message : ".") +
+          "\n(Déployez les functions si speechBodyOnly est nouveau.)"
+      );
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+
+    if (!prepared.length) {
+      articlePopupAlert("Aucun segment audio produit.");
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+
+    const ok = await recordCanvasKaraokeWithAudioBuffers(fullText, prepared, opts);
+    articleVideoNotifyDone(opts, ok);
+  }
+
+  /** API partagée (Mes Notes, articles, …) : corps = text, titre = opts.title. */
+  window.zcRecordReadAloudVideo = recordArticleReadAloudVideo;
+
   function afficherArticleDansPopup(titre) {
     const q = (titre || '').trim().toLowerCase();
 
@@ -1430,6 +2192,34 @@ function sanitizeMediaPermissions(listArticleDivs) {
       fontSize: "14px"
     });
 
+    const btnListen = document.createElement("button");
+    btnListen.textContent = "🔊 Lire";
+    btnListen.title = "Lis (Voix IA & Lecture)";
+    btnListen.setAttribute("aria-label", "Lis (Voix IA & Lecture)");
+    Object.assign(btnListen.style, {
+      background: "var(--zc-popup-link)",
+      color: "#fff",
+      border: "1px solid var(--zc-popup-link)",
+      borderRadius: "6px",
+      padding: "6px 10px",
+      cursor: "pointer",
+      fontSize: "14px"
+    });
+
+    const btnVideo = document.createElement("button");
+    btnVideo.textContent = "🎬 Vidéo";
+    btnVideo.title = "Générer une vidéo karaoke (texte + voix) — test";
+    btnVideo.setAttribute("aria-label", "Générer une vidéo karaoke");
+    Object.assign(btnVideo.style, {
+      background: "var(--zc-popup-link)",
+      color: "#fff",
+      border: "1px solid var(--zc-popup-link)",
+      borderRadius: "6px",
+      padding: "6px 10px",
+      cursor: "pointer",
+      fontSize: "14px"
+    });
+
     const close = document.createElement("button");
     close.textContent = "✖";
     close.onclick = fermerPopupHtmlArticle;
@@ -1451,6 +2241,8 @@ function sanitizeMediaPermissions(listArticleDivs) {
 
     left.appendChild(linkDdf);
     left.appendChild(btnCopyLink);
+    left.appendChild(btnListen);
+    left.appendChild(btnVideo);
     actionsRow.appendChild(left);
     actionsRow.appendChild(close);
     header.appendChild(actionsRow);
@@ -1511,6 +2303,68 @@ function sanitizeMediaPermissions(listArticleDivs) {
         setTimeout(() => btnCopyLink.textContent = old, 1200);
       }
     };
+
+    if (clone && isArticleIframeOnly(clone)) {
+      btnListen.disabled = true;
+      btnListen.style.opacity = "0.55";
+      btnListen.style.cursor = "not-allowed";
+      btnListen.title = "Lecture indisponible (article iframe)";
+      btnVideo.disabled = true;
+      btnVideo.style.opacity = "0.55";
+      btnVideo.style.cursor = "not-allowed";
+      btnVideo.title = "Vidéo indisponible (article iframe)";
+    } else {
+      btnListen.onclick = () => {
+        const root =
+          (clone && (clone.querySelector(".corps") || clone)) ||
+          document.getElementById("contenuTexteArticle");
+        const text = (root && (root.innerText || root.textContent) || "").trim();
+        if (!text) {
+          if (typeof alertMsgBoxPopup === "function") {
+            alertMsgBoxPopup("Aucun texte à lire dans cet article.");
+          }
+          return;
+        }
+        if (typeof window.zcReadTextWithOverlay === "function") {
+          window.zcReadTextWithOverlay(text, {
+            title: "Lis (Voix IA & Lecture)",
+            callerEl: document.getElementById("popupArticleHtml")
+          });
+        } else if (typeof lireTexte === "function") {
+          lireTexte(text, "fr-FR", 1.0);
+        } else if (typeof alertMsgBoxPopup === "function") {
+          alertMsgBoxPopup("La lecture vocale n'est pas disponible pour le moment.");
+        }
+      };
+
+      btnVideo.onclick = () => {
+        const root =
+          (clone && (clone.querySelector(".corps") || clone)) ||
+          document.getElementById("contenuTexteArticle");
+        const text = (root && (root.innerText || root.textContent) || "").trim();
+        if (!text) {
+          if (typeof alertMsgBoxPopup === "function") {
+            alertMsgBoxPopup("Aucun texte à lire dans cet article.");
+          }
+          return;
+        }
+        const oldLabel = btnVideo.textContent;
+        btnVideo.disabled = true;
+        btnVideo.textContent = "⏺ …";
+        recordArticleReadAloudVideo(text, {
+          fileBase: titre || "article",
+          title: titrePourDdf || titre || "",
+          callerEl: document.getElementById("popupArticleHtml"),
+          onDone: function () {
+            btnVideo.disabled = false;
+            btnVideo.textContent = oldLabel;
+          }
+        }).catch(function () {
+          btnVideo.disabled = false;
+          btnVideo.textContent = oldLabel;
+        });
+      };
+    }
 
     ouvrirPopupHtmlArticle();
     popup.scrollTop = 0;
