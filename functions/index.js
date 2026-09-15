@@ -1282,7 +1282,8 @@ exports.sendQueuedNewsletterCampaign = functions
 
 /**
  * Callable : MP3 du champ Texte (Google Cloud TTS) → Firebase Storage MesMedias/audio/MesNotesTts/{uid}/…
- * Données : { text, subject, langKey?, phase? } — phase « probe » = lecture Storage seule (pas de TTS).
+ * Données : { text, subject, langKey?, phase?, speechBodyOnly? } — phase « probe » = lecture Storage seule (pas de TTS).
+ * Réservé aux comptes niveau ≥ 3 (facturation Google Cloud Text-to-Speech).
  */
 exports.synthesizeMesNoteAudio = functions
   .region(REGION)
@@ -1298,6 +1299,10 @@ exports.synthesizeMesNoteAudio = functions
         "Connexion requise."
       );
     }
+    /* TTS Google Cloud = facturé : réservé niveau ≥ 3. */
+    await assertAdminByAuthEmail(
+      context.auth.token && context.auth.token.email
+    );
     const payload =
       data != null && typeof data === "object" && !Array.isArray(data)
         ? data

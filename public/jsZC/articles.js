@@ -2013,15 +2013,27 @@ function sanitizeMediaPermissions(listArticleDivs) {
       articleVideoNotifyDone(opts, false);
       return;
     }
-    if (typeof window.MediaRecorder !== "function") {
-      articlePopupAlert("MediaRecorder non supporté par ce navigateur.");
-      articleVideoNotifyDone(opts, false);
-      return;
-    }
-    if (typeof firebase === "undefined" || !firebase.auth || !firebase.auth().currentUser) {
+    const niveau = Number(
+      (typeof window.niveauUser === "number" && window.niveauUser) ||
+        localStorage.getItem("niveauUser") ||
+        0
+    );
+    if (!(typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser)) {
       articlePopupAlert(
         "Pour une vidéo avec son, connectez-vous : la voix est générée comme le MP3 (Firebase)."
       );
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+    if (!Number.isFinite(niveau) || niveau < 3) {
+      articlePopupAlert(
+        "Synthèse MP3 / vidéo réservée au niveau 3 (service Google Cloud facturé)."
+      );
+      articleVideoNotifyDone(opts, false);
+      return;
+    }
+    if (typeof window.MediaRecorder !== "function") {
+      articlePopupAlert("MediaRecorder non supporté par ce navigateur.");
       articleVideoNotifyDone(opts, false);
       return;
     }
@@ -2314,6 +2326,18 @@ function sanitizeMediaPermissions(listArticleDivs) {
       btnVideo.style.cursor = "not-allowed";
       btnVideo.title = "Vidéo indisponible (article iframe)";
     } else {
+      const niveauVideo = Number(
+        typeof window.niveauUser === "number"
+          ? window.niveauUser
+          : localStorage.getItem("niveauUser") || 0
+      );
+      if (!Number.isFinite(niveauVideo) || niveauVideo < 3) {
+        btnVideo.disabled = true;
+        btnVideo.style.opacity = "0.55";
+        btnVideo.style.cursor = "not-allowed";
+        btnVideo.title =
+          "Synthèse vidéo réservée au niveau 3 (Google Cloud facturé)";
+      }
       btnListen.onclick = () => {
         const root =
           (clone && (clone.querySelector(".corps") || clone)) ||

@@ -194,6 +194,8 @@
         "</ul>" +
         "<p>Sur la ligne <em>Texte</em>, le bouton <strong>📂</strong> permet aussi de choisir un fichier audio <strong>sur l’appareil</strong> pour une transcription vers le champ <em>Texte</em>.</p>",
       needLogin: "Connectez-vous pour enregistrer l’audio.",
+      needLevel3:
+        "Synthèse MP3 / vidéo réservée au niveau 3 (service Google Cloud facturé).",
       empty: "Aucun texte à lire.",
       genOk: "Audio enregistré sur Firebase.",
       genFail: "Échec de la synthèse ou de l’upload.",
@@ -246,6 +248,8 @@
         "</ul>" +
         "<p>On the <em>Text</em> row, the <strong>📂</strong> button also lets you pick a <strong>local</strong> audio file for transcription into <em>Text</em>.</p>",
       needLogin: "Sign in to save audio.",
+      needLevel3:
+        "MP3 / video synthesis is limited to level 3 (billable Google Cloud service).",
       empty: "No text to read.",
       genOk: "Audio saved to Firebase.",
       genFail: "Synthesis or upload failed.",
@@ -297,6 +301,7 @@
         "</ul>" +
         "<p>في سطر <em>النص</em>، زر <strong>📂</strong> يتيح أيضاً اختيار ملف صوتي <strong>من الجهاز</strong> للتفريغ إلى حقل <em>النص</em>.</p>",
       needLogin: "سجّل الدخول لحفظ الصوت.",
+      needLevel3: "تركيب MP3 / الفيديو مخصص للمستوى 3 (خدمة Google Cloud مدفوعة).",
       empty: "لا نص للقراءة.",
       genOk: "تم حفظ الصوت.",
       genFail: "فشل الإنشاء أو الرفع.",
@@ -346,6 +351,8 @@
         "</ul>" +
         "<p>En la fila <em>Texto</em>, el botón <strong>📂</strong> también permite elegir un audio <strong>local</strong> para transcribir al <em>Texto</em>.</p>",
       needLogin: "Inicia sesión para guardar el audio.",
+      needLevel3:
+        "La síntesis MP3 / vídeo está reservada al nivel 3 (servicio de Google Cloud de pago).",
       empty: "Sin texto para leer.",
       genOk: "Audio guardado en Firebase.",
       genFail: "Fallo al generar o subir.",
@@ -381,6 +388,35 @@
   function tstrings() {
     const lc = getLc();
     return TXT[lc] || TXT.fr;
+  }
+
+  function getUserNiveau() {
+    try {
+      if (typeof window.niveauUser === "number" && Number.isFinite(window.niveauUser)) {
+        return Number(window.niveauUser);
+      }
+    } catch (_) {}
+    return Number(localStorage.getItem("niveauUser") || 0);
+  }
+
+  function canUsePaidTts() {
+    return getUserNiveau() >= 3;
+  }
+
+  function ensurePaidTtsAllowed() {
+    const T = tstrings();
+    if (typeof firebase === "undefined" || !firebase.auth || !firebase.auth().currentUser) {
+      popupPlainMessage(T.needLogin);
+      return false;
+    }
+    if (!canUsePaidTts()) {
+      popupPlainMessage(
+        T.needLevel3 ||
+          "Synthèse MP3 / vidéo réservée au niveau 3 (service Google Cloud facturé)."
+      );
+      return false;
+    }
+    return true;
   }
 
   function getBodyText() {
@@ -1484,6 +1520,7 @@
 
   async function synthesizeAndUploadFirebase() {
     const T = tstrings();
+    if (!ensurePaidTtsAllowed()) return;
     const raw = getBodyText();
     const subjectRaw = getSubjectText();
     if (!subjectRaw) {
@@ -1620,17 +1657,29 @@
     }
     if (labListen) labListen.textContent = T.listenTitle;
     const mp3Short = T.mp3TitleShort || T.mp3 || "MP3";
+    const paidOk = canUsePaidTts();
+    const paidHint = paidOk
+      ? ""
+      : " — " +
+        (T.needLevel3 ||
+          "Réservé au niveau 3 (Google Cloud facturé).");
     if (mp3) {
-      mp3.setAttribute("title", mp3Short);
-      mp3.setAttribute("aria-label", mp3Short);
+      mp3.setAttribute("title", mp3Short + (paidOk ? "" : paidHint));
+      mp3.setAttribute("aria-label", mp3Short + (paidOk ? "" : paidHint));
       mp3.setAttribute("data-zc-tab-title", mp3Short);
+      mp3.disabled = !paidOk;
+      mp3.style.opacity = paidOk ? "" : "0.55";
+      mp3.style.cursor = paidOk ? "" : "not-allowed";
     }
     if (labMp3) labMp3.textContent = mp3Short;
     const videoTitle = T.videoTitle || T.video || "Vidéo";
     if (video) {
-      video.setAttribute("title", videoTitle);
-      video.setAttribute("aria-label", videoTitle);
+      video.setAttribute("title", videoTitle + (paidOk ? "" : paidHint));
+      video.setAttribute("aria-label", videoTitle + (paidOk ? "" : paidHint));
       video.setAttribute("data-zc-tab-title", videoTitle);
+      video.disabled = !paidOk;
+      video.style.opacity = paidOk ? "" : "0.55";
+      video.style.cursor = paidOk ? "" : "not-allowed";
     }
     if (labVideo) labVideo.textContent = T.video || "Vidéo";
     const fileBtn = document.getElementById("afModalMesNoteAudioFileBtn");
@@ -1791,6 +1840,7 @@
 
   async function recordMesNoteVideo() {
     const T = tstrings();
+    if (!ensurePaidTtsAllowed()) return;
     const body = getBodyText();
     const subject = getSubjectText();
     if (!body) {
