@@ -32,30 +32,36 @@ function zcFirebaseHasRealSignedInUser() {
 }
 window.zcFirebaseHasRealSignedInUser = zcFirebaseHasRealSignedInUser;
 
-function zcRememberLastNonAnonUser(name, mail, code) {
+/**
+ * Sécurité : le mot de passe n'est plus conservé dans le navigateur (localStorage est lisible
+ * par tout script de la page). On efface les copies laissées par les versions précédentes ;
+ * le préremplissage du mot de passe est laissé au gestionnaire de mots de passe du navigateur.
+ */
+(function zcPurgeMotDePasseLocal() {
+  try {
+    localStorage.removeItem('codeUser');
+    localStorage.removeItem('lastNonAnonCodeUser');
+  } catch (_) { }
+})();
+
+function zcRememberLastNonAnonUser(name, mail) {
   var safeMail = String(mail || '').trim().toLowerCase();
   if (!safeMail || zcIsAnonymeCourriel(safeMail)) return;
   try {
     localStorage.setItem('lastNonAnonMailUser', safeMail);
     localStorage.setItem('lastNonAnonNameUser', String(name || '').trim());
-    if (code != null && String(code).trim() !== '') {
-      localStorage.setItem('lastNonAnonCodeUser', String(code));
-    }
   } catch (_) { }
 }
 
 function zcGetLastNonAnonUser() {
   var lastMail = '';
   var lastName = '';
-  var lastCode = '';
   try {
     lastMail = String(localStorage.getItem('lastNonAnonMailUser') || '').trim().toLowerCase();
     lastName = String(localStorage.getItem('lastNonAnonNameUser') || '').trim();
-    lastCode = String(localStorage.getItem('lastNonAnonCodeUser') || '').trim();
-    if (!lastCode) lastCode = String(localStorage.getItem('codeUser') || '').trim();
   } catch (_) { }
   if (!lastMail || zcIsAnonymeCourriel(lastMail)) return null;
-  return { mail: lastMail, name: lastName, code: lastCode };
+  return { mail: lastMail, name: lastName };
 }
 
 function zcRefreshForumIfOpen() {
@@ -102,7 +108,10 @@ function zcClampLoginNiveauSelect(n) {
 
 /**
  * Bannière #msg, champ nom (inscription) et « Niveau demandé » selon le courriel et
- * demandeCollaborerLexique/{mail} (lecture publique).
+ * demandeCollaborerLexique/{mail}.
+ * Sécurité : la fiche n'est lisible que par son propriétaire (connecté, e-mail vérifié)
+ * ou par un admin. Pour un visiteur non connecté, la lecture est refusée par les règles
+ * et la bannière retombe sur les valeurs locales (bannerSessionFallback).
  */
 async function zcRefreshLoginFormFromEmail() {
   var mailEl = zcElLogin('email');
@@ -519,7 +528,7 @@ async function fctLogInUser() {
       else elMail.value = mailStr;
     }
     if (elCode && 'value' in elCode) {
-      elCode.value = (lastNonAnon && lastNonAnon.code) ? lastNonAnon.code : '';
+      elCode.value = ''; // jamais prérempli depuis localStorage (voir zcPurgeMotDePasseLocal)
     }
 
     var niveau = Number(localStorage.getItem('niveauUser') || 0);
@@ -750,18 +759,19 @@ function zcStopPollingEmailVerification() {
  * Crée le document Firestore + lexique + forum (nouvelle inscription uniquement).
  * Appelé après que l’utilisateur a cliqué le lien dans le mail (email vérifié).
  */
-async function sauvegarderNouvelleDemandeLexique(mail, code, name, niveauDemandeParam) {
+async function sauvegarderNouvelleDemandeLexique(mail, name, niveauDemandeParam) {
+  // Sécurité : le mot de passe n'est JAMAIS écrit dans Firestore ; seul Firebase Auth le connaît.
+  // La fiche n'est lisible/créable que par son propriétaire (e-mail vérifié) : voir firestore.rules.
   const docRefMail = db.collection('demandeCollaborerLexique').doc(mail.toLowerCase());
-  const querySnapshot = await db.collection('demandeCollaborerLexique').where('name', '==', name.toLowerCase()).get();
-  if (!querySnapshot.empty) {
-    document.getElementById('msg').innerHTML = tMsg('nameAlreadyTaken', { name: name });
+  const dejaLa = await docRefMail.get();
+  if (dejaLa.exists) {
+    document.getElementById('msg').innerHTML = tMsg('emailHasRecordUseLogin');
     return;
   }
-  var niveauDemandeInt = parseInt(niveauDemandeParam, 10);
+  var niveauDemandeInt = zcClampLoginNiveauSelect(niveauDemandeParam);
   await docRefMail.set({
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     mail: mail.toLowerCase(),
-    code: code,
     name: name,
     niveau: 0,
     niveauDemande: niveauDemandeInt
@@ -772,7 +782,7 @@ async function sauvegarderNouvelleDemandeLexique(mail, code, name, niveauDemande
   localStorage.setItem('nameUser', name);
   localStorage.setItem('mailUser', mail);
   localStorage.setItem('niveauUser', 0);
-  zcRememberLastNonAnonUser(name, mail, code);
+  zcRememberLastNonAnonUser(name, mail);
 
   alertMsgBoxPopup(tMsg('requestSaved', { name: name }));
   niveauDemande = parseInt(document.getElementById('niveauSelect').value, 10);
@@ -801,11 +811,14 @@ function zcStartPollingEmailVerification() {
       await u.reload();
       if (!u.emailVerified) return;
       zcStopPollingEmailVerification();
+      // Les règles Firestore exigent email_verified dans le jeton : reload() ne le
+      // rafraîchit pas, il faut forcer un nouveau jeton avant d'écrire la fiche.
+      await u.getIdToken(true);
       var raw = sessionStorage.getItem(ZC_PENDING_KEY);
       if (!raw) return;
       var p = JSON.parse(raw);
       sessionStorage.removeItem(ZC_PENDING_KEY);
-      await sauvegarderNouvelleDemandeLexique(p.mail, p.code, p.name, p.niveauDemande);
+      await sauvegarderNouvelleDemandeLexique(p.mail, p.name, p.niveauDemande);
     } catch (err) {
       console.warn('[inscription] poll email', err);
     }
@@ -815,18 +828,14 @@ function zcStartPollingEmailVerification() {
 /**
  * Compte Firebase déjà créé (inscription interrompue) mais sans doc Firestore :
  * connexion avec le même mot de passe, puis finalisation si l’e-mail est vérifié.
+ * La fiche n'est lisible que par son propriétaire à l'e-mail vérifié : on vérifie donc
+ * l'e-mail AVANT de lire la fiche. Si la fiche existe ('exists'), la session Auth est
+ * conservée pour que l'appelant puisse traiter une demande de changement de niveau.
  * @returns {'done'|'polling'|'exists'}
  */
 async function zcFinaliserSiCompteOrphelin(mail, code, name, niveauDemandeParam) {
   var cred = await firebase.auth().signInWithEmailAndPassword(mail, code);
   await cred.user.reload();
-  var docRef = db.collection('demandeCollaborerLexique').doc(mail.toLowerCase());
-  var snap = await docRef.get();
-
-  if (snap.exists) {
-    try { await firebase.auth().signOut(); } catch (_) { }
-    return 'exists';
-  }
 
   if (!cred.user.emailVerified) {
     try {
@@ -836,8 +845,15 @@ async function zcFinaliserSiCompteOrphelin(mail, code, name, niveauDemandeParam)
     }
     return 'polling';
   }
+  await cred.user.getIdToken(true);
 
-  await sauvegarderNouvelleDemandeLexique(mail, code, name, niveauDemandeParam);
+  var docRef = db.collection('demandeCollaborerLexique').doc(mail.toLowerCase());
+  var snap = await docRef.get();
+  if (snap.exists) {
+    return 'exists';
+  }
+
+  await sauvegarderNouvelleDemandeLexique(mail, name, niveauDemandeParam);
   return 'done';
 }
 
@@ -954,7 +970,12 @@ window.zcAdminSyncAuthProfiles = async function () {
   }
 };
 
-async function enregistrerDemande(mail, code, name) {//lors de l'inscription, le nom est ajouté au Lexique, juste après sendMessage au journal
+/**
+ * Fiche déjà existante : demande de changement de niveau (niveauDemande) et/ou de nom.
+ * Appelée uniquement après une connexion Firebase Auth réussie avec ce courriel :
+ * c'est Auth qui a vérifié le mot de passe (plus aucune comparaison avec Firestore).
+ */
+async function enregistrerDemande(mail, name) {
   try {
 
     // Référence au document par mail (également converti en minuscule)
@@ -968,16 +989,15 @@ async function enregistrerDemande(mail, code, name) {//lors de l'inscription, le
     let tstNiv = true;
     const userData = doc.data();
     const mailOk = mail.toLowerCase() === String(userData.mail || '').trim().toLowerCase();
-    const codeOk = code === userData.code;
     const nameOk = zcNormalizeLexiqueName(name) === zcNormalizeLexiqueName(userData.name);
-    // Compat anciens comptes: en cas de mismatch nom, on accepte mail+code
+    // Compat anciens comptes: en cas de mismatch nom, on accepte le courriel authentifié
     // et on met à jour le nom affiché demandé.
-    const canRefreshLegacyName = mailOk && codeOk;
+    const canRefreshLegacyName = mailOk;
     const nDem = Number(niveauDemande);
     const nCur = Number(userData.niveau);
     const sameLevel = nDem === nCur;
 
-    if (mailOk && codeOk && sameLevel) {
+    if (mailOk && sameLevel) {
       if (!nameOk && validateInput(name)) {
         try {
           await docRefMail.update({
@@ -995,10 +1015,6 @@ async function enregistrerDemande(mail, code, name) {//lors de l'inscription, le
     document.getElementById('msg').innerHTML = tMsg('mailAlreadyExistsLogin');
 
       // Vérifications des champs (en minuscules pour éviter les erreurs de casse)
-      if (!codeOk) {
-        document.getElementById('msg').innerHTML += '<br>' + tMsg('wrongPassword');
-        tstNiv = false;
-      }
       if (!mailOk) {
         document.getElementById('msg').innerHTML += '<br>' + tMsg('invalidMail');
         tstNiv = false;
@@ -1038,61 +1054,6 @@ async function enregistrerDemande(mail, code, name) {//lors de l'inscription, le
 
 // Variable globale pour stocker le niveau choisi
 let niveauDemande = 0;
-
-/**
- * Cas legacy: l'utilisateur existe dans demandeCollaborerLexique mais pas dans Firebase Auth.
- * - si absent d'Auth => crée le compte Auth + envoie vérification e-mail.
- * - si présent avec mot de passe différent => informe l'utilisateur.
- * Retour:
- *   'ok' | 'created-pending-verification' | 'auth-password-mismatch' | 'error'
- */
-async function zcEnsureAuthAccountForExistingFirestoreUser(mail, code, msgEl) {
-  try {
-    var cred = await firebase.auth().signInWithEmailAndPassword(mail, code);
-    await cred.user.reload();
-    if (!cred.user.emailVerified) {
-      try { await cred.user.sendEmailVerification(); } catch (_) { }
-    }
-    return 'ok';
-  } catch (e) {
-    var ec = e && e.code;
-    if (ec === 'auth/user-not-found') {
-      try {
-        await firebase.auth().createUserWithEmailAndPassword(mail, code);
-        if (firebase.auth().currentUser) {
-          await firebase.auth().currentUser.sendEmailVerification();
-        }
-        if (msgEl) {
-          msgEl.innerHTML =
-            '<p>Votre fiche existe déjà, mais votre compte Auth Firebase manquait.</p>' +
-            '<p>Nous venons de le créer. Vérifiez votre courriel puis utilisez Connexion.</p>' +
-            '<p class="zc-login-spam-hint">' + tMsg('verifyEmailSpamReminder') + '</p>';
-        }
-        return 'created-pending-verification';
-      } catch (eCreate) {
-        console.error('create auth legacy:', eCreate);
-        if (msgEl) {
-          msgEl.innerHTML = (eCreate && eCreate.message) || tMsg('signupFinalizeImpossible');
-        }
-        return 'error';
-      }
-    }
-    if (ec === 'auth/wrong-password' || ec === 'auth/invalid-credential') {
-      if (msgEl) {
-        msgEl.innerHTML =
-          '<p>Ce courriel existe dans Authentification avec un autre mot de passe.</p>' +
-          '<p>Utilisez Connexion avec le bon mot de passe (ou “J’ai oublié mon mot de passe”).</p>';
-      }
-      return 'auth-password-mismatch';
-    }
-    if (ec === 'auth/too-many-requests') {
-      if (msgEl) msgEl.innerHTML = tMsg('tooManyRequests');
-      return 'error';
-    }
-    console.error('sync auth legacy:', e);
-    return 'ok';
-  }
-}
 
 async function Collaborer() {
   niveauDemande = parseInt(document.getElementById('niveauSelect').value, 10);
@@ -1135,30 +1096,21 @@ async function Collaborer() {
     return;
   }
 
-  var docRefMail = db.collection('demandeCollaborerLexique').doc(mail);
-  var docSnap = await docRefMail.get();
-
-  if (docSnap.exists) {
-    const syncState = await zcEnsureAuthAccountForExistingFirestoreUser(mail, code, msg);
-    if (syncState === 'created-pending-verification' || syncState === 'auth-password-mismatch' || syncState === 'error') {
-      return;
-    }
-    await enregistrerDemande(mail, code, name);
-    return;
-  }
-
+  // Sécurité : on ne lit plus la fiche avant authentification (la collection n'est plus
+  // publique). On passe par Firebase Auth : si le compte existe déjà et que le mot de passe
+  // est bon, zcFinaliserSiCompteOrphelin lit la fiche du propriétaire une fois connecté.
   async function zcTryFinalizeFromExistingAuthAccount() {
     try {
       var st = await zcFinaliserSiCompteOrphelin(mail, code, name, niveauDemande);
       sessionStorage.removeItem(ZC_PENDING_KEY);
       if (st === 'exists') {
-        msg.innerHTML = tMsg('emailHasRecordUseLogin');
+        // Fiche existante + mot de passe validé par Auth : demande de changement de niveau / nom.
+        await enregistrerDemande(mail, name);
         return true;
       } else if (st === 'polling') {
         sessionStorage.setItem(ZC_PENDING_KEY, JSON.stringify({
           mail: mail,
           name: name,
-          code: code,
           niveauDemande: niveauDemande
         }));
         msg.innerHTML =
@@ -1200,7 +1152,6 @@ async function Collaborer() {
   sessionStorage.setItem(ZC_PENDING_KEY, JSON.stringify({
     mail: mail,
     name: name,
-    code: code,
     niveauDemande: niveauDemande
   }));
 
@@ -1330,8 +1281,7 @@ async function verifyCode1() {
     localStorage.setItem('niveauUser', data.user.niveau);
     localStorage.setItem('nameUser', data.user.name);
     localStorage.setItem('mailUser', data.user.mail);
-    localStorage.setItem('codeUser', data.user.code);
-    zcRememberLastNonAnonUser(data.user.name, data.user.mail, data.user.code);
+    zcRememberLastNonAnonUser(data.user.name, data.user.mail);
     await incrementerNombreConnexions(+1);
     await addDbCollectionUsers('historiqueActions', data.user.name, data.user.mail, '', '', 'Connexion');
     msg.innerHTML = '';
@@ -1360,7 +1310,7 @@ async function verifyCode1() {
       msg.innerHTML = zcEmailVerificationMsgHtml();
       return;
     }
-    var data = await verifyUserCode(mailUser, codeUser, { skipCodeCheck: true });
+    var data = await zcChargerProfilConnecte(mailUser);
     if (data.success) {
       await finishLoginSuccess(data);
     } else {
@@ -1368,41 +1318,11 @@ async function verifyCode1() {
     }
   } catch (e) {
     var ec = e && e.code;
+    // Sécurité : plus de repli « legacy » comparant le mot de passe à un champ Firestore.
+    // Un membre sans compte Auth passe par « J'ai oublié mon mot de passe » (après la
+    // synchro admin « Sync Auth ») ou par une nouvelle inscription avec le même courriel.
     if (ec === 'auth/user-not-found') {
-      try {
-        var dataLegacy = await verifyUserCode(mailUser, codeUser);
-        if (dataLegacy.success) {
-          try {
-            var credLegacy;
-            try {
-              credLegacy = await firebase.auth().createUserWithEmailAndPassword(mailUser, codeUser);
-            } catch (ce) {
-              var cec = ce && ce.code;
-              if (cec === 'auth/email-already-in-use') {
-                credLegacy = await firebase.auth().signInWithEmailAndPassword(mailUser, codeUser);
-              } else {
-                throw ce;
-              }
-            }
-            await credLegacy.user.reload();
-            if (!credLegacy.user.emailVerified) {
-              msg.innerHTML = zcEmailVerificationMsgHtml();
-              return;
-            }
-            await finishLoginSuccess(dataLegacy);
-          } catch (authErr) {
-            console.error('Connexion legacy (Firestore OK, Auth Firebase):', authErr);
-            msg.innerHTML =
-              '<p>' + tMsg('loginError') + '</p>' +
-              '<p style="font-size:0.9em;color:#64748b;">Compte présent dans la base mais liaison Auth impossible. Contactez le support si besoin.</p>';
-          }
-        } else {
-          msg.innerHTML = '<p>' + (dataLegacy.message || tMsg('loginInvalidCreds')) + '</p>';
-        }
-      } catch (err2) {
-        msg.innerHTML = '<p>' + tMsg('loginVerifyError') + '</p>';
-        console.error(err2);
-      }
+      msg.innerHTML = '<p>' + tMsg('loginInvalidCreds') + '</p>';
     } else if (ec === 'auth/wrong-password' || ec === 'auth/invalid-credential') {
       msg.innerHTML = '<p>' + tMsg('loginInvalidCreds') + '</p>';
     } else {
@@ -1412,41 +1332,30 @@ async function verifyCode1() {
   }
 }
 /*************************************/
-async function verifyUserCode(mail, code, opts) {
-  opts = opts || {};
-  var skipCodeCheck = !!opts.skipCodeCheck;
+/**
+ * Charge la fiche du membre connecté (demandeCollaborerLexique/{mail}).
+ * À appeler APRÈS signInWithEmailAndPassword : le mot de passe est vérifié par Firebase Auth
+ * uniquement ; il n'est ni lu, ni comparé, ni écrit dans Firestore.
+ */
+async function zcChargerProfilConnecte(mail) {
   try {
     niveauUser = -1;
     nameUser = 'anonyme';
     mailUser = mail.toLowerCase();
-    const docRef = db.collection('demandeCollaborerLexique').doc(mail);
+    const docRef = db.collection('demandeCollaborerLexique').doc(mailUser);
     const doc = await docRef.get();
     if (!doc.exists) {
       return { success: false, message: tMsg('emailNotFound') };
     }
 
     const userData = doc.data();
-    var codeOk = skipCodeCheck || userData.code === code;
-    if (!codeOk) {
-      return { success: false, message: tMsg('wrongPassword') };
-    }
-    if (skipCodeCheck && code && userData.code !== code) {
-      try {
-        await docRef.update({
-          code: code,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (e) {
-        console.warn('[auth] synchro code Firestore', e);
-      }
-    }
-
     niveauUser = userData.niveau;
     nameUser = userData.name;
     mailUser = userData.mail;
 
     if (niveauUser > -1) {
-      var userOut = Object.assign({}, userData, { code: code });
+      var userOut = Object.assign({}, userData);
+      delete userOut.code; // ancien champ (fiches non encore purgées) : ne jamais le propager
       return { success: true, user: userOut };
     }
     return { success: false, message: tMsg('validationPending') };
