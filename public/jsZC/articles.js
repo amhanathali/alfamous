@@ -268,9 +268,13 @@
           color: var(--zc-text) !important;
           background: transparent !important;
         }
-        :root:not([data-theme="light"]) #popupArticleHtml #contenuTexteArticle :is(p, div, span, li, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, td, th):not(.article-term-hit):not(.zc-term-hit) {
+        /* Chantier 7 : TOUS les éléments du corps (section, details, footer, em/strong à fond inline…),
+           pas seulement une liste de balises. :where() = spécificité nulle, pour que les règles
+           strong/em/pre/table/a ci-dessous gardent la main. */
+        :root:not([data-theme="light"]) #popupArticleHtml #contenuTexteArticle :where(*:not(img, svg, svg *, video, iframe, canvas, picture, source, .article-term-hit, .zc-term-hit)) {
           color: var(--zc-text) !important;
-          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
         }
         :root:not([data-theme="light"]) #popupArticleHtml #contenuTexteArticle :is(strong, b) {
           color: color-mix(in srgb, var(--zc-text) 92%, white) !important;
@@ -312,9 +316,11 @@
         color: var(--zc-text) !important;
         background: transparent !important;
       }
-      :root[data-theme="dark"] #popupArticleHtml #contenuTexteArticle :is(p, div, span, li, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, td, th):not(.article-term-hit):not(.zc-term-hit) {
+      /* Chantier 7 : même règle pour le thème sombre choisi à la main. */
+      :root[data-theme="dark"] #popupArticleHtml #contenuTexteArticle :where(*:not(img, svg, svg *, video, iframe, canvas, picture, source, .article-term-hit, .zc-term-hit)) {
         color: var(--zc-text) !important;
-        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
       }
       :root[data-theme="dark"] #popupArticleHtml #contenuTexteArticle :is(strong, b) {
         color: color-mix(in srgb, var(--zc-text) 92%, white) !important;
@@ -366,12 +372,13 @@
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
           --zc-hit-bg: color-mix(in srgb, #fff2a8 68%, transparent);
-          --zc-hit-fg: var(--zc-text);
+          /* Texte foncé sur le jaune : le texte clair y tombait à un contraste de 2:1. */
+          --zc-hit-fg: #0f172a;
         }
       }
       :root[data-theme="dark"] {
         --zc-hit-bg: color-mix(in srgb, #fff2a8 68%, transparent);
-        --zc-hit-fg: var(--zc-text);
+        --zc-hit-fg: #0f172a;
       }
 
       @media (max-width:700px) {
