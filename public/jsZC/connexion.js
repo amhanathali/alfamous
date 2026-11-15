@@ -587,6 +587,14 @@ async function fctLogInUser() {
 
 
 async function ajouterNomAuLexique(name) {
+  // storage.rules (chantier 2a) : seul un compte de niveau >= 1 à l'e-mail vérifié peut écrire
+  // fTabLexique1.js. Un nouveau membre (niveau 0) ne peut donc plus ajouter son @nom ici ;
+  // on n'essaie pas, pour ne pas afficher d'erreur pendant l'inscription.
+  // TODO chantier 2b : confier cet ajout à une Cloud Function (droits admin).
+  if ((parseInt(localStorage.getItem('niveauUser') || '0', 10) || 0) < 1) {
+    console.info('[inscription] Ajout de @' + name + ' au lexique reporté (chantier 2b).');
+    return false;
+  }
   // Consulter Lexique1
   var tabLexique = fTabLexique();
   var motTrouve = false;

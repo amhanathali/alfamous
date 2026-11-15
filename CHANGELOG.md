@@ -32,6 +32,15 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Le mot de passe n'est plus conservé dans le `localStorage` du navigateur (les anciennes
   copies sont effacées au chargement).
 - Tests des règles avec l'émulateur Firebase (`tests/rules/`).
+- **Storage** (`storage.rules`) : fin de l'écriture ouverte à toute session, y compris anonyme.
+  Les fichiers de données exécutés par l'application (`MesDonnes/MesJS/fTabLexique1.js`,
+  `fTabVersets1.js`, `articles-format-html.js`) ne sont plus inscriptibles que par un compte
+  de niveau 1 ou plus à l'e-mail vérifié (niveau lu dans Firestore) ; le reste du bucket est en
+  lecture seule sauf pour les administrateurs. Médias, audio de transcription, MP3 de synthèse
+  vocale et historique de mots passent dans des dossiers personnels lisibles par leur seul
+  propriétaire. Les nouveaux médias sont envoyés dans `MesMedias/membres/{uid}/` (`medias1.js`).
+  Un nouveau membre (niveau 0) n'ajoute plus son `@nom` au lexique à l'inscription
+  (à reprendre par une Cloud Function).
 - Exclusion du suivi Git de tous les secrets (clés de service Firebase Admin,
   secret client OAuth, identifiants de connexion rapide, `key.json`).
 - Déplacement de la clé API Blogger hors du code (`Gscript/ArticlesBlogHtml.gs`)

@@ -1,12 +1,155 @@
 rules_version = '2';
+
+// =============================================================================
+// Règles Firebase Storage — Alfamous (chantier 2a, décision du 15 novembre 2026)
+//
+// Principe : tout le bucket est en LECTURE publique et en ÉCRITURE réservée aux
+// administrateurs, sauf les exceptions ci-dessous.
+//
+//   MesDonnes/MesJS/{fTabLexique1.js | fTabVersets1.js | articles-format-html.js}
+//       lecture : tout le monde (l'application charge ces fichiers à chaque visite)
+//       écriture : compte de niveau >= 1 avec e-mail vérifié ; suppression : admin
+//   MesDonnes/historikMots/uid_{uid}/historiqueMots.json      (histMots.js)
+//   MesMedias/membres/{uid}/...                               (medias1.js)
+//   MesMedias/stt-input/{uid}/...                             (mes-notes-tts.js)
+//   MesMedias/audio/MesNotesTts/{uid}/...                     (MP3 écrits par la Function)
+//       dossiers PERSONNELS : lus et gérés par leur propriétaire (et par un admin) seulement
+//
+// Les sessions anonymes de medias1.js (signInAnonymously) ne peuvent plus rien
+// écrire, sauf leur propre historique de mots (petit fichier JSON).
+//
+// Le niveau est lu dans Firestore : demandeCollaborerLexique/{e-mail}.niveau,
+// la même source de vérité que firestore.rules et functions/index.js. Ce champ
+// n'est modifiable que par un admin depuis le chantier 1.
+// Niveaux : 0 = membre ; 1 = contributeur ; 2 = modérateur ; >= 3 = admin.
+//
+// Rappel : une URL de téléchargement (avec ?token=...) reste lisible par quiconque
+// la possède, quelles que soient ces règles. C'est ainsi que les liens de
+// LiensMedias continuent de fonctionner pour les visiteurs.
+// =============================================================================
+
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // Même idée que Firestore : lecture libre, écriture réservée aux utilisateurs
-    // connectés (Auth) dans ce projet Firebase.
-    match /{allPaths=**} {
+    // ---------------------------------------------------------------------
+    // Fonctions communes (identité)
+    // ---------------------------------------------------------------------
+
+    // Compte e-mail + mot de passe avec e-mail VÉRIFIÉ (exclut les sessions anonymes).
+    function emailVerifie() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
+    }
+
+    // Niveau du compte connecté, lu dans sa fiche Firestore (ID = e-mail en minuscules).
+    // Fiche absente → erreur → la règle refuse (comportement voulu).
+    function niveau() {
+      return firestore.get(
+        /databases/(default)/documents/demandeCollaborerLexique/$(request.auth.token.email)
+      ).data.niveau;
+    }
+
+    function estContributeur() {
+      return emailVerifie() && niveau() >= 1;
+    }
+
+    function estAdmin() {
+      return emailVerifie() && niveau() >= 3;
+    }
+
+    // La session connectée est-elle celle du propriétaire du dossier {uid} ?
+    function estProprietaire(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Taille maximale du fichier envoyé, en mégaoctets.
+    function tailleMax(mo) {
+      return request.resource.size < mo * 1024 * 1024;
+    }
+
+    // ---------------------------------------------------------------------
+    // Admin : lecture, écriture et suppression partout.
+    // ---------------------------------------------------------------------
+    match /{chemin=**} {
+      allow read, write: if estAdmin();
+    }
+
+    // ---------------------------------------------------------------------
+    // Lecture publique de tout le reste du bucket, HORS dossiers personnels.
+    // (Une règle Storage accorde l'accès dès qu'UN match l'autorise : la lecture
+    // publique est donc déclarée dossier par dossier, en excluant les dossiers
+    // personnels par leur nom, plutôt que par un joker global.)
+    // Couvre les anciens médias (MesMedias/audio, images, video…), les pages Warsh
+    // (MesDonnes/warsh), les fichiers MesJS et l'ancien MesDonnes/historiqueMots.json.
+    // ---------------------------------------------------------------------
+    match /{fichier} {                                    // fichiers à la racine
       allow read: if true;
-      allow write: if request.auth != null;
+    }
+    match /{dossier}/{reste=**} {                         // autres dossiers racine
+      allow read: if !(dossier in ['MesDonnes', 'MesMedias']);
+    }
+    match /MesDonnes/{sous}/{reste=**} {
+      allow read: if sous != 'historikMots';
+    }
+    match /MesMedias/{sous}/{reste=**} {
+      allow read: if !(sous in ['membres', 'stt-input', 'audio']);
+    }
+    match /MesMedias/audio/{sous}/{reste=**} {
+      allow read: if sous != 'MesNotesTts';
+    }
+
+    // ---------------------------------------------------------------------
+    // Fichiers de données exécutés par l'application (enregistrer.js, connexion.js)
+    // ---------------------------------------------------------------------
+    match /MesDonnes/MesJS/{fichier} {
+      allow create, update: if fichier in ['fTabLexique1.js', 'fTabVersets1.js', 'articles-format-html.js']
+        && estContributeur()
+        && tailleMax(30)
+        && request.resource.contentType.matches('(application|text)/javascript.*');
+      // delete : admin seulement (règle générale)
+    }
+
+    // ---------------------------------------------------------------------
+    // Historique de mots (histMots.js) : MesDonnes/historikMots/uid_{uid}/historiqueMots.json
+    // Le segment est construit par zcHistorikFirebasePathSegment() : « uid:XXX » → « uid_XXX ».
+    // Les anciens segments « mail_… » et « guest » ne sont plus inscriptibles.
+    // ---------------------------------------------------------------------
+    match /MesDonnes/historikMots/{segment}/{fichier} {
+      allow read: if request.auth != null && segment == 'uid_' + request.auth.uid;
+      allow create, update: if request.auth != null
+        && segment == 'uid_' + request.auth.uid
+        && fichier == 'historiqueMots.json'
+        && tailleMax(1)
+        && request.resource.contentType.matches('application/json.*');
+      allow delete: if request.auth != null && segment == 'uid_' + request.auth.uid;
+    }
+
+    // ---------------------------------------------------------------------
+    // Médias des membres (medias1.js) : MesMedias/membres/{uid}/{audio|video|images|pdf|docs|autres}/…
+    // ---------------------------------------------------------------------
+    match /MesMedias/membres/{uid}/{chemin=**} {
+      allow read, delete: if estProprietaire(uid);
+      allow create, update: if estProprietaire(uid) && emailVerifie() && tailleMax(200);
+    }
+
+    // ---------------------------------------------------------------------
+    // Audio envoyé pour transcription (mes-notes-tts.js) : MesMedias/stt-input/{uid}/…
+    // ---------------------------------------------------------------------
+    match /MesMedias/stt-input/{uid}/{fichier} {
+      allow read, delete: if estProprietaire(uid);
+      allow create, update: if estProprietaire(uid) && emailVerifie()
+        && tailleMax(100)
+        && (request.resource.contentType.matches('(audio|video)/.*')
+            || request.resource.contentType == 'application/octet-stream');
+    }
+
+    // ---------------------------------------------------------------------
+    // MP3 de synthèse vocale (écrits par la Cloud Function, qui ignore ces règles) :
+    // le propriétaire lit, liste et supprime les siens ; il n'écrit pas.
+    // ---------------------------------------------------------------------
+    match /MesMedias/audio/MesNotesTts/{uid}/{fichier} {
+      allow read, delete: if estProprietaire(uid);
     }
   }
 }
