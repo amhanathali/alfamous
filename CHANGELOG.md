@@ -23,6 +23,15 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Scripts `.bat` d'aide Git (sauvegarde, récupération, état) ; `DEPLOYER` sauvegarde désormais sur GitHub ; `SAUVEGARDER` inclut tous les secrets.
 
 ### Sécurité
+- **Mots de passe** : l'application n'écrit plus le mot de passe des membres (champ `code`)
+  dans Firestore et ne le compare plus à Firestore ; seul Firebase Auth le vérifie.
+  Script `functions/scripts/purge-codes-demande-collaborer.js` pour effacer les anciennes copies.
+- **Rôles** : dans `demandeCollaborerLexique`, le champ `niveau` n'est plus modifiable que par
+  un administrateur ; chaque membre ne lit que sa propre fiche ; la collection n'est plus en
+  lecture publique (règles Firestore).
+- Le mot de passe n'est plus conservé dans le `localStorage` du navigateur (les anciennes
+  copies sont effacées au chargement).
+- Tests des règles avec l'émulateur Firebase (`tests/rules/`).
 - Exclusion du suivi Git de tous les secrets (clés de service Firebase Admin,
   secret client OAuth, identifiants de connexion rapide, `key.json`).
 - Déplacement de la clé API Blogger hors du code (`Gscript/ArticlesBlogHtml.gs`)

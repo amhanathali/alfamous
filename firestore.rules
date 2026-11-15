@@ -2,6 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ---------------------------------------------------------------------
+    // Fonctions communes (identité)
+    // ---------------------------------------------------------------------
+    // Compte Firebase Auth avec e-mail VÉRIFIÉ (exclut les sessions anonymes de medias1.js
+    // et les comptes créés avec l'adresse de quelqu'un d'autre sans accès à sa boîte).
+    function zcEmailVerifie() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
+    }
+    // Propriétaire d'une fiche dont l'ID est son e-mail (Auth renvoie l'e-mail en minuscules).
+    function zcEstProprietaire(docId) {
+      return zcEmailVerifie() && request.auth.token.email == docId;
+    }
+    // Administrateur : niveau >= 3 dans SA fiche demandeCollaborerLexique/{e-mail}.
+    // Même source de vérité que assertAdminByAuthEmail (functions/index.js) ; elle est fiable
+    // parce que le champ niveau n'est plus modifiable que par un admin (voir plus bas).
+    function zcEstAdmin() {
+      return zcEmailVerifie()
+        && get(/databases/$(database)/documents/demandeCollaborerLexique/$(request.auth.token.email)).data.niveau >= 3;
+    }
+
     // Contact public : création sans compte (contact.html), schéma strict anti-spam.
     match /messagesContact/{docId} {
       allow read: if true;
@@ -194,9 +216,54 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null;
     }
+    // Fiches des membres (docId = e-mail en minuscules) : données personnelles + rôle (niveau).
+    // - Lecture : le propriétaire lit SA fiche ; seul un admin peut lister la collection.
+    // - Création : par le propriétaire, e-mail vérifié, toujours au niveau 0, sans champ « code ».
+    // - Mise à jour par le propriétaire : nom, niveau DEMANDÉ et compteur de connexions seulement.
+    // - niveau (rôle) : modifiable uniquement par un admin.
+    // - Le champ « code » (ancien mot de passe en clair) ne peut plus être écrit ni modifié par
+    //   personne ; il est effacé par functions/scripts/purge-codes-demande-collaborer.js.
     match /demandeCollaborerLexique/{docId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      function champsCreationOk() {
+        return request.resource.data.keys().hasOnly(['timestamp', 'mail', 'name', 'niveau', 'niveauDemande'])
+          && request.resource.data.keys().hasAll(['mail', 'name', 'niveau', 'niveauDemande'])
+          && request.resource.data.mail == docId
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 120
+          && request.resource.data.niveau == 0
+          && request.resource.data.niveauDemande is int
+          && request.resource.data.niveauDemande >= 0
+          && request.resource.data.niveauDemande <= 3;
+      }
+      function champModifie(champ) {
+        return request.resource.data.diff(resource.data).affectedKeys().hasAny([champ]);
+      }
+      // Chaque champ n'est validé que s'il est modifié : une ancienne fiche au format
+      // irrégulier ne bloque pas la mise à jour d'un autre champ.
+      function majProprietaireOk() {
+        return request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['name', 'niveauDemande', 'nombreConnexions', 'updatedAt'])
+          && (!champModifie('name') || (
+            request.resource.data.name is string
+            && request.resource.data.name.size() >= 1
+            && request.resource.data.name.size() <= 120))
+          && (!champModifie('niveauDemande') || (
+            request.resource.data.niveauDemande is int
+            && request.resource.data.niveauDemande >= 0
+            && request.resource.data.niveauDemande <= 3))
+          && (!champModifie('nombreConnexions') || request.resource.data.nombreConnexions is int);
+      }
+      function codeInchange() {
+        return request.resource.data.get('code', null) == resource.data.get('code', null);
+      }
+
+      allow get: if zcEstProprietaire(docId) || zcEstAdmin();
+      allow list: if zcEstAdmin();
+      allow create: if zcEstProprietaire(docId) && champsCreationOk();
+      allow update: if (zcEstProprietaire(docId) && majProprietaireOk())
+        || (zcEstAdmin() && codeInchange());
+      allow delete: if zcEstAdmin();
     }
 
     // Liens partagés Médias (medias1.js) : même logique que le fourre-tout (toute session Firebase authentifiée).
@@ -213,9 +280,14 @@ service cloud.firestore {
 
     // Tout le reste : lecture ouverte, écriture si connecté (Auth).
     // Exclure forumMessages du fourre-tout (éviter de court-circuiter les règles spécifiques du forum).
-    match /{document=**} {
-      allow read: if true;
+    // IMPORTANT : dans Firestore, il suffit qu'UNE règle autorise pour que l'accès soit accordé.
+    // demandeCollaborerLexique doit donc être exclue ici aussi (lecture ET écriture), sinon ce
+    // fourre-tout annulerait les règles strictes ci-dessus. Le nom de collection est capturé par
+    // {nomCollection} : test fiable, sans dépendre de request.path.matches().
+    match /{nomCollection}/{document=**} {
+      allow read: if nomCollection != 'demandeCollaborerLexique';
       allow write: if request.auth != null
+        && nomCollection != 'demandeCollaborerLexique'
         && !request.path.matches('/databases/' + database + '/documents/forumMessages/.*')
         && !request.path.matches('databases/' + database + '/documents/forumMessages/.*')
         && !request.path.matches('/databases/' + database + '/documents/newsletterCampaigns/.*')
