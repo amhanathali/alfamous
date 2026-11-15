@@ -27,6 +27,7 @@ La commande démarre les émulateurs Firestore et Storage, exécute tous les fic
 | Fichier | Ce qu'il vérifie |
 |---|---|
 | `firestore.demandeCollaborerLexique.test.js` | Fiches membres : pas de mot de passe, `niveau` réservé aux admins, lecture limitée au propriétaire |
+| `storage.test.js` | Storage : fichiers de données (niveau ≥ 1), reste du bucket (admin), dossiers personnels (médias, Mes Notes, historique de mots) |
 
 ## Ajouter un test
 

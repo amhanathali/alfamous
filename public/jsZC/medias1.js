@@ -561,6 +561,24 @@ catch (e) { console.error("Storage non initialisé:", e); }
 
 /* ---------- Helpers communs (dé-dupliqués) ---------- */
 function extFromName(name = '') { const m = /\.([^.?#/\\]+)(?:[?#].*)?$/i.exec(name); return m ? m[1].toLowerCase() : ''; }
+/**
+ * Chemin Storage d'un fichier envoyé par un membre (sous MesMedias/) : membres/{uid}/{dossier}/{horodatage}_{nom}.
+ * storage.rules (chantier 2a) n'autorise l'envoi que dans SON dossier, avec un compte e-mail vérifié
+ * (pas de session anonyme). Renvoie "" et affiche un message sinon.
+ */
+function zcMedias1CheminFichierMembre(folder, nomFichier) {
+  let cu = null;
+  try { cu = firebase.auth && firebase.auth().currentUser; } catch (_) { cu = null; }
+  if (!cu || cu.isAnonymous || !cu.email) {
+    alertMsgBoxPopup("❌ Connectez-vous avec votre compte (e-mail vérifié) pour envoyer un fichier.");
+    return "";
+  }
+  if (!cu.emailVerified) {
+    alertMsgBoxPopup("❌ Vérifiez d’abord votre adresse e-mail (lien reçu à l’inscription) pour envoyer un fichier.");
+    return "";
+  }
+  return `membres/${cu.uid}/${folder}/${Date.now()}_${nomFichier}`;
+}
 function storageFolderFor(ext = '', mime = '') {
   const e = (ext || '').toLowerCase(), m = (mime || '').toLowerCase();
   const is = (xs) => xs.includes(e) || xs.some(x => m.includes(x));
@@ -1261,10 +1279,11 @@ async function ajouterMediaFichier(fichier) {
   if (lvl <= 2) { alertMsgBoxPopup("Accès refusé (niveau > 2 requis)."); return; }
   if (!fichier) return;
 
-  const root = (typeof mediaStorageRef !== "undefined" && mediaStorageRef?.child) ? mediaStorageRef : (firebase?.storage?.().ref?.() || null);
+  const root = (typeof mediaStorageRef !== "undefined" && mediaStorageRef?.child) ? mediaStorageRef : (firebase?.storage?.().ref?.("MesMedias") || null);
   if (!root) { alertMsgBoxPopup("Storage non initialisé."); return; }
 
-  const ext = extFromName(fichier.name), folder = storageFolderFor(ext, fichier.type), path = `${folder}/${Date.now()}_${fichier.name}`;
+  const ext = extFromName(fichier.name), folder = storageFolderFor(ext, fichier.type), path = zcMedias1CheminFichierMembre(folder, fichier.name);
+  if (!path) return;
   let mediaUrl = ""; try { const snap = await root.child(path).put(fichier); mediaUrl = await snap.ref.getDownloadURL(); }
   catch (e) { console.error(e); alertMsgBoxPopup("Échec de l'upload : " + (e?.message || e)); return; }
 
@@ -1299,7 +1318,8 @@ window.zcMesMediasUploadFileLikeAjouter = async function zcMesMediasUploadFileLi
       : firebase.storage().ref("MesMedias");
   const ext = extFromName(fichier.name);
   const folder = storageFolderFor(ext, fichier.type);
-  const path = `${folder}/${Date.now()}_${fichier.name}`;
+  const path = zcMedias1CheminFichierMembre(folder, fichier.name);
+  if (!path) return false;
   let mediaUrl = "";
   try {
     const snap = await root.child(path).put(fichier);

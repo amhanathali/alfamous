@@ -3,7 +3,7 @@
   "private": true,
   "description": "Tests des règles Firestore et Storage avec l'émulateur Firebase",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test --test-concurrency=1",
     "test:emulateur": "cd ../.. && firebase emulators:exec --project demo-alfamous --only firestore,storage \"npm --prefix tests/rules test\""
   },
   "devDependencies": {
