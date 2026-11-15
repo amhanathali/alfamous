@@ -8,6 +8,23 @@ Avant toute modification de code, **résumer brièvement ce qui a été compris*
 
 Le propriétaire travaille en français, sous Windows ; sa copie locale est `C:\Users\gmpcd\Desktop\Alfamous`. Répondre en français.
 
+## Règles de travail (obligatoires)
+
+Source de vérité : Notion (« Tableau de bord — Projets Alfamous », puis le hub « Alfamous.ca — application » : audit, chantiers, journal). Une session = un chantier ; en fin de session, rappeler à l'auteur de mettre à jour la liste des chantiers et le journal du hub.
+
+1. Lire le code concerné avant de proposer ; montrer chaque changement (diff) et sa raison.
+2. Toujours travailler sur une branche, puis pull request vers `main`. Jamais de commit direct sur `main`.
+3. **Ne jamais pousser (`git push`) ni déployer (`firebase deploy`, `DEPLOYER____.BAT`, `GIT_*.bat`) sans l'accord explicite de l'auteur, donné pour cette action précise.** `DEPLOYER____.BAT` fait aussi un commit + push : ne pas le lancer de ta propre initiative.
+4. Règles Firestore / Storage : les tester avec l'émulateur avant tout déploiement (voir « Tests des règles »). Tout changement de règles s'accompagne de tests.
+5. Mettre à jour `CHANGELOG.md` pour tout changement notable.
+
+### Interdits
+
+- **Ne pas modifier le contenu** de `public/jsZC/fTabVersets1.js` et `public/jsZC/fTabLexique1.js` (données du projet Blog). Seul le code qui les charge peut changer.
+- Aucun secret dans Git, et ne pas lire ni afficher le contenu de `key.json`, `functions/*adminsdk*.json`, `functions/client_secret*.json`, `functions/quick-login.json`, `Gscript/secrets.gs`, `.env`.
+- Ne pas modifier `other/` (dossier de travail local, hors dépôt).
+- Ne jamais écrire, lire ni comparer un mot de passe dans Firestore ni dans `localStorage` : seul Firebase Auth gère les mots de passe.
+
 ## Projet
 
 Alfamous : application web open source (GPL v3) d'étude du codex coranique — recherche par mots/racines/pages/versets, commentaires sur versets et lexique, forum, notes, articles. Ligne éditoriale : **le texte d'abord** (les hadiths n'entrent pas dans l'appareil d'analyse). Interface multilingue (FR, EN, AR, ES, KAB). Projet Firebase : `alfamous-amha`.
@@ -18,8 +35,11 @@ Alfamous : application web open source (GPL v3) d'étude du codex coranique — 
 # Dépendances backend
 cd functions && npm install
 
-# Lint (seul outil de vérification ; il n'y a pas de suite de tests)
+# Lint des Cloud Functions
 cd functions && npm run lint
+
+# Tests des règles Firestore (émulateur ; Java 21+ requis ; port 8085 car 8080 est pris par nocache_server.py)
+cd tests/rules && npm install && npm run test:emulateur
 
 # Émulateurs Firebase (hosting, functions, firestore, storage)
 firebase emulators:start
@@ -28,8 +48,9 @@ cd functions && npm run serve        # functions seules
 # Test rapide du frontend sans Firebase local : serveur statique sans cache sur public/
 python nocache_server.py 8080        # (LANCER_ALFAMOUS.BAT fait la même chose sous Windows)
 
-# Déploiement
+# Déploiement (uniquement sur accord explicite de l'auteur)
 firebase deploy                      # tout
+firebase deploy --only firestore:rules,hosting --project alfamous-amha   # règles + hosting, sans les Functions
 firebase deploy --only hosting       # frontend seul
 firebase deploy --only functions
 
@@ -53,6 +74,16 @@ Détails : `docs/ARCHITECTURE.md`, `docs/DATA-MODEL.md`, `docs/CONFIGURATION.md`
 **Backend (`functions/index.js`, Node 20)** — toutes les fonctions en région **`europe-west1`** : déclencheurs Firestore pour e-mails (forum, contact), callables admin (newsletter, synchro Auth ↔ `demandeCollaborerLexique`), `newsletterUnsubscribe` (HTTP, lien HMAC, exposé via rewrite dans `firebase.json`), TTS/STT des notes (`mesNoteTts.js`, `mesNoteStt.js`), envoi SMTP (`mail.js`). Style ESLint `google` + guillemets doubles.
 
 **Autorisation** : le rôle admin = **niveau ≥ 3** dans la collection Firestore `demandeCollaborerLexique`, croisé avec l'e-mail Firebase Auth. Ce modèle est appliqué à la fois dans `firestore.rules`/`storage.rules` et dans les callables — toute évolution des droits doit être reportée aux deux endroits.
+
+**État de la sécurité (chantier 1, en ligne depuis le 14 nov. 2026)** : `demandeCollaborerLexique` (docId = e-mail en minuscules) n'est plus lisible publiquement. Une fiche est lisible par son propriétaire (e-mail vérifié) ; la liste et le champ `niveau` sont réservés aux admins ; le champ `code` ne peut plus être écrit. La collection est exclue du « fourre-tout » `match /{nomCollection}/{document=**}` : dans Firestore, il suffit qu'UNE règle autorise pour que l'accès soit accordé, donc toute collection aux règles strictes doit y être exclue. Chantiers ouverts : Storage (écriture ouverte à tout compte, y compris anonyme) et lecture publique de `messagesContact`, `newsletterSubscribers`, `temoignages`.
+
+## Tests des règles
+
+`tests/rules/` (18 tests, `@firebase/rules-unit-testing`) : visiteur, session anonyme, membre, e-mail non vérifié, admin. Lancement : `cd tests/rules && npm run test:emulateur`. L'émulateur Firestore est configuré sur le port 8085 dans `firebase.json`.
+
+## Scripts d'administration
+
+`functions/scripts/purge-codes-demande-collaborer.js` : rapport en simulation par défaut, `--apply` pour écrire. Utiliser une clé `functions/*adminsdk*.json` via `GOOGLE_APPLICATION_CREDENTIALS` (`key.json` n'a pas accès à Firestore).
 
 **Hosting** : `firebase.json` sert `public/` avec fallback SPA vers `index.html` ; `other/**` et `jsZC/quick-login.json` sont exclus du déploiement.
 
