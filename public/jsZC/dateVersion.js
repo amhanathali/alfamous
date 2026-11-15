@@ -2,7 +2,7 @@
 window.__FTDV_CANON__ = true;
 function fTabDateVersion() {
   var tableau = [
-    [20.45, "17-07-2026 13:01:08"],
+    [20.46, "15-11-2026 12:12:17"],
   ];
   return tableau;
 }

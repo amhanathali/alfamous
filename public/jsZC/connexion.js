@@ -1513,25 +1513,36 @@ function ensureListeAbonnesContainer() {
     const st = document.createElement('style');
     st.id = 'abonnes-popup-style';
     st.textContent = `
+      /* Chantier 7 : couleurs tirées des jetons du thème (01-tokens.css) pour rester
+         lisible en clair comme en sombre ; valeurs claires d'origine en repli. */
       #abonnes-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35);
         display:flex; align-items:center; justify-content:center; }
-      #abonnes-popup { background:#fff; width:min(1100px, 95vw); max-height:85vh; 
+      #abonnes-popup { background:var(--zc-surface, #fff); color:var(--zc-text, #0f172a);
+        width:min(1100px, 95vw); max-height:85vh;
+        border:1px solid var(--zc-border, transparent);
         border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2);
         display:flex; flex-direction:column; overflow:hidden; }
       #abonnes-head { padding:10px 14px; display:flex; align-items:center; gap:10px;
-        justify-content:space-between; background:#f7f7f8; border-bottom:1px solid #e6e6e6; }
+        justify-content:space-between; background:var(--zc-surface-muted, #f7f7f8);
+        border-bottom:1px solid var(--zc-border, #e6e6e6); }
       #abonnes-body { overflow:auto; padding:0; }
-      #abonnes-table { width:100%; border-collapse:collapse; font-size:14px; }
-      #abonnes-table thead tr { position:sticky; top:0; background:#fafafa; z-index:1; }
-      #abonnes-table th, #abonnes-table td { padding:3px 4px; border-bottom:1px solid #f0f0f0; white-space:nowrap; }
+      #abonnes-table { width:100%; border-collapse:collapse; font-size:14px; color:inherit; }
+      #abonnes-table thead tr { position:sticky; top:0; background:var(--zc-surface-muted, #fafafa); z-index:1; }
+      #abonnes-table th, #abonnes-table td { padding:3px 4px; border-bottom:1px solid var(--zc-border, #f0f0f0);
+        white-space:nowrap; color:inherit; }
       #abonnes-table th[data-sort] { cursor:pointer; user-select:none; }
-      #abonnes-table tbody tr:nth-child(odd){ background:#fcfcfd; }
+      #abonnes-table tbody tr:nth-child(odd){ background:var(--zc-ui-soft-bg, #fcfcfd); }
+      #abonnes-table tbody tr:hover{ background:var(--zc-hover-bg, #f2f2f2); }
       #abonnes-actions { display:flex; gap:6px; align-items:center; }
-      #abonnes-search { padding:3px 4px; border:1px solid #ddd; border-radius:8px; font-size:13px; min-width:220px; }
-      #abonnes-level { padding:3px 4px; border:1px solid #ddd; border-radius:8px; font-size:13px; }
-      .btn-plain { border:1px solid #ddd; background:#fff; border-radius:8px; padding:6px 10px; cursor:pointer; }
-      .btn-plain:hover { background:#f2f2f2; }
-      .tag { font-size:12px; padding:2px 6px; border-radius:999px; border:1px solid #e0e0e0; }
+      #abonnes-search, #abonnes-level { padding:3px 4px; border:1px solid var(--zc-ui-soft-border, #ddd);
+        border-radius:8px; font-size:13px; background:var(--zc-surface, #fff); color:var(--zc-text, inherit); }
+      #abonnes-search { min-width:220px; }
+      #abonnes-search::placeholder { color:var(--zc-text-muted, #757575); }
+      .btn-plain { border:1px solid var(--zc-ui-soft-border, #ddd); background:var(--zc-ui-soft-bg, #fff);
+        color:var(--zc-text, inherit); border-radius:8px; padding:6px 10px; cursor:pointer; }
+      .btn-plain:hover { background:var(--zc-hover-bg, #f2f2f2); }
+      .tag { font-size:12px; padding:2px 6px; border-radius:999px; border:1px solid var(--zc-border, #e0e0e0);
+        color:inherit; }
     `;
     document.head.appendChild(st);
   }

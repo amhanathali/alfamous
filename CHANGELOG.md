@@ -49,3 +49,12 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 ---
 
 > Les versions publiées seront listées ici au format `## [x.y.z] - AAAA-MM-JJ`.
+
+### Corrigé
+- **Thème sombre — articles** : les blocs mis en forme dans l'article lui-même (`section`, `details`,
+  `footer`, `em`/`strong` avec fond inline…) gardaient leur fond clair sous un texte clair.
+  Tout le corps de l'article est désormais remis aux couleurs du thème (règle `:where(*)` à
+  spécificité nulle) ; images, vidéos, SVG et surlignages de recherche sont épargnés. Le texte
+  surligné passe en foncé sur le jaune (contraste 2:1 → 8:1).
+- **Thème sombre — fenêtre Abonnés** : fond, en-tête, lignes, boutons, champ de recherche et
+  pastilles utilisent les jetons `--zc-*` au lieu de blancs codés en dur.
